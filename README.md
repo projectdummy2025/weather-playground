@@ -1,47 +1,40 @@
-# 🌦️ Weather Playground
+# 🌦️ Prakiraan Cuaca BMKG API
 
-> 🧪 Mini eksperimen belajar integrasi **API publik (AccuWeather)** dan parsing **JSON** menggunakan **Express.js**.  
-> Proyek ini hanya untuk eksplorasi — bukan untuk produksi.
+> 🧪 Eksperimen integrasi **API publik BMKG** dan parsing **JSON** menggunakan **Express.js**.
+> Proyek ini bertujuan untuk menyediakan endpoint backend sederhana yang mengambil dan menyajikan data prakiraan cuaca dari BMKG.
 
 ---
 
 ## 🎯 Tujuan Proyek
-- Melatih integrasi dengan REST API pihak ketiga  
-- Mempelajari autentikasi menggunakan **header `Authorization: Bearer`**  
-- Memahami alur: pencarian lokasi → dapatkan `locationKey` → ambil kondisi cuaca  
-- Melatih error handling dan parsing JSON aman di backend  
+- Melatih integrasi dengan REST API publik tanpa autentikasi kompleks.
+- Mempelajari cara mengambil data berdasarkan kode wilayah administratif (`adm4`).
+- Memahami alur: request ke API BMKG → parsing JSON → menyajikan data terstruktur.
+- Melatih error handling dan parsing JSON yang tidak konvensional di backend.
 
 ---
 
 ## ⚙️ Teknologi yang Digunakan
-- **Node.js** (runtime environment)  
-- **Express.js** (framework backend)  
-- **Axios** (HTTP client untuk request ke API)  
-- **AccuWeather API** — *Core Weather: Current Conditions & Location Search*  
+- **Node.js** (runtime environment)
+- **Express.js** (framework backend)
+- **Axios** (HTTP client untuk request ke API)
+- **API Publik BMKG** — *Prakiraan Cuaca Indonesia tingkat Kecamatan/Desa*
 
 ---
 
 ## 🚀 Fitur Saat Ini
-- ✅ Cari cuaca berdasarkan **nama kota** via query parameter  
-- ✅ Otomatis:
-  1. Cari `locationKey` dari endpoint `/locations/v1/cities/search`
-  2. Gunakan `locationKey` untuk ambil data dari `/currentconditions/v1/{key}`
+- ✅ Ambil data cuaca berdasarkan **kode wilayah (`adm4`)** via query parameter.
+- ✅ Parsing dan transformasi respons JSON dari BMKG menjadi format yang lebih bersih dan mudah digunakan.
 - ✅ Respons JSON berisi:
-  - Nama kota (`LocalizedName`)
-  - `WeatherText` (kondisi cuaca)
-  - Suhu dalam Celsius dan Fahrenheit
-  - Waktu observasi lokal (`LocalObservationDateTime`)
-  - Status siang/malam (`IsDayTime`)
-  - Link ke halaman AccuWeather
-
-> ⚠️ Catatan: Beberapa field seperti `RelativeHumidity` bisa bernilai `null` — ini normal sesuai dokumentasi AccuWeather.
+  - Informasi detail lokasi (`desa`, `kecamatan`, `kota`, `provinsi`).
+  - Data prakiraan cuaca untuk beberapa hari ke depan, terstruktur per hari dan per periode waktu.
+  - Detail cuaca per periode: suhu, kelembapan, kondisi cuaca, kecepatan dan arah angin.
 
 ---
 
 ## 🧩 Struktur Proyek
 ```bash
-weather-playground/
-├── .env                 # Simpan ACCUWEATHER_API_KEY
+Cumulus/
+├── .env                 # Simpan konfigurasi opsional (PORT, dll.)
 ├── .env.example         # Template untuk .env
 ├── server.js            # Entry point server Express
 ├── package.json
@@ -54,8 +47,8 @@ weather-playground/
 
 ### 1️⃣ Kloning Repositori
 ```bash
-git clone https://github.com/username/weather-playground.git
-cd weather-playground
+git clone https://github.com/username/Cumulus.git
+cd Cumulus
 ```
 
 ### 2️⃣ Instal Dependensi
@@ -63,79 +56,103 @@ cd weather-playground
 npm install
 ```
 
-### 3️⃣ Dapatkan API Key dari AccuWeather
-- Buka [https://developer.accuweather.com](https://developer.accuweather.com)
-- Buat akun → buat aplikasi baru → salin API Key  
-- Pastikan status aplikasi **Active** (kadang perlu klik "Submit")
-
-### 4️⃣ Buat File `.env`
-Buat file `.env` di root proyek dan isi dengan API Key Anda.
+### 3️⃣ Buat File `.env` (Opsional)
+API BMKG saat ini tidak memerlukan API Key. File `.env` dapat digunakan untuk mengkonfigurasi port server atau variabel lingkungan lainnya.
 
 *Contoh `.env`:*
 ```env
-ACCUWEATHER_API_KEY=abcd1234efgh5678ijkl9012mnop3456
 PORT=3000
+# BMKG_BASE_URL=https://api.bmkg.go.id/publik
+# BMKG_TIMEOUT=30000
 ```
 > 💡 Jangan commit `.env`! File ini sudah ada di `.gitignore`.
 
-### 5️⃣ Jalankan Server
+### 4️⃣ Jalankan Server
 ```bash
 npm start
 ```
-Server akan berjalan di: 👉 `http://localhost:3000`  
+Server akan berjalan di: 👉 `http://localhost:3000` (atau port yang didefinisikan di `.env`).
 
 ---
 
 ## 🔍 Cara Menggunakan API
 
-**Endpoint**  
+**Endpoint**
 ```
-GET /weather?city={nama_kota}
+GET /cuaca?adm4={kode_wilayah}
 ```
 
-**Contoh Request**  
+**Contoh Request**
+Gunakan kode `adm4` untuk wilayah yang diinginkan. Contoh untuk Kemayoran, Jakarta Pusat:
 ```http
-GET http://localhost:3000/weather?city=Jakarta
+GET http://localhost:3000/cuaca?adm4=31.71.03.1001
 ```
 
-**Contoh Respons**  
+**Contoh Respons Sukses**
 ```json
 {
-  "city": "Jakarta",
-  "locationKey": "208971",
-  "weatherText": "Partly sunny",
-  "temperatureC": 31,
-  "temperatureF": 88,
-  "humidity": 74,
-  "isDayTime": true,
-  "observationTime": "2025-11-06T10:30:00+07:00"
+  "lokasi": {
+    "desa": "Kemayoran",
+    "kecamatan": "Kemayoran",
+    "kota": "Kota Adm. Jakarta Pusat",
+    "provinsi": "DKI Jakarta",
+    "lat": -6.1647214778,
+    "lon": 106.8453837867,
+    "timezone": "Asia/Jakarta"
+  },
+  "prakiraan": [
+    {
+      "hari": "Hari ke-1",
+      "periode": [
+        {
+          "utc_datetime": "2025-11-11 00:00:00",
+          "local_datetime": "2025-11-11 07:00:00",
+          "t": 26,
+          "hu": 84,
+          "weather_desc": "Berawan",
+          "weather_desc_en": "Mostly Cloudy",
+          "ws": 4.4,
+          "wd": "SW",
+          "tcc": 100,
+          "vs_text": "< 10 km",
+          "analysis_date": "2025-11-10T12:00:00",
+          "url_ikon": "https://api-apps.bmkg.go.id/storage/icon/cuaca/berawan-am.svg"
+        },
+        {
+          "utc_datetime": "2025-11-11 03:00:00",
+          "local_datetime": "2025-11-11 10:00:00",
+          "t": 26,
+          "hu": 85,
+          "weather_desc": "Hujan Ringan",
+          "weather_desc_en": "Light Rain",
+          "ws": 4,
+          "wd": "N",
+          "tcc": 100,
+          "vs_text": "< 10 km",
+          "analysis_date": "2025-11-10T12:00:00",
+          "url_ikon": "https://api-apps.bmkg.go.id/storage/icon/cuaca/hujan%20ringan-am.svg"
+        }
+      ]
+    }
+  ]
 }
 ```
-> 📌 Field seperti `humidity` bisa `null` tergantung lokasi dan data AccuWeather. 
 
 ---
 
 ## 🧠 Catatan Tambahan
-- Semua request ke AccuWeather menggunakan header: `Authorization: Bearer YOUR_API_KEY`
-- Error `401` biasanya karena:
-    - API key salah/tidak aktif
-    - Lupa pakai header (mengandalkan `apikey=...` di URL tidak dijamin bekerja)
-- Rate limit: ~50 request/hari untuk akun gratis
+- API publik BMKG tidak memerlukan *API key*.
+- Struktur data JSON dari BMKG bisa jadi tidak konvensional (misalnya, properti `data` yang berisi objek, bukan array di beberapa kasus). Kode di `server.js` sudah dirancang untuk menangani struktur yang kita temukan.
+- Kode wilayah (`adm4`) bisa didapatkan dari sumber data pemerintah seperti Kepmendagri.
 
 ---
 
 ## 💡 Ide Pengembangan Berikutnya
-- 🌍 Tambah endpoint forecast 5 hari: `/forecasts/v1/daily/5day/{key}`
-- 📊 Buat tampilan frontend sederhana (HTML + JS)
-- ⚡ Implementasi caching `locationKey` (gunakan `Map` atau Redis ringan)
-- 📦 Ekspor ke Docker untuk deployment mudah
+- 🌍 Tambah endpoint untuk mencari kode `adm4` berdasarkan nama wilayah.
+- 📊 Buat tampilan frontend sederhana (HTML + JS) untuk menampilkan data cuaca.
+- ⚡ Implementasi caching untuk mengurangi jumlah request ke API BMKG.
+- 📦 Konfigurasi Docker untuk deployment yang lebih mudah.
 
 ---
 
-## ✨ Kesan & Catatan   
-> Proyek ini seperti melihat langit — kadang cerah, kadang mendung, tapi selalu menarik untuk diamati.
-> Tujuan utamanya bukan hanya mengambil data cuaca, tapi melatih ketelitian membaca dokumentasi, pemahaman alur API, dan logika pemrosesan JSON. 
-
----
-
-© 2025 — Weather Playground | Eksperimen kecil, pelajaran besar.
+© 2025 — Cumulus | Eksperimen API BMKG.
