@@ -1,47 +1,64 @@
-# 🌦️ Prakiraan Cuaca BMKG API (Simplified)
+# ☁️ Cumulus: Prakiraan Cuaca BMKG (Beta)
 
-> 🧪 Eksperimen belajar integrasi **API publik BMKG** dan menampilkan data **JSON** menggunakan **Express.js** (backend) dan **Vue.js** (frontend).
-
----
-
-## 🎯 Tujuan Proyek
-- Menjalankan backend Express.js untuk mengambil data dari BMKG.
-- Menjalankan frontend Vue.js untuk memicu permintaan API dan menampilkan data mentah.
-- Memastikan koneksi dasar antara frontend dan backend berfungsi.
+> **Cumulus** adalah aplikasi web eksperimental yang dirancang untuk menampilkan prakiraan cuaca dari API publik BMKG. Proyek ini berfungsi sebagai studi kasus untuk integrasi backend Express.js dengan frontend Vue.js yang modern dan responsif menggunakan Tailwind CSS.
 
 ---
 
-## ⚙️ Teknologi yang Digunakan
-- **Node.js** (runtime environment)
-- **Express.js** (framework backend)
-- **Axios** (HTTP client untuk request ke API)
-- **Vue.js 3** (framework frontend)
-- **Vite** (build tool untuk frontend)
-- **API Publik BMKG** — *Prakiraan Cuaca Indonesia tingkat Kecamatan/Desa*
+## 🚀 Gambaran Umum Proyek
+Cumulus bertujuan untuk menyajikan data prakiraan cuaca secara intuitif dan efisien. Sebagai proyek tahap beta, fokus utamanya adalah pada konsumsi data dari API BMKG dan penyajiannya dalam antarmuka pengguna yang bersih. Aplikasi ini menunjukkan bagaimana teknologi web modern dapat digunakan untuk membangun aplikasi yang responsif dan mudah digunakan.
+
+---
+
+## ✨ Fitur
+- **Tampilan Multi-Lokasi**: Menampilkan prakiraan cuaca untuk beberapa lokasi yang telah ditentukan (saat ini: Kemayoran - Jakarta, Sekeloa - Bandung, Kuta - Bali).
+- **UI Modern & Responsif**: Dibangun dengan Vue.js dan Tailwind CSS, antarmuka pengguna dirancang agar bersih, minimalis, dan berfungsi dengan baik di berbagai ukuran perangkat.
+- **Prakiraan Per Jam**: Menyajikan detail prakiraan cuaca per jam untuk setiap lokasi, termasuk suhu, kelembapan, kecepatan angin, dan kondisi cuaca.
+- **Navigasi Hari Berbasis Tab**: Memungkinkan pengguna untuk dengan mudah beralih antara prakiraan cuaca untuk hari ini, besok, dan lusa melalui antarmuka tab yang intuitif.
+- **Backend Proxy Sederhana**: Server Express.js bertindak sebagai proxy untuk mengambil data dari API BMKG, membantu menghindari masalah CORS dan mengelola permintaan API.
+
+---
+
+## 🛠️ Tumpukan Teknologi
+### Backend
+- **Node.js**: Lingkungan runtime JavaScript.
+- **Express.js**: Framework web minimalis untuk Node.js, digunakan untuk membuat API proxy.
+- **Axios**: Klien HTTP berbasis Promise untuk browser dan Node.js, digunakan untuk membuat permintaan ke API BMKG.
+
+### Frontend
+- **Vue.js 3**: Framework JavaScript progresif untuk membangun antarmuka pengguna.
+- **Vite**: Tool build frontend generasi berikutnya yang menyediakan pengalaman pengembangan yang sangat cepat.
+- **Tailwind CSS**: Framework CSS utility-first untuk membangun desain kustom dengan cepat.
+- **PostCSS & Autoprefixer**: Digunakan oleh Tailwind untuk memproses CSS dan menambahkan prefix vendor.
+
+### API
+- **API Publik BMKG**: Sumber data utama untuk prakiraan cuaca di Indonesia (tingkat Kecamatan/Desa).
 
 ---
 
 ## 🧩 Struktur Proyek
 ```bash
 Cumulus/
-├── .env                 # Konfigurasi variabel lingkungan (PORT, BMKG_BASE_URL)
-├── src/                 # Folder untuk kode backend Node.js (sebelumnya server.js)
-│   └── server.js        # Logika server Express.js
-├── client/              # Folder untuk kode frontend Vue.js
-│   ├── public/
-│   ├── src/
-│   │   ├── App.vue      # File utama aplikasi Vue.js
-│   │   └── main.js
-│   ├── index.html
-│   ├── package.json
-│   └── ...
-├── package.json         # Konfigurasi proyek backend dan scripts
-└── README.md            # Dokumentasi proyek ini
+├── server/              # Kode backend Express.js
+│   └── server.js        # Logika server utama
+├── client/              # Kode frontend Vue.js
+│   ├── public/          # Aset statis
+│   ├── src/             # Kode sumber Vue.js
+│   │   ├── App.vue      # Komponen root aplikasi
+│   │   ├── main.js      # Titik masuk JavaScript
+│   │   └── assets/      # Aset CSS dan lainnya
+│   ├── tailwind.config.js # Konfigurasi Tailwind CSS
+│   ├── postcss.config.js  # Konfigurasi PostCSS
+│   ├── index.html       # File HTML utama
+│   ├── package.json     # Dependensi frontend
+│   └── vite.config.js   # Konfigurasi Vite
+├── .env.example         # Contoh variabel lingkungan
+├── package.json         # Dependensi proyek utama (backend)
+└── README.md            # Dokumentasi proyek
 ```
 
 ---
 
-## 🪄 Langkah Instalasi & Penggunaan
+## 🚀 Instalasi & Menjalankan Aplikasi
 
 ### 1️⃣ Kloning Repositori
 ```bash
@@ -50,47 +67,59 @@ cd Cumulus
 ```
 
 ### 2️⃣ Instal Dependensi
+Proyek ini memiliki dua file `package.json` yang terpisah untuk backend (di root) dan frontend (di `client/`).
+
 ```bash
-npm install # Untuk dependensi backend
-npm install --prefix client # Untuk dependensi frontend
+# Instal dependensi untuk server (backend)
+npm install
+
+# Instal dependensi untuk aplikasi Vue (frontend)
+npm install --prefix client
 ```
 
-### 3️⃣ Konfigurasi File `.env`
-Buat file bernama `.env` di **root project** (`/home/ubuntu/Experiment/Cumulus/.env`). Isi dengan konten berikut (jangan ubah `BMKG_BASE_URL` kecuali ada perubahan dari BMKG):
+### 3️⃣ Konfigurasi Variabel Lingkungan
+Buat file bernama `.env` di **root project** (`/Cumulus/.env`) berdasarkan `.env.example`.
 
 ```env
+# Port untuk server backend
 PORT=3000
-BMKG_BASE_URL="https://api.bmkg.go.id/publik"
 ```
-> 💡 Jangan commit `.env`! File ini sudah ada di `.gitignore`.
+> 💡 **Penting**: Jangan commit file `.env` Anda ke repositori publik!
 
-### 4️⃣ Build Aplikasi Frontend
-Sebelum menjalankan server, Anda perlu melakukan build untuk aplikasi Vue.js:
-```bash
-npm run build
-```
-Ini akan membuat bundle produksi di `client/dist/`.
+### 4️⃣ Jalankan Aplikasi
+Aplikasi ini memerlukan dua proses terminal yang berjalan secara bersamaan: satu untuk backend dan satu untuk frontend.
 
-### 5️⃣ Jalankan Server Backend
+**Terminal 1 (Di folder root `Cumulus/`): Jalankan Server Backend**
 ```bash
 npm start
 ```
-Server akan berjalan di: 👉 `http://localhost:3000` (atau port yang didefinisikan di `.env`).
+Server Express.js akan berjalan di `http://localhost:3000`.
+
+**Terminal 2 (Di folder root `Cumulus/`): Jalankan Server Pengembangan Frontend**
+```bash
+npm run dev --prefix client
+```
+Server pengembangan Vite akan berjalan di `http://localhost:5173` (atau port lain jika 5173 sudah digunakan).
+
+### 5️⃣ Akses Aplikasi
+Setelah kedua server berjalan, buka browser Anda dan navigasi ke alamat server frontend: **`http://localhost:5173`**.
 
 ---
 
-## 🔍 Cara Menggunakan Aplikasi (Frontend)
-
-1.  Setelah server berjalan (`npm start`), buka browser Anda dan navigasi ke `http://localhost:3000`.
-2.  Anda akan melihat halaman sederhana dengan sebuah tombol "Fetch Weather".
-3.  Klik tombol tersebut. Aplikasi akan memanggil API backend (`/api/cuaca`) untuk mengambil data cuaca untuk Kemayoran.
-4.  Data JSON mentah dari BMKG akan ditampilkan langsung di halaman. Jika ada error, pesan error akan ditampilkan.
+## 💡 Catatan Pengembangan & Kustomisasi
+- **Proxy API**: Frontend Vite dikonfigurasi untuk melakukan proxy permintaan dari `/api/*` ke server backend di `localhost:3000`. Ini diatur dalam `client/vite.config.js`.
+- **Kustomisasi Lokasi**: Lokasi cuaca saat ini di-hardcode di dalam `client/src/App.vue`. Anda dapat mengubah atau menambahkan kode `adm4` untuk menampilkan data dari wilayah lain.
+- **Status Beta**: Karena ini adalah proyek beta, beberapa fitur mungkin belum lengkap atau dioptimalkan. Feedback dan kontribusi sangat dihargai!
 
 ---
 
-## 🧠 Catatan Tambahan & Debugging
-- Jika Anda melihat pesan error "Failed to connect to the server" di browser, atau server tidak merespons, periksa *terminal Anda* tempat `npm start` berjalan. Server memiliki log detail yang akan membantu dalam diagnosis.
-- Endpoint API backend sekarang adalah `GET /api/cuaca?adm4={kode_wilayah}`. Frontend saat ini menggunakan `adm4=31.71.03.1001` (Kemayoran) secara hardcode.
+## 🤝 Kontribusi
+Saran, laporan bug, dan permintaan fitur sangat diterima. Silakan buka issue atau ajukan pull request di repositori GitHub.
+
+---
+
+## 📄 Lisensi
+Proyek ini dilisensikan di bawah [MIT License](LICENSE).
 
 ---
 
