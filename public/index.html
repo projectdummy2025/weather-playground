@@ -3,50 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather App</title>
+    <title>BMKG Weather Forecast</title>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f0f2f5; }
-        .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; }
-        input { padding: 0.5rem; margin-right: 0.5rem; }
-        button { padding: 0.5rem 1rem; }
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; background-color: #f0f2f5; margin: 0; padding: 2rem; }
+        h1 { text-align: center; color: #333; margin-bottom: 2rem; }
+        .locations-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; }
+        .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 800px; }
         #result { margin-top: 1.5rem; }
+        .loading, .error { text-align: center; color: #666; font-size: 1.1rem; }
+        .location-info { background-color: #e9f7ff; padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem; }
+        .location-info h2 { margin: 0 0 0.5rem 0; color: #0056b3; }
+        .forecast-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+        .forecast-card { background: #f9f9f9; border: 1px solid #eee; border-radius: 4px; padding: 1rem; }
+        .forecast-card h3 { margin: 0 0 1rem 0; font-size: 1.1rem; color: #333; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem; }
+        .forecast-card p { margin: 0.5rem 0; font-size: 0.95rem; }
+        .forecast-card img { width: 50px; height: 50px; margin-right: 10px; vertical-align: middle; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Cek Cuaca</h1>
-        <form id="weather-form">
-            <input type="text" id="city" placeholder="Masukkan nama kota" required>
-            <button type="submit">Cari</button>
-        </form>
-        <div id="result"></div>
+    <h1>Prakiraan Cuaca BMKG</h1>
+    <div class="locations-container">
+        <div class="container" id="location-3171031001"></div>
+        <div class="container" id="location-3273021005"></div>
+        <div class="container" id="location-5103011001"></div>
     </div>
 
     <script>
-        document.getElementById('weather-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const city = document.getElementById('city').value;
-            const resultDiv = document.getElementById('result');
-            resultDiv.textContent = 'Mencari...';
+        const locations = [
+            { adm4: '31.71.03.1001', name: 'Kemayoran, Jakarta' },
+            { adm4: '32.73.02.1005', name: 'Sekeloa, Bandung' },
+            { adm4: '51.03.01.1001', name: 'Kuta, Bali' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            locations.forEach(location => {
+                // Use a sanitized ID for the container
+                const containerId = `location-${location.adm4.replace(/\./g, '')}`;
+                const container = document.getElementById(containerId);
+                if (container) {
+                    fetchWeather(location.adm4, location.name, container);
+                } else {
+                    console.error(`Container not found for adm4: ${location.adm4}`);
+                }
+            });
+        });
+
+        async function fetchWeather(adm4, name, container) {
+            container.innerHTML = '<p class="loading">Mencari data...</p>';
 
             try {
-                const response = await fetch(`/weather?city=${encodeURIComponent(city)}`);
+                const response = await fetch(`/cuaca?adm4=${encodeURIComponent(adm4)}`);
                 const data = await response.json();
 
                 if (response.ok) {
-                    resultDiv.innerHTML = `
-                        <h2>${data.city}</h2>
-                        <p><strong>Cuaca:</strong> ${data.weatherText}</p>
-                        <p><strong>Suhu:</strong> ${data.temperatureC}°C</p>
-                        <p><strong>Kelembapan:</strong> ${data.humidity}%</p>
-                    `;
+                    renderSuccess(container, data, name);
                 } else {
-                    resultDiv.textContent = `Error: ${data.error}`;
+                    renderError(container, data.error || 'Gagal mengambil data.');
                 }
             } catch (error) {
-                resultDiv.textContent = 'Gagal terhubung ke server.';
+                console.error('Fetch error:', error);
+                renderError(container, 'Gagal terhubung ke server. Pastikan server berjalan dan coba lagi.');
             }
-        });
+        }
+
+        function renderError(container, message) {
+            container.innerHTML = `<p class="error">Error: ${message}</p>`;
+        }
+
+        function renderSuccess(container, data, name) {
+            const { lokasi, prakiraan } = data;
+
+            if (!lokasi || !prakiraan || prakiraan.length === 0) {
+                renderError(container, `Format data tidak sesuai atau tidak ada data prakiraan untuk ${name}.`);
+                return;
+            }
+
+            let content = `
+                <div class="location-info">
+                    <h2>${name}</h2>
+                    <p><strong>Kecamatan:</strong> ${lokasi.kecamatan || '-'}</p>
+                    <p><strong>Koordinat:</strong> ${lokasi.lat}, ${lokasi.lon}</p>
+                </div>
+                <h3>Prakiraan Cuaca:</h3>
+            `;
+
+            // Display forecast for the first day only to keep it concise
+            const todayForecast = prakiraan[0];
+            if (todayForecast) {
+                content += `<h4>${todayForecast.hari}</h4><div class="forecast-grid">`;
+                todayForecast.periode.forEach(item => {
+                    content += `
+                        <div class="forecast-card">
+                            <h3>${new Date(item.local_datetime).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</h3>
+                            <p>
+                                ${item.url_ikon ? `<img src="https://www.bmkg.go.id/asset/media/web/media/icon/${item.url_ikon}" alt="${item.weather_desc}">` : ''}
+                                <strong>${item.weather_desc}</strong>
+                            </p>
+                            <p><strong>Suhu:</strong> ${item.t}°C</p>
+                            <p><strong>Kelembapan:</strong> ${item.hu}%</p>
+                            <p><strong>Angin:</strong> ${item.ws} m/s</p>
+                        </div>
+                    `;
+                });
+                content += `</div>`;
+            }
+
+
+            container.innerHTML = content;
+        }
     </script>
 </body>
 </html>

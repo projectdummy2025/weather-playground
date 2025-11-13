@@ -3,6 +3,7 @@ const axios = require('axios');
 require('dotenv').config(); // Load .env
 
 const app = express();
+app.use(express.static('public'));
 const PORT = process.env.PORT || 3000;
 const BMKG_BASE_URL = process.env.BMKG_BASE_URL || 'https://api.bmkg.go.id/publik';
 const BMKG_TIMEOUT = parseInt(process.env.BMKG_TIMEOUT) || 30000; // ms
