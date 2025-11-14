@@ -89,8 +89,106 @@ const refreshLocation = (location) => {
       </div>
     </header>
 
+   <!-- Hero Section -->
+    <section class="container mx-auto px-6 lg:px-8 py-12 lg:py-16">
+      <div class="mx-auto">
+        <!-- Hero Content -->
+        <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl shadow-sm border border-slate-200/60 overflow-hidden">
+          <div class="relative px-6 lg:px-8 py-12 lg:py-16">
+            <!-- Decorative Pattern -->
+            <div class="absolute inset-0 opacity-5">
+              <div class="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+              <div class="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+            </div>
+
+            <div class="relative">
+              <!-- Hero Badge -->
+              <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-6">
+                <div class="flex items-center gap-1.5">
+                  <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span class="text-sm text-white font-medium">Live Update</span>
+                </div>
+                <span class="text-white/40">•</span>
+                <span class="text-sm text-white/80">Data Real-time BMKG</span>
+              </div>
+
+              <!-- Hero Title -->
+              <h2 class="text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight font-montserrat max-w-3xl">
+                Rencanakan Hari Anda dengan Prakiraan Cuaca Akurat
+              </h2>
+              <p class="text-lg text-slate-300 max-w-2xl leading-relaxed mb-8">
+                Pantau kondisi cuaca terkini dan prakiraan 5 hari ke depan untuk kota-kota besar di Indonesia. Data langsung dari BMKG untuk membantu Anda merencanakan aktivitas dengan lebih baik.
+              </p>
+
+              <!-- Feature Highlights -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                <div class="flex items-start gap-3 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                  <div class="flex-shrink-0 w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-white mb-1">Update Real-time</p>
+                    <p class="text-xs text-slate-400">Data cuaca terbaru setiap saat</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                  <div class="flex-shrink-0 w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-white mb-1">Prakiraan 5 Hari</p>
+                    <p class="text-xs text-slate-400">Rencanakan jauh hari aktivitas Anda</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                  <div class="flex-shrink-0 w-10 h-10 bg-orange-500/20 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-white mb-1">Sumber Terpercaya</p>
+                    <p class="text-xs text-slate-400">Langsung dari BMKG Indonesia</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CTA Button -->
+              <div class="flex flex-wrap items-center gap-4">
+                <a href="#prakiraan-cuaca" 
+                  class="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-900 font-semibold rounded-full hover:bg-slate-100 transition-all duration-200 shadow-lg">
+                  <span>Lihat Prakiraan Cuaca</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </a>
+                <div class="flex items-center gap-2 text-sm text-slate-400">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <span>Diperbarui setiap jam</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Main Content -->
-    <main class="container mx-auto px-6 lg:px-8 py-6">
+    <main class="container mx-auto px-6 lg:px-8 py-8">
+      <!-- Section Title -->
+      <div class="mb-6">
+        <h3 class="text-2xl font-bold text-slate-900 mb-2 font-montserrat">Prakiraan Cuaca Populer</h3>
+        <p class="text-slate-600">Lihat kondisi cuaca terkini di kota-kota populer</p>
+      </div>
+      
       <div class="space-y-4">
         <!-- Location Card -->
         <article v-for="location in locations" :key="location.adm4"
@@ -137,7 +235,7 @@ const refreshLocation = (location) => {
                     </svg>
                     <p class="text-sm text-slate-400 font-medium tracking-wide uppercase">{{ location.data.lokasi.kecamatan }}</p>
                   </div>
-                  <h2 class="text-3xl font-semibold tracking-tight font-montserrat">{{ location.name }}</h2>
+                  <h4 class="text-3xl font-semibold tracking-tight font-montserrat">{{ location.name }}</h4>
                 </div>
                 <button @click="refreshLocation(location)" 
                   class="p-2 hover:bg-white/10 rounded-xl transition-colors" 
