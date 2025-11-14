@@ -57,32 +57,32 @@ const refreshLocation = (location) => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 font-poppins">
+  <div class="min-h-screen bg-animated font-poppins">
     <!-- Header Section -->
-    <header class="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-50">
+    <header class="bg-slate-900/40 backdrop-blur-xl border-b border-slate-700/30 sticky top-0 z-50">
       <div class="container mx-auto px-6 lg:px-8 py-5">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div>
-              <h1 class="text-3xl font-bold text-slate-900 tracking-tight font-montserrat">Cumulus</h1>
+              <h1 class="text-3xl font-bold text-white tracking-tight font-montserrat">Cumulus</h1>
             </div>
           </div>
           
           <div class="flex items-center gap-3">
-            <div v-if="isLoading" class="flex items-center gap-2 text-sm text-slate-500 mr-2">
-              <svg class="animate-spin h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24">
+            <div v-if="isLoading" class="flex items-center gap-2 text-sm text-slate-300 mr-2">
+              <svg class="animate-spin h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
             </div>
             
-            <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-full border border-slate-200/60">
-              <div class="w-6 h-6 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                <svg class="w-4 h-4 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-800/60 rounded-full border border-slate-700/40">
+              <div class="w-6 h-6 bg-slate-700/60 rounded-lg flex items-center justify-center shadow-sm">
+                <svg class="w-4 h-4 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L2 7v3c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
                 </svg>
               </div>
-              <span class="text-xs font-medium text-slate-600 tracking-wide">Powered by BMKG</span>
+              <span class="text-xs font-medium text-slate-300 tracking-wide">Powered by BMKG</span>
             </div>
           </div>
         </div>
@@ -185,8 +185,8 @@ const refreshLocation = (location) => {
     <main class="container mx-auto px-6 lg:px-8 py-8">
       <!-- Section Title -->
       <div class="mb-6">
-        <h3 class="text-2xl font-bold text-slate-900 mb-2 font-montserrat">Prakiraan Cuaca Populer</h3>
-        <p class="text-slate-600">Lihat kondisi cuaca terkini di kota-kota populer</p>
+        <h3 class="text-2xl font-bold text-white mb-2 font-montserrat">Prakiraan Cuaca Populer</h3>
+        <p class="text-slate-300">Lihat kondisi cuaca terkini di kota-kota populer</p>
       </div>
       
       <div class="space-y-4">
@@ -319,11 +319,11 @@ const refreshLocation = (location) => {
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white/50 backdrop-blur-xl border-t border-slate-200/60 mt-8">
+    <footer class="bg-slate-900/40 backdrop-blur-xl border-t border-slate-700/30 mt-8">
       <div class="container mx-auto px-6 lg:px-8 py-6">
-        <p class="text-center text-sm text-slate-500">
+        <p class="text-center text-sm text-slate-400">
           Data dari 
-          <a href="https://www.bmkg.go.id" target="_blank" rel="noopener" class="text-slate-700 font-semibold hover:text-slate-900 transition-colors">
+          <a href="https://www.bmkg.go.id" target="_blank" rel="noopener" class="text-slate-200 font-semibold hover:text-white transition-colors">
             BMKG
           </a>
         </p>
@@ -346,6 +346,25 @@ const refreshLocation = (location) => {
 
 .font-montserrat {
   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Animated gradient background */
+.bg-animated {
+  background: linear-gradient(-45deg, #0f172a, #1e293b, #334155, #1e293b);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .scrollbar-hide::-webkit-scrollbar {
