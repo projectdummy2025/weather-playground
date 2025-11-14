@@ -2,6 +2,7 @@
 /node_modules
 /client/node_modules/
 /client/dist/
+/client/.vscode/
 # Environment variables
 .env
 
