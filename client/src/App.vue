@@ -123,8 +123,8 @@ const refreshLocation = (location) => {
               <!-- Feature Highlights -->
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                 <div class="flex items-start gap-3 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
-                  <div class="flex-shrink-0 w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
-                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="flex-shrink-0 w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                     </svg>
                   </div>
@@ -135,8 +135,8 @@ const refreshLocation = (location) => {
                 </div>
 
                 <div class="flex items-start gap-3 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
-                  <div class="flex-shrink-0 w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center">
-                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="flex-shrink-0 w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
                   </div>
@@ -147,8 +147,8 @@ const refreshLocation = (location) => {
                 </div>
 
                 <div class="flex items-start gap-3 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
-                  <div class="flex-shrink-0 w-10 h-10 bg-orange-500/20 rounded-xl flex items-center justify-center">
-                    <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="flex-shrink-0 w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                   </div>
