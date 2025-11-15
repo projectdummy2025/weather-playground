@@ -192,7 +192,7 @@ const refreshLocation = (location) => {
       <div class="space-y-4">
         <!-- Location Card -->
         <article v-for="location in locations" :key="location.adm4"
-          class="bg-white/90 backdrop-blur-xl rounded-3xl shadow-sm border border-slate-200/60 overflow-hidden transition-all duration-300 hover:shadow-md">
+          class="bg-slate-50/90 backdrop-blur-xl rounded-3xl shadow-sm border border-slate-200/60 overflow-hidden transition-all duration-300 hover:shadow-md">
 
           <!-- Loading State -->
           <div v-if="!location.data && !location.error" class="p-12 text-center">
