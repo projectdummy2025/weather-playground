@@ -1,13 +1,8 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-
+import { ref, computed } from 'vue';
 import LocationSearch from './components/LocationSearch.vue';
 
-const locations = ref([
-  { adm4: '31.71.03.1001', name: 'Kemayoran, Jakarta', data: null, error: null, selectedDay: 0 },
-  { adm4: '32.73.02.1005', name: 'Sekeloa, Bandung', data: null, error: null, selectedDay: 0 },
-  { adm4: '51.03.01.1001', name: 'Kuta, Bali', data: null, error: null, selectedDay: 0 }
-]);
+const locations = ref([]);
 
 const isLoading = computed(() => locations.value.some(loc => !loc.data && !loc.error));
 
@@ -29,9 +24,30 @@ const fetchWeather = async (location) => {
   }
 };
 
-onMounted(() => {
-  locations.value.forEach(location => fetchWeather(location));
-});
+const handleLocationSelected = (selectedLocation) => {
+  const exists = locations.value.some(loc => loc.adm4 === selectedLocation.code);
+  if (!exists) {
+    const newLocation = {
+      adm4: selectedLocation.code,
+      name: selectedLocation.name,
+      data: null,
+      error: null,
+      selectedDay: 0
+    };
+    locations.value.unshift(newLocation);
+    fetchWeather(newLocation);
+  } else {
+    console.log("Location already in the list.");
+    const existingLocationEl = document.getElementById(`location-${selectedLocation.code}`);
+    if (existingLocationEl) {
+      existingLocationEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      existingLocationEl.classList.add('highlight');
+      setTimeout(() => {
+        existingLocationEl.classList.remove('highlight');
+      }, 2000);
+    }
+  }
+};
 
 const getIconUrl = (imageName) => {
   return imageName ? `https://www.bmkg.go.id/asset/media/web/media/icon/${imageName}` : '';
@@ -119,7 +135,7 @@ const refreshLocation = (location) => {
                 Rencanakan Hari Anda dengan Prakiraan Cuaca Akurat
               </h2>
               <p class="text-lg text-slate-300 max-w-2xl leading-relaxed mb-8">
-                Pantau kondisi cuaca terkini dan prakiraan 5 hari ke depan untuk kota-kota besar di Indonesia. Data langsung dari BMKG untuk membantu Anda merencanakan aktivitas dengan lebih baik.
+                Cari lokasi Anda dan pantau kondisi cuaca terkini serta prakiraan 5 hari ke depan. Data langsung dari BMKG untuk membantu Anda merencanakan aktivitas dengan lebih baik.
               </p>
 
               <!-- Feature Highlights -->
@@ -165,7 +181,7 @@ const refreshLocation = (location) => {
               <div class="flex flex-wrap items-center gap-4">
                 <a href="#prakiraan-cuaca" 
                   class="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-900 font-semibold rounded-full hover:bg-slate-100 transition-all duration-200 shadow-lg">
-                  <span>Lihat Prakiraan Cuaca</span>
+                  <span>Lihat Hasil Pencarian</span>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                   </svg>
@@ -186,20 +202,21 @@ const refreshLocation = (location) => {
 
     <!-- Location Search Section -->
     <section class="container mx-auto px-6 lg:px-8 py-12 lg:py-16">
-      <LocationSearch />
+      <LocationSearch @location-selected="handleLocationSelected" />
     </section>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-6 lg:px-8 py-8">
+    <main id="prakiraan-cuaca" class="container mx-auto px-6 lg:px-8 py-8">
       <!-- Section Title -->
       <div class="mb-6">
-        <h3 class="text-2xl font-bold text-white mb-2 font-montserrat">Prakiraan Cuaca Populer</h3>
-        <p class="text-slate-300">Lihat kondisi cuaca terkini di kota-kota populer</p>
+        <h3 class="text-2xl font-bold text-white mb-2 font-montserrat">Prakiraan Cuaca</h3>
+        <p v-if="locations.length > 0" class="text-slate-300">Hasil pencarian Anda akan ditampilkan di sini.</p>
+        <p v-else class="text-slate-300">Cari lokasi di atas untuk melihat prakiraan cuaca.</p>
       </div>
       
       <div class="space-y-4">
         <!-- Location Card -->
-        <article v-for="location in locations" :key="location.adm4"
+        <article v-for="location in locations" :key="location.adm4" :id="`location-${location.adm4}`"
           class="bg-slate-50/90 backdrop-blur-xl rounded-3xl shadow-sm border border-slate-200/60 overflow-hidden transition-all duration-300 hover:shadow-md">
 
           <!-- Loading State -->
@@ -388,5 +405,20 @@ const refreshLocation = (location) => {
 button:focus-visible {
   outline: 2px solid rgb(59 130 246);
   outline-offset: 2px;
+}
+
+.highlight {
+  animation: highlight-anim 2s ease-out;
+}
+
+@keyframes highlight-anim {
+  0% {
+    transform: scale(1.01);
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+  100% {
+    transform: scale(1);
+    background-color: transparent;
+  }
 }
 </style>
