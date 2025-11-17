@@ -6,6 +6,49 @@ const path = require('path'); // Import path module
 
 const app = express();
 
+const fs = require('fs');
+
+// Load and parse location data from CSV
+const dataPath = path.join(__dirname, '..', 'kode_wilayah_adm4.csv');
+let locations = [];
+try {
+  const fileContent = fs.readFileSync(dataPath, 'utf-8');
+  locations = fileContent.split('\n')
+    .map(line => {
+        const parts = line.split(',');
+        if (parts.length < 2) return null;
+        const code = parts[0].trim();
+        const name = parts.slice(1).join(',').trim();
+        // Only include locations that have a valid adm4 code (village/desa level)
+        if (/^\d{2}\.\d{2}\.\d{2}\.\d{4}$/.test(code)) {
+            return { code, name };
+        }
+        return null;
+    })
+    .filter(Boolean); // Remove null entries
+  console.log(`${locations.length} adm4 locations loaded and parsed.`);
+} catch (error) {
+  console.error("Could not read or parse kode_wilayah_adm4.csv:", error);
+}
+
+// API endpoint for location search
+app.get('/api/search-location', (req, res) => {
+    const query = (req.query.q || '').toLowerCase();
+    if (!query || query.length < 2) {
+        return res.json([]);
+    }
+
+    try {
+      const results = locations.filter(location =>
+          location.name.toLowerCase().includes(query)
+      ).slice(0, 20); // Limit results to the top 20
+  
+      res.json(results);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to search locations.' });
+    }
+});
+
 // Middleware to log all incoming requests
 app.use((req, res, next) => {
   console.log(`Incoming request: ${req.method} ${req.path}`);
