@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 
+import LocationSearch from './components/LocationSearch.vue';
+
 const locations = ref([
   { adm4: '31.71.03.1001', name: 'Kemayoran, Jakarta', data: null, error: null, selectedDay: 0 },
   { adm4: '32.73.02.1005', name: 'Sekeloa, Bandung', data: null, error: null, selectedDay: 0 },
@@ -179,6 +181,12 @@ const refreshLocation = (location) => {
           </div>
         </div>
       </div>
+    </section>
+
+
+    <!-- Location Search Section -->
+    <section class="container mx-auto px-6 lg:px-8 py-12 lg:py-16">
+      <LocationSearch />
     </section>
 
     <!-- Main Content -->
