@@ -15,3 +15,15 @@ yarn-error.log*
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+# Database related files
+*.db
+*.sqlite
+*.sqlite3
+db.json
+database/
+migrations/
+seeds/
+*.sql
+dump.sql
+db_plan.txt
