@@ -1,11 +1,17 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors'); // Import cors
+const compression = require('compression'); // Import compression middleware
 require('dotenv').config(); // Load .env
 const path = require('path'); // Import path module
-const db = require('./config/database'); // Import database configuration
+const { db, cache } = require('./config/database'); // Import database configuration and cache
 
 const app = express();
+
+// Apply middleware for performance optimization
+app.use(compression()); // Compress all responses
+app.use(express.json({ limit: '10mb' })); // Handle larger JSON payloads
+app.use(express.urlencoded({ extended: true, limit: '10mb' })); // Handle larger URL-encoded payloads
 
 // API endpoint for location search
 app.get('/api/search-location', async (req, res) => {
@@ -14,16 +20,66 @@ app.get('/api/search-location', async (req, res) => {
         return res.json([]);
     }
 
+    // Create cache key
+    const cacheKey = `search:${query}`;
+
     try {
-        const [results] = await db.execute(
+        // Try to get from cache first
+        let results = cache.get(cacheKey);
+
+        if (results) {
+            console.log(`Cache hit for query: ${query}`);
+            return res.json(results);
+        }
+
+        console.log(`Cache miss for query: ${query}, querying database...`);
+
+        // Query database if not in cache
+        const [dbResults] = await db.execute(
             'SELECT code, name FROM villages WHERE LOWER(name) LIKE ? LIMIT 20',
             [`%${query}%`]
         );
+
+        // Store in cache for future requests (use TTL from environment, default 1 hour)
+        results = dbResults;
+        const cacheTTL = parseInt(process.env.CACHE_TTL) || 3600;
+        cache.set(cacheKey, results, cacheTTL);
 
         res.json(results);
     } catch (error) {
         console.error('Database query error:', error);
         res.status(500).json({ error: 'Failed to search locations.' });
+    }
+});
+
+// API endpoint to get all location data for client-side caching
+app.get('/api/all-locations', async (req, res) => {
+    const cacheKey = 'all-locations';
+
+    try {
+        // Try to get from cache first
+        let allLocations = cache.get(cacheKey);
+
+        if (allLocations) {
+            console.log('Cache hit for all locations');
+            return res.json(allLocations);
+        }
+
+        console.log('Cache miss for all locations, querying database...');
+
+        // Query database for all villages (the searchable data)
+        const [dbResults] = await db.execute(
+            'SELECT code, name FROM villages ORDER BY name'
+        );
+
+        // Store in cache for 30 minutes (1800 seconds) as requested
+        allLocations = dbResults;
+        cache.set(cacheKey, allLocations, 1800); // 30 minutes in seconds
+
+        res.json(allLocations);
+    } catch (error) {
+        console.error('Database query error for all locations:', error);
+        res.status(500).json({ error: 'Failed to retrieve all locations.' });
     }
 });
 

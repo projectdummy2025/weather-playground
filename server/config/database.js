@@ -1,4 +1,5 @@
 const mysql = require('mysql2/promise');
+const cache = require('../utils/cache');
 
 // Read database configuration from environment variables
 const dbConfig = {
@@ -27,4 +28,4 @@ db.getConnection()
     console.error('Database connection failed:', err.message);
   });
 
-module.exports = db;
+module.exports = { db, cache };
