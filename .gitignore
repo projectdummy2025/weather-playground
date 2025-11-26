@@ -26,4 +26,14 @@ migrations/
 seeds/
 *.sql
 dump.sql
+
+
+# IDE specific files
+.vscode/idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+kode_wilayah_adm4.csv
 db_plan.txt
