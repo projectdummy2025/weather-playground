@@ -2,9 +2,33 @@ const express = require('express');
 const axios = require('axios');
 const cors = require('cors'); // Import cors
 const compression = require('compression'); // Import compression middleware
+const http = require('http');
+const https = require('https');
 require('dotenv').config(); // Load .env
 const path = require('path'); // Import path module
 const { db, cache } = require('./config/database'); // Import database configuration and cache
+
+// Create axios instance with optimized defaults for BMKG API
+const bmkgAxios = axios.create({
+  timeout: parseInt(process.env.BMKG_TIMEOUT) || 45000, // Use environment variable or default 45s
+  headers: {
+    'Accept': 'application/json',
+    'User-Agent': 'Cumulus-Weather-App/1.0' // Some APIs respond better with user agent
+  },
+  // Enable keep-alive to reuse connections
+  httpAgent: http.Agent({
+    keepAlive: true,
+    keepAliveMsecs: 1000,
+    maxSockets: 50,
+    maxFreeSockets: 10,
+  }),
+  httpsAgent: https.Agent({
+    keepAlive: true,
+    keepAliveMsecs: 1000,
+    maxSockets: 50,
+    maxFreeSockets: 10,
+  })
+});
 
 const app = express();
 
@@ -92,22 +116,30 @@ app.use((req, res, next) => {
 app.use(cors()); // Enable CORS for all routes
 
 const PORT = process.env.PORT || 3000;
-const BMKG_BASE_URL = process.env.BMKG_BASE_URL || 'https://api.bmkg.go.id/publik';
-const BMKG_TIMEOUT = parseInt(process.env.BMKG_TIMEOUT) || 30000; // ms
 
 // Serve static files from the Vue.js build directory
 app.use(express.static(path.join(__dirname, '..', 'client/dist')));
 
 // --- Fungsi untuk mengambil dan memproses data dari BMKG ---
 async function getBmkgForecast(adm4) {
-  try {
-    const url = `${BMKG_BASE_URL}/prakiraan-cuaca?adm4=${adm4}`;
-    console.log("Mengakses URL:", url);
+  // Create cache key for this specific adm4 code
+  const cacheKey = `bmkg:${adm4}`;
+  const cacheTTL = parseInt(process.env.BMKG_CACHE_TTL) || 900; // Cache for 15 minutes (900 seconds) - weather data freshness
 
-    const response = await axios.get(url, {
-      timeout: BMKG_TIMEOUT,
-      headers: { 'Accept': 'application/json' }
-    });
+  // Try to get from cache first
+  let cachedData = cache.get(cacheKey);
+  if (cachedData) {
+    console.log(`Cache hit for BMKG data: ${adm4}`);
+    return cachedData;
+  }
+
+  console.log(`Cache miss for BMKG data: ${adm4}, fetching from API...`);
+
+  try {
+    const BMKG_BASE_URL = process.env.BMKG_BASE_URL || 'https://api.bmkg.go.id/publik';
+    const url = `${BMKG_BASE_URL}/prakiraan-cuaca?adm4=${adm4}`;
+
+    const response = await bmkgAxios.get(url);
 
     if (response.status !== 200) {
       throw new Error(`API BMKG merespons ${response.status}`);
@@ -125,6 +157,8 @@ async function getBmkgForecast(adm4) {
     const forecasts = rawData.data[0].cuaca;
 
     // Mengubah data mentah menjadi format JSON yang lebih bersih dan terstruktur
+    // Optimized parsing - only include necessary fields to reduce response size
+    // Prioritize first few days since they're most relevant for users
     const formattedData = {
       lokasi: {
         desa: location.desa || null,
@@ -135,28 +169,31 @@ async function getBmkgForecast(adm4) {
         lon: location.lon || null,
         timezone: location.timezone || null
       },
-      prakiraan: forecasts.map((prakiraan_harian, index_hari) => {
-        if (!Array.isArray(prakiraan_harian)) return null;
+      // Only return the first 3 days of forecast (most relevant) to reduce payload
+      prakiraan: forecasts
+        .slice(0, 3) // Take only first 3 days to reduce data transfer
+        .map((prakiraan_harian, index_hari) => {
+          if (!Array.isArray(prakiraan_harian)) return null;
 
-        return {
-          hari: `Hari ke-${index_hari + 1}`,
-          periode: prakiraan_harian.map(item => ({
-            utc_datetime: item.utc_datetime || null,
-            local_datetime: item.local_datetime || null,
-            t: item.t ? parseFloat(item.t) : null,
-            hu: item.hu ? parseInt(item.hu) : null,
-            weather_desc: item.weather_desc || null,
-            weather_desc_en: item.weather_desc_en || null,
-            ws: item.ws ? parseFloat(item.ws) : null,
-            wd: item.wd || null,
-            tcc: item.tcc ? parseInt(item.tcc) : null,
-            vs_text: item.vs_text || null,
-            analysis_date: item.analysis_date || null,
-            url_ikon: item.image ? item.image.replace(/ /g, '%20') : null
-          }))
-        };
-      }).filter(Boolean) // Menghapus entri null jika ada
+          // Only include essential weather data to reduce payload size
+          return {
+            hari: `Hari ke-${index_hari + 1}`,
+            periode: prakiraan_harian.map(item => ({
+              local_datetime: item.local_datetime || null,
+              t: item.t ? parseFloat(item.t) : null,        // temperature
+              hu: item.hu ? parseInt(item.hu) : null,       // humidity
+              weather_desc: item.weather_desc || null,      // weather description
+              weather_desc_en: item.weather_desc_en || null, // weather desc in English
+              url_ikon: item.image ? item.image.replace(/ /g, '%20') : null // weather icon
+            })).filter(item => item.local_datetime !== null) // Remove entries without datetime
+          };
+        })
+        .filter(Boolean) // Menghapus entri null jika ada
     };
+
+    // Store in cache for 15 minutes to avoid repeated API calls
+    cache.set(cacheKey, formattedData, cacheTTL);
+    console.log(`BMKG data cached for ${adm4} with TTL ${cacheTTL}s`);
 
     return formattedData;
 
