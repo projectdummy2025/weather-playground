@@ -112,22 +112,18 @@ if (typeof window !== 'undefined') {
 
     <div class="container relative mx-auto px-6 md:px-12 z-20 grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center">
       <!-- Left Column: Content -->
-      <div class="text-left space-y-8 md:space-y-10">
-        <div class="space-y-6">
+      <div class="text-left space-y-6 md:space-y-8">
+        <div class="space-y-4">
           <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight font-montserrat">
             Cuaca di Sekitarmu, <br />
             <span class="text-blue-400">Tanpa Perlu Mencarinya</span>
           </h1>
-          <h2 class="text-lg md:text-xl text-slate-300 font-medium leading-relaxed max-w-lg">
-            Prakiraan cuaca resmi dari BMKG yang tersaji untuk setiap sudut Indonesia, dari pusat kota hingga jalan setapak yang jarang disebut peta.
+          <h2 class="text-base md:text-lg text-slate-300 leading-relaxed max-w-lg">
+            Informasi cuaca bersumber langsung dari BMKG, tersedia untuk seluruh penjuru Indonesia. Masukkan nama lokasi Anda untuk mengakses datanya secara cepat.
           </h2>
-          <p class="text-base text-slate-400 leading-relaxed max-w-xl text-justify">
-            Tak semua orang tinggal di kota besar, dan langit setiap tempat punya ceritanya sendiri. Cumulus menghadirkan prakiraan cuaca terkini langsung dari BMKG, untuk lokasi besar maupun titik kecil yang sering terlewatkan. Ketik saja nama desa, kelurahan, atau kecamatan; sisanya biar kami yang menemukan informasinya untukmu.
-          </p>
         </div>
 
         <!-- Search Box -->
-        <!-- Search Box (General Style) -->
         <div class="relative max-w-lg z-50">
           <div class="flex rounded-lg border border-slate-600 bg-slate-800/60 backdrop-blur-sm overflow-hidden">
             <!-- Search Icon -->
@@ -163,7 +159,7 @@ if (typeof window !== 'undefined') {
             </button>
           </div>
 
-          <!-- Dropdown Results (Tetap sama, cukup sesuaikan margin jika perlu) -->
+          <!-- Dropdown Results -->
           <div v-if="showDropdown && searchResults.length > 0" class="absolute top-full left-0 right-0 mt-2 bg-slate-800/95 backdrop-blur-xl border border-slate-700/60 rounded-xl shadow-lg overflow-hidden z-50 max-h-[350px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent">
             <ul>
               <li 
@@ -189,51 +185,31 @@ if (typeof window !== 'undefined') {
         </div>
 
         <!-- Value Points -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 pt-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
           <!-- Point 1 -->
           <div class="flex items-start gap-3 group">
-            <div class="mt-1 p-2 bg-slate-800/80 rounded-lg text-blue-400 border border-slate-700/50 group-hover:border-blue-500/30 transition-colors">
-               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div class="mt-1 p-2.5 bg-gradient-to-br from-blue-500/10 to-blue-600/5 rounded-xl text-blue-400 border border-slate-700/50 group-hover:border-blue-500/50 group-hover:shadow-lg group-hover:shadow-blue-500/10 transition-all duration-300">
+               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </div>
             <div>
-              <h3 class="font-semibold text-slate-200 text-sm group-hover:text-blue-300 transition-colors">Cakupan Menyeluruh</h3>
-              <p class="text-xs text-slate-400 mt-0.5">Dari Sabang sampai Merauke.</p>
+              <h3 class="font-semibold text-slate-100 text-base group-hover:text-blue-300 transition-colors">Jangkauan Hingga Tingkat Desa</h3>
+              <p class="text-sm text-slate-400 mt-1 leading-relaxed">Menyajikan informasi cuaca yang relevan bagi seluruh lapisan wilayah, dari keramaian kota hingga desa yang sunyi.</p>
             </div>
           </div>
           <!-- Point 2 -->
           <div class="flex items-start gap-3 group">
-             <div class="mt-1 p-2 bg-slate-800/80 rounded-lg text-blue-400 border border-slate-700/50 group-hover:border-blue-500/30 transition-colors">
-               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+             <div class="mt-1 p-2.5 bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 rounded-xl text-emerald-400 border border-slate-700/50 group-hover:border-emerald-500/50 group-hover:shadow-lg group-hover:shadow-emerald-500/10 transition-all duration-300">
+               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.18-4.403A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
             </div>
             <div>
-              <h3 class="font-semibold text-slate-200 text-sm group-hover:text-blue-300 transition-colors">Sumber Resmi BMKG</h3>
-              <p class="text-xs text-slate-400 mt-0.5">Data tepercaya dari ahlinya.</p>
-            </div>
-          </div>
-           <!-- Point 3 -->
-           <div class="flex items-start gap-3 group">
-             <div class="mt-1 p-2 bg-slate-800/80 rounded-lg text-blue-400 border border-slate-700/50 group-hover:border-blue-500/30 transition-colors">
-               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            </div>
-            <div>
-              <h3 class="font-semibold text-slate-200 text-sm group-hover:text-blue-300 transition-colors">Pencarian Natural</h3>
-              <p class="text-xs text-slate-400 mt-0.5">Ketik seperti yang diucapkan.</p>
-            </div>
-          </div>
-           <!-- Point 4 -->
-           <div class="flex items-start gap-3 group">
-             <div class="mt-1 p-2 bg-slate-800/80 rounded-lg text-blue-400 border border-slate-700/50 group-hover:border-blue-500/30 transition-colors">
-               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-            </div>
-            <div>
-              <h3 class="font-semibold text-slate-200 text-sm group-hover:text-blue-300 transition-colors">Akses Seketika</h3>
-              <p class="text-xs text-slate-400 mt-0.5">Info hadir dalam hitungan detik.</p>
+              <h3 class="font-semibold text-slate-100 text-base group-hover:text-emerald-300 transition-colors">Data Otoritatif & Diperbarui Berkala</h3>
+              <p class="text-sm text-slate-400 mt-1 leading-relaxed">Prakiraan langsung dari Badan Meteorologi resmi Indonesia, diperbarui setiap 6 jam untuk akurasi maksimal.</p>
             </div>
           </div>
         </div>
 
         <!-- Attribution -->
-        <div class="pt-6 border-t border-slate-800/50">
+        <div class="pt-4 border-t border-slate-800/50">
            <p class="text-xs text-slate-500 flex items-center gap-2">
              <span class="w-1.5 h-1.5 rounded-full bg-blue-500/50"></span>
              Data sumber: <span class="font-medium text-slate-400">Badan Meteorologi, Klimatologi, dan Geofisika (BMKG)</span>
@@ -291,8 +267,8 @@ if (typeof window !== 'undefined') {
                 <div class="absolute inset-0 flex items-center justify-center">
                   <div class="bg-slate-800/80 backdrop-blur-md border border-slate-700 rounded-2xl px-8 py-6 shadow-2xl">
                     <div class="text-center">
-                      <div class="text-4xl font-bold text-white mb-2">BMKG</div>
-                      <div class="text-sm text-slate-400">Weather Data</div>
+                      <div class="text-4xl font-bold text-white mb-2">Cumulus</div>
+                      <div class="text-sm text-slate-400">Weather App</div>
                     </div>
                   </div>
                 </div>
