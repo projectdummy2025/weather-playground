@@ -99,14 +99,7 @@ if (typeof window !== 'undefined') {
     <!-- Background Elements -->
     <div class="absolute inset-0 pointer-events-none overflow-hidden">
       <!-- Right side illustration container -->
-      <div class="absolute right-0 top-0 w-full md:w-3/5 h-full flex items-center justify-center opacity-20 z-0">
-        <!-- Map Representation -->
-        <img 
-          src="https://upload.wikimedia.org/wikipedia/commons/0/02/Indonesia_blank_map.svg" 
-          alt="Peta Indonesia"
-          class="absolute right-[-10%] top-1/2 -translate-y-1/2 w-[140%] h-[140%] object-contain blur-[1px] invert grayscale"
-        />
-        
+      <div class="absolute right-0 top-0 w-full md:w-3/5 h-full flex items-center justify-center opacity-40 z-0">
         <!-- Abstract Glows -->
         <div class="absolute top-1/4 right-10 w-80 h-80 bg-blue-600/30 rounded-full blur-[100px] animate-drift-slow mix-blend-screen"></div>
         <div class="absolute bottom-1/3 left-10 w-96 h-96 bg-indigo-600/30 rounded-full blur-[100px] animate-drift-slower mix-blend-screen"></div>
@@ -249,8 +242,63 @@ if (typeof window !== 'undefined') {
       </div>
 
       <!-- Right Column: Visuals (Desktop Only) -->
-      <div class="hidden md:block relative h-full min-h-[600px] pointer-events-none">
-         <!-- Visuals are handled by the background container to ensure correct layering -->
+      <div class="hidden md:flex relative h-full min-h-[500px] items-center justify-center">
+         <div class="relative w-full max-w-md lg:max-w-lg">
+            <!-- Main Weather Illustration Container -->
+            <div class="relative aspect-square">
+              <!-- Background Circle -->
+              <div class="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 to-indigo-600/20 blur-3xl"></div>
+              
+              <!-- Floating Weather Icons -->
+              <div class="absolute inset-0 flex items-center justify-center">
+                <!-- Sun Icon -->
+                <div class="absolute top-[15%] right-[20%] animate-float-slow">
+                  <svg class="w-20 h-20 text-yellow-400 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="5"/>
+                    <path d="M12 1v3m0 16v3M4.22 4.22l2.12 2.12m11.32 11.32l2.12 2.12M1 12h3m16 0h3M4.22 19.78l2.12-2.12m11.32-11.32l2.12-2.12"/>
+                  </svg>
+                </div>
+                
+                <!-- Cloud Icon -->
+                <div class="absolute top-[35%] left-[15%] animate-float-medium">
+                  <svg class="w-24 h-24 text-slate-300 drop-shadow-xl" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6.5 20q-2.28 0-3.89-1.57T1 14.58q0-1.95 1.17-3.48t3.02-1.94q.63-1.95 2.21-3.16T11 4.78q2.52 0 4.27 1.75t1.75 4.27v.5q1.75.13 2.86 1.38T21 15.5q0 1.88-1.31 3.19T16.5 20z"/>
+                  </svg>
+                </div>
+                
+                <!-- Rain Drops -->
+                <div class="absolute bottom-[30%] right-[25%] animate-float-fast">
+                  <svg class="w-16 h-16 text-blue-400 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                  </svg>
+                </div>
+                
+                <!-- Lightning Icon -->
+                <div class="absolute bottom-[20%] left-[25%] animate-pulse-slow">
+                  <svg class="w-14 h-14 text-yellow-300 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M13 2L3 14h8l-1 8 10-12h-8z"/>
+                  </svg>
+                </div>
+                
+                <!-- Small Stars/Sparkles -->
+                <div class="absolute top-[25%] left-[35%] animate-twinkle">
+                  <svg class="w-8 h-8 text-blue-300" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7-6.3-4.7-6.3 4.7 2.3-7-6-4.6h7.6z"/>
+                  </svg>
+                </div>
+                
+                <!-- Center Text/Badge -->
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="bg-slate-800/80 backdrop-blur-md border border-slate-700 rounded-2xl px-8 py-6 shadow-2xl">
+                    <div class="text-center">
+                      <div class="text-4xl font-bold text-white mb-2">BMKG</div>
+                      <div class="text-sm text-slate-400">Weather Data</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+         </div>
       </div>
     </div>
   </section>
@@ -262,11 +310,56 @@ if (typeof window !== 'undefined') {
   50% { transform: translateX(-20px); }
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes float-medium {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  50% { transform: translateY(-15px) translateX(10px); }
+}
+
+@keyframes float-fast {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-25px); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
 .animate-drift-slow {
   animation: drift 20s ease-in-out infinite;
 }
 
 .animate-drift-slower {
   animation: drift 30s ease-in-out infinite reverse;
+}
+
+.animate-float-slow {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-medium {
+  animation: float-medium 8s ease-in-out infinite;
+}
+
+.animate-float-fast {
+  animation: float-fast 4s ease-in-out infinite;
+}
+
+.animate-twinkle {
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
 }
 </style>
