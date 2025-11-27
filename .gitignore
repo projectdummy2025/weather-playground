@@ -35,5 +35,4 @@ dump.sql
 *.njsproj
 *.sln
 
-kode_wilayah_adm4.csv
-db_plan.txt
+/documentation

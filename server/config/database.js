@@ -10,9 +10,8 @@ const dbConfig = {
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  acquireTimeout: 60000,        // How long to wait to acquire a connection (60 seconds)
-  idleTimeout: 60000,           // How long a connection can be idle before being released
-  timeout: 60000                // General timeout for operations (60 seconds)
+  acquireTimeoutMillis: 60000,  // How long to wait to acquire a connection (60 seconds)
+  connectTimeout: 60000         // Timeout for initial connection (60 seconds)
 };
 
 // Create database connection pool
