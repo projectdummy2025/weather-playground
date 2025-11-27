@@ -134,55 +134,59 @@ if (typeof window !== 'undefined') {
         </div>
 
         <!-- Search Box -->
-        <div class="relative max-w-lg group shadow-2xl shadow-blue-900/20 rounded-2xl mt-8 search-container z-50">
-          <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-            <svg class="w-6 h-6 text-slate-400 group-focus-within:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-          </div>
-          <input 
-            type="text" 
-            v-model="searchQuery"
-            @input="handleInput"
-            @focus="showDropdown = true"
-            class="block w-full pl-14 pr-32 py-5 bg-slate-800/90 border border-slate-700 rounded-2xl text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all outline-none text-lg backdrop-blur-md shadow-inner"
-            placeholder="Cari kecamatan, desa, atau kota..." 
-          />
-          <div class="absolute inset-y-0 right-2 flex items-center">
-             <button 
-               @click="searchLocations"
-               class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl font-medium transition-all text-sm shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40 transform hover:-translate-y-0.5 duration-200 whitespace-nowrap flex items-center gap-2"
-               :disabled="isSearching"
-             >
-               <span v-if="isSearching" class="flex items-center gap-2">
-                 <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                 </svg>
-                 Mencari
-               </span>
-               <span v-else>Cek Cuaca</span>
-             </button>
+        <!-- Search Box (General Style) -->
+        <div class="relative max-w-lg z-50">
+          <div class="flex rounded-lg border border-slate-600 bg-slate-800/60 backdrop-blur-sm overflow-hidden">
+            <!-- Search Icon -->
+            <div class="flex items-center pl-4 pr-3 text-slate-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+
+            <!-- Input -->
+            <input 
+              type="text" 
+              v-model="searchQuery"
+              @input="handleInput"
+              @focus="showDropdown = true"
+              class="flex-1 bg-transparent py-3.5 px-2 text-slate-200 placeholder-slate-500 outline-none text-base"
+              placeholder="Cari kecamatan, desa, atau kota..." 
+            />
+
+            <!-- Button -->
+            <button 
+              @click="searchLocations"
+              :disabled="isSearching"
+              class="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1.5"
+            >
+              <span v-if="isSearching" class="flex items-center gap-1">
+                <svg class="animate-spin h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </span>
+              <span>Cari</span>
+            </button>
           </div>
 
-          <!-- Dropdown Results -->
-          <div v-if="showDropdown && searchResults.length > 0" class="absolute top-full left-0 right-0 mt-3 bg-slate-800/95 backdrop-blur-xl border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden z-50 max-h-[350px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent">
+          <!-- Dropdown Results (Tetap sama, cukup sesuaikan margin jika perlu) -->
+          <div v-if="showDropdown && searchResults.length > 0" class="absolute top-full left-0 right-0 mt-2 bg-slate-800/95 backdrop-blur-xl border border-slate-700/60 rounded-xl shadow-lg overflow-hidden z-50 max-h-[350px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent">
             <ul>
               <li 
                 v-for="result in searchResults" 
                 :key="result.id + result.type"
                 @click="selectLocation(result)"
-                class="px-5 py-4 hover:bg-slate-700/50 cursor-pointer text-slate-200 border-b border-slate-700/50 last:border-0 transition-colors group/item"
+                class="px-4 py-3 hover:bg-slate-700/40 cursor-pointer text-slate-200 border-b border-slate-700/30 last:border-0 transition-colors"
               >
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between text-sm">
                   <div>
-                    <div class="font-medium text-base group-hover/item:text-blue-300 transition-colors">{{ result.name }}</div>
-                    <div v-if="result.parent_name" class="text-xs text-slate-400 mt-0.5 flex items-center gap-1">
-                      <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <div class="font-medium">{{ result.name }}</div>
+                    <div v-if="result.parent_name" class="text-xs text-slate-400 mt-0.5">
                       {{ result.parent_name }}
                     </div>
                   </div>
-                  <span class="text-[10px] uppercase tracking-wider font-semibold px-2 py-1 rounded-md bg-slate-700/50 text-slate-400 border border-slate-600/50 group-hover/item:border-blue-500/30 group-hover/item:text-blue-300 group-hover/item:bg-blue-500/10 transition-all">
+                  <span class="text-[10px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded bg-slate-700/50 text-slate-400">
                     {{ result.search_type }}
                   </span>
                 </div>
