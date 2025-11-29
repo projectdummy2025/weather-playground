@@ -498,14 +498,18 @@ async function getBmkgForecast(adm4) {
 
               // Array for day names in Indonesian
               const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-              const dayName = dayNames[date.getDay()];
+              const monthNames = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+              ];
 
-              // Format the date as DD/MM/YYYY
-              const day = String(date.getDate()).padStart(2, '0');
-              const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+              const dayName = dayNames[date.getDay()];
+              const day = date.getDate();
+              const monthName = monthNames[date.getMonth()];
               const year = date.getFullYear();
 
-              dayLabel = `${dayName}, ${day}/${month}/${year}`;
+              // Format: 'Senin, 28 Desember 2025'
+              dayLabel = `${dayName}, ${day} ${monthName} ${year}`;
             } catch (e) {
               // If parsing fails, keep the default label
               console.warn(`Failed to parse date: ${dateStr}`, e);
@@ -521,7 +525,9 @@ async function getBmkgForecast(adm4) {
               hu: item.hu ? parseInt(item.hu) : null,       // humidity
               weather_desc: item.weather_desc || null,      // weather description
               weather_desc_en: item.weather_desc_en || null, // weather desc in English
-              url_ikon: item.image ? item.image.replace(/ /g, '%20') : null // weather icon
+              url_ikon: item.image ? item.image.replace(/ /g, '%20') : null, // weather icon
+              wind_dir: item.wd_deg || item.wd || null,     // wind direction
+              wind_speed: item.ws ? parseFloat(item.ws) : null // wind speed in knots
             })).filter(item => item.local_datetime !== null) // Remove entries without datetime
           };
         })

@@ -126,25 +126,19 @@ if (typeof window !== 'undefined') {
         <!-- Search Box -->
         <div class="relative max-w-lg z-50">
           <div class="flex rounded-lg border border-slate-600 bg-slate-800/60 backdrop-blur-sm overflow-hidden">
-            <!-- Search Icon -->
-            <div class="flex items-center pl-4 pr-3 text-slate-400">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
 
             <!-- Input -->
-            <input 
-              type="text" 
+            <input
+              type="text"
               v-model="searchQuery"
               @input="handleInput"
               @focus="showDropdown = true"
-              class="flex-1 bg-transparent py-3.5 px-2 text-slate-200 placeholder-slate-500 outline-none text-base"
-              placeholder="Cari kecamatan, desa, atau kota..." 
+              class="flex-1 bg-transparent py-3.5 px-4 text-slate-200 placeholder-slate-500 outline-none text-base"
+              placeholder="Cari kecamatan, desa, atau kota..."
             />
 
             <!-- Button -->
-            <button 
+            <button
               @click="searchLocations"
               :disabled="isSearching"
               class="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1.5"
@@ -160,7 +154,7 @@ if (typeof window !== 'undefined') {
           </div>
 
           <!-- Dropdown Results -->
-          <div v-if="showDropdown && searchResults.length > 0" class="absolute top-full left-0 right-0 mt-2 bg-slate-800/95 backdrop-blur-xl border border-slate-700/60 rounded-xl shadow-lg overflow-hidden z-50 max-h-[350px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent">
+          <div v-if="showDropdown && searchResults.length > 0" class="absolute top-full left-0 right-0 mt-2 bg-slate-800/95 backdrop-blur-xl border border-slate-700/60 rounded-lg shadow-lg overflow-hidden z-50 max-h-[350px] overflow-y-auto custom-scrollbar">
             <ul>
               <li 
                 v-for="result in searchResults" 
@@ -337,5 +331,31 @@ if (typeof window !== 'undefined') {
 
 .animate-pulse-slow {
   animation: pulse-slow 2s ease-in-out infinite;
+}
+
+/* Custom scrollbar styling */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #4f46e5 transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4f46e5;
+  border-radius: 3px;
+  border: 1px solid transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #4338ca;
 }
 </style>

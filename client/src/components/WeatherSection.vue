@@ -3,46 +3,19 @@
     <!-- Location Filter Section -->
     <div class="mb-8">
       <div
-        class="bg-slate-800/40 backdrop-blur-xl border border-slate-700/40 rounded-2xl p-6"
+        class="bg-gradient-to-br from-slate-800/60 via-slate-800/40 to-slate-700/40 backdrop-blur-xl border border-slate-600/40 rounded-3xl p-6 shadow-2xl"
       >
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-semibold text-white font-montserrat">
-            Pilih Lokasi Anda
-          </h2>
-          <!-- Direct Search Input -->
-          <div class="relative w-full max-w-xs">
-            <input
-              type="text"
-              placeholder="Cari lokasi langsung..."
-              class="w-full pl-10 pr-4 py-2 bg-slate-700/60 text-white rounded-lg border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-400"
-            />
-            <div
-              class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
-            >
-              <svg
-                class="w-5 h-5 text-slate-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                ></path>
-              </svg>
-            </div>
-          </div>
-        </div>
+        <h2 class="text-2xl font-bold text-white font-montserrat mb-6">
+          Pilih Lokasi Anda
+        </h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <!-- Province Filter -->
           <div class="relative" data-province-dropdown>
-            <label class="block text-sm font-medium text-slate-300 mb-1"
-              >Provinsi</label
-            >
-            <div class="relative">
+            <label class="block text-sm font-semibold text-slate-200 mb-2">
+              Provinsi
+            </label>
+            <div class="relative group">
               <input
                 type="text"
                 :value="
@@ -56,24 +29,30 @@
                 "
                 @click="emit('update:provinceDropdownOpen', !provinceDropdownOpen)"
                 placeholder="Pilih atau cari provinsi..."
-                class="w-full px-3 py-2 bg-slate-700/60 text-white rounded-lg border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-4 py-3 bg-slate-700/50 text-white rounded-xl border border-slate-600/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400 transition-all group-hover:border-slate-500/70"
               />
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg class="w-4 h-4 text-slate-400 transition-transform" :class="{'rotate-180': provinceDropdownOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
             </div>
             <div
               v-show="provinceDropdownOpen"
-              class="absolute z-20 w-full mt-1 bg-slate-700/90 backdrop-blur-xl border border-slate-600 rounded-lg shadow-lg max-h-60 overflow-y-auto scrollbar-hide"
+              class="absolute z-30 w-full mt-2 bg-slate-800/95 backdrop-blur-xl border border-slate-600/60 rounded-lg shadow-2xl max-h-64 overflow-y-auto custom-scrollbar"
             >
-              <ul class="py-1">
+              <ul class="py-2">
                 <li
                   v-for="prov in filteredProvinces"
                   :key="prov.code"
-                  class="px-3 py-2 text-white hover:bg-slate-600/80 rounded-md cursor-pointer"
+                  class="px-4 py-2.5 text-slate-200 hover:bg-blue-600/20 hover:text-white cursor-pointer transition-colors flex items-center gap-2 group"
                   @click="
                     emit('update:selectedProvince', prov.code);
                     emit('update:provinceSearch', prov.name);
                     emit('update:provinceDropdownOpen', false);
                   "
                 >
+                  <span class="w-1 h-1 rounded-full bg-blue-400 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   {{ prov.name }}
                 </li>
               </ul>
@@ -82,10 +61,10 @@
 
           <!-- City Filter -->
           <div class="relative" data-city-dropdown>
-            <label class="block text-sm font-medium text-slate-300 mb-1"
-              >Kota/Kabupaten</label
-            >
-            <div class="relative">
+            <label class="block text-sm font-semibold text-slate-200 mb-2">
+              Kota/Kabupaten
+            </label>
+            <div class="relative group">
               <input
                 type="text"
                 :value="
@@ -100,24 +79,30 @@
                 @click="emit('update:cityDropdownOpen', !cityDropdownOpen)"
                 :disabled="!selectedProvince"
                 placeholder="Pilih atau cari kota..."
-                class="w-full px-3 py-2 bg-slate-700/60 text-white rounded-lg border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                class="w-full px-4 py-3 bg-slate-700/50 text-white rounded-xl border border-slate-600/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:opacity-40 disabled:cursor-not-allowed placeholder-slate-400 transition-all group-hover:border-slate-500/70"
               />
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg class="w-4 h-4 text-slate-400 transition-transform" :class="{'rotate-180': cityDropdownOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
             </div>
             <div
               v-show="cityDropdownOpen"
-              class="absolute z-20 w-full mt-1 bg-slate-700/90 backdrop-blur-xl border border-slate-600 rounded-lg shadow-lg max-h-60 overflow-y-auto scrollbar-hide"
+              class="absolute z-30 w-full mt-2 bg-slate-800/95 backdrop-blur-xl border border-slate-600/60 rounded-lg shadow-2xl max-h-64 overflow-y-auto custom-scrollbar"
             >
-              <ul class="py-1">
+              <ul class="py-2">
                 <li
                   v-for="city in filteredCities"
                   :key="city.code"
-                  class="px-3 py-2 text-white hover:bg-slate-600/80 rounded-md cursor-pointer"
+                  class="px-4 py-2.5 text-slate-200 hover:bg-emerald-600/20 hover:text-white cursor-pointer transition-colors flex items-center gap-2 group"
                   @click="
                     emit('update:selectedCity', city.code);
                     emit('update:citySearch', city.name);
                     emit('update:cityDropdownOpen', false);
                   "
                 >
+                  <span class="w-1 h-1 rounded-full bg-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   {{ city.name }}
                 </li>
               </ul>
@@ -126,10 +111,10 @@
 
           <!-- District Filter -->
           <div class="relative" data-district-dropdown>
-            <label class="block text-sm font-medium text-slate-300 mb-1"
-              >Kecamatan</label
-            >
-            <div class="relative">
+            <label class="block text-sm font-semibold text-slate-200 mb-2">
+              Kecamatan
+            </label>
+            <div class="relative group">
               <input
                 type="text"
                 :value="
@@ -146,24 +131,30 @@
                 "
                 :disabled="!selectedCity"
                 placeholder="Pilih atau cari kecamatan..."
-                class="w-full px-3 py-2 bg-slate-700/60 text-white rounded-lg border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                class="w-full px-4 py-3 bg-slate-700/50 text-white rounded-xl border border-slate-600/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-40 disabled:cursor-not-allowed placeholder-slate-400 transition-all group-hover:border-slate-500/70"
               />
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg class="w-4 h-4 text-slate-400 transition-transform" :class="{'rotate-180': districtDropdownOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
             </div>
             <div
               v-show="districtDropdownOpen"
-              class="absolute z-20 w-full mt-1 bg-slate-700/90 backdrop-blur-xl border border-slate-600 rounded-lg shadow-lg max-h-60 overflow-y-auto scrollbar-hide"
+              class="absolute z-30 w-full mt-2 bg-slate-800/95 backdrop-blur-xl border border-slate-600/60 rounded-lg shadow-2xl max-h-64 overflow-y-auto custom-scrollbar"
             >
-              <ul class="py-1">
+              <ul class="py-2">
                 <li
                   v-for="district in filteredDistricts"
                   :key="district.code"
-                  class="px-3 py-2 text-white hover:bg-slate-600/80 rounded-md cursor-pointer"
+                  class="px-4 py-2.5 text-slate-200 hover:bg-purple-600/20 hover:text-white cursor-pointer transition-colors flex items-center gap-2 group"
                   @click="
                     emit('update:selectedDistrict', district.code);
                     emit('update:districtSearch', district.name);
                     emit('update:districtDropdownOpen', false);
                   "
                 >
+                  <span class="w-1 h-1 rounded-full bg-purple-400 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   {{ district.name }}
                 </li>
               </ul>
@@ -172,10 +163,10 @@
 
           <!-- Village Filter -->
           <div class="relative" data-village-dropdown>
-            <label class="block text-sm font-medium text-slate-300 mb-1"
-              >Kelurahan/Desa</label
-            >
-            <div class="relative">
+            <label class="block text-sm font-semibold text-slate-200 mb-2">
+              Kelurahan/Desa
+            </label>
+            <div class="relative group">
               <input
                 type="text"
                 :value="
@@ -190,24 +181,30 @@
                 @click="emit('update:villageDropdownOpen', !villageDropdownOpen)"
                 :disabled="!selectedDistrict"
                 placeholder="Pilih atau cari kelurahan..."
-                class="w-full px-3 py-2 bg-slate-700/60 text-white rounded-lg border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                class="w-full px-4 py-3 bg-slate-700/50 text-white rounded-xl border border-slate-600/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:opacity-40 disabled:cursor-not-allowed placeholder-slate-400 transition-all group-hover:border-slate-500/70"
               />
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg class="w-4 h-4 text-slate-400 transition-transform" :class="{'rotate-180': villageDropdownOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
             </div>
             <div
               v-show="villageDropdownOpen"
-              class="absolute z-20 w-full mt-1 bg-slate-700/90 backdrop-blur-xl border border-slate-600 rounded-lg shadow-lg max-h-60 overflow-y-auto scrollbar-hide"
+              class="absolute z-30 w-full mt-2 bg-slate-800/95 backdrop-blur-xl border border-slate-600/60 rounded-lg shadow-2xl max-h-64 overflow-y-auto custom-scrollbar"
             >
-              <ul class="py-1">
+              <ul class="py-2">
                 <li
                   v-for="village in filteredVillages"
                   :key="village.code"
-                  class="px-3 py-2 text-white hover:bg-slate-600/80 rounded-md cursor-pointer"
+                  class="px-4 py-2.5 text-slate-200 hover:bg-amber-600/20 hover:text-white cursor-pointer transition-colors flex items-center gap-2 group"
                   @click="
                     emit('update:selectedVillage', village.code);
                     emit('update:villageSearch', village.name);
                     emit('update:villageDropdownOpen', false);
                   "
                 >
+                  <span class="w-1 h-1 rounded-full bg-amber-400 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   {{ village.name }}
                 </li>
               </ul>
@@ -217,9 +214,12 @@
 
         <div
           v-if="error"
-          class="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-200"
+          class="mt-6 p-4 bg-gradient-to-r from-red-500/20 to-rose-500/20 border border-red-500/40 rounded-xl text-red-200 flex items-start gap-3"
         >
-          {{ error }}
+          <svg class="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span>{{ error }}</span>
         </div>
       </div>
     </div>
@@ -228,22 +228,28 @@
     <div v-if="weatherData && selectedLocation">
       <!-- Location Header -->
       <div
-        class="bg-gradient-to-r from-slate-800 to-slate-700 rounded-2xl p-5 mb-6"
+        class="bg-gradient-to-br from-slate-800/80 via-slate-700/60 to-slate-800/80 backdrop-blur-xl border border-slate-600/40 rounded-3xl p-6 mb-6 shadow-2xl"
       >
         <div class="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h3 class="text-2xl font-semibold text-white font-montserrat">
-              {{ selectedLocation.name }}
-            </h3>
-            <p class="text-slate-300 text-sm">
-              {{ selectedLocation.location.kecamatan }},
-              {{ selectedLocation.location.kotkab }},
-              {{ selectedLocation.location.provinsi }}
-            </p>
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-2xl font-bold text-white font-montserrat">
+                {{ selectedLocation.name }}
+              </h3>
+              <p class="text-slate-300 text-sm mt-1">
+                {{ selectedLocation.location.kecamatan }}, {{ selectedLocation.location.kotkab }}, {{ selectedLocation.location.provinsi }}
+              </p>
+            </div>
           </div>
           <div class="flex items-center gap-2">
             <span
-              class="px-3 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-full"
+              class="px-4 py-2 bg-slate-700/60 backdrop-blur-sm text-slate-300 text-xs font-medium rounded-full border border-slate-600/40"
             >
               Kode: {{ selectedVillage }}
             </span>
@@ -251,11 +257,71 @@
         </div>
       </div>
 
+      <!-- Weather Cards Section -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <!-- Current Temperature Card -->
+        <div
+          class="bg-gradient-to-br from-orange-500/20 via-slate-800/60 to-slate-800/40 backdrop-blur-xl border border-orange-500/30 rounded-2xl p-5 shadow-xl hover:shadow-2xl hover:shadow-orange-500/10 transition-all duration-300"
+        >
+          <div class="mb-4">
+            <h4 class="font-semibold uppercase text-xs tracking-wider text-orange-300">Suhu Saat Ini</h4>
+          </div>
+          <p class="text-5xl font-bold text-white mb-2">
+            {{ weatherData.prakiraan[0]?.periode[0]?.t }}°
+          </p>
+          <p class="text-sm text-slate-300 capitalize">
+            {{ weatherData.prakiraan[0]?.periode[0]?.weather_desc }}
+          </p>
+        </div>
+
+        <!-- Temperature Range Card -->
+        <div
+          class="bg-gradient-to-br from-blue-500/20 via-slate-800/60 to-slate-800/40 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-5 shadow-xl hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300"
+        >
+          <div class="mb-4">
+            <h4 class="font-semibold uppercase text-xs tracking-wider text-blue-300">Rentang Suhu</h4>
+          </div>
+          <p class="text-3xl font-bold text-white mb-2">
+            {{ Math.min(...weatherData.prakiraan[0]?.periode.map((p) => p.t)) }}° / 
+            {{ Math.max(...weatherData.prakiraan[0]?.periode.map((p) => p.t)) }}°
+          </p>
+          <p class="text-sm text-slate-400">Min / Maks Hari Ini</p>
+        </div>
+
+        <!-- Wind Direction Card -->
+        <div
+          class="bg-gradient-to-br from-cyan-500/20 via-slate-800/60 to-slate-800/40 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-5 shadow-xl hover:shadow-2xl hover:shadow-cyan-500/10 transition-all duration-300"
+        >
+          <div class="mb-4">
+            <h4 class="font-semibold uppercase text-xs tracking-wider text-cyan-300">Arah Angin</h4>
+          </div>
+          <p class="text-3xl font-bold text-white mb-2">
+            {{ weatherData.prakiraan[0]?.periode[0]?.wind_dir }}
+          </p>
+          <p class="text-sm text-slate-400">
+            Kecepatan {{ weatherData.prakiraan[0]?.periode[0]?.wind_speed }} knot
+          </p>
+        </div>
+
+        <!-- Humidity Card -->
+        <div
+          class="bg-gradient-to-br from-teal-500/20 via-slate-800/60 to-slate-800/40 backdrop-blur-xl border border-teal-500/30 rounded-2xl p-5 shadow-xl hover:shadow-2xl hover:shadow-teal-500/10 transition-all duration-300"
+        >
+          <div class="mb-4">
+            <h4 class="font-semibold uppercase text-xs tracking-wider text-teal-300">Kelembaban</h4>
+          </div>
+          <p class="text-5xl font-bold text-white mb-2">
+            {{ weatherData.prakiraan[0]?.periode[0]?.hu }}%
+          </p>
+          <p class="text-sm text-slate-400">Tingkat kelembaban udara</p>
+        </div>
+      </div>
+
       <!-- Temperature/Humidity Timeline Chart -->
       <div
-        class="bg-slate-800/40 backdrop-blur-xl border border-slate-700/40 rounded-2xl p-5 mb-6"
+        class="bg-gradient-to-br from-slate-800/60 via-slate-800/40 to-slate-700/40 backdrop-blur-xl border border-slate-600/40 rounded-3xl p-6 mb-6 shadow-2xl"
       >
-        <h3 class="text-lg font-semibold text-white mb-4 font-montserrat">
+        <h3 class="text-xl font-bold text-white font-montserrat mb-6">
           Timeline Suhu & Kelembaban
         </h3>
         <div class="h-80 w-full">
@@ -263,154 +329,48 @@
         </div>
       </div>
 
-      <!-- Weather Cards Section -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <!-- Today's Summary, Current Weather, Humidity, Temp Range cards... -->
-        <!-- These will be restyled to look more like Apple's weather app widgets -->
-        <div
-          class="bg-slate-800/40 backdrop-blur-xl border border-slate-700/40 rounded-2xl p-4 flex flex-col justify-between"
-        >
-          <div>
-            <div class="flex items-center gap-3 mb-3 text-slate-400">
-              <svg
-                class="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                ></path>
-              </svg>
-              <h4 class="font-medium uppercase text-xs">Suhu Saat Ini</h4>
-            </div>
-            <p class="text-4xl font-bold text-white">
-              {{ weatherData.prakiraan[0]?.periode[0]?.t }}°C
-            </p>
-          </div>
-          <p class="text-sm text-slate-300 mt-1 capitalize">
-            {{ weatherData.prakiraan[0]?.periode[0]?.weather_desc }}
-          </p>
-        </div>
-
-        <div
-          class="bg-slate-800/40 backdrop-blur-xl border border-slate-700/40 rounded-2xl p-4 flex flex-col justify-between"
-        >
-          <div>
-            <div class="flex items-center gap-3 mb-3 text-slate-400">
-              <svg
-                class="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                ></path>
-              </svg>
-              <h4 class="font-medium uppercase text-xs">Rentang Suhu</h4>
-            </div>
-            <p class="text-2xl font-semibold text-white">
-              {{
-                Math.min(
-                  ...weatherData.prakiraan[0]?.periode.map((p) => p.t)
-                )
-              }}° /
-              {{
-                Math.max(
-                  ...weatherData.prakiraan[0]?.periode.map((p) => p.t)
-                )
-              }}°
-            </p>
-          </div>
-          <p class="text-sm text-slate-400 mt-1">Min / Maks Hari Ini</p>
-        </div>
-
-        <div
-          class="bg-slate-800/40 backdrop-blur-xl border border-slate-700/40 rounded-2xl p-4 flex flex-col justify-between"
-        >
-          <div>
-            <div class="flex items-center gap-3 mb-3 text-slate-400">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M12 6.34L21.36 18H2.64L12 6.34M12 4L0 20h24L12 4z"
-                ></path>
-              </svg>
-              <h4 class="font-medium uppercase text-xs">Arah Angin</h4>
-            </div>
-            <p class="text-2xl font-semibold text-white">
-              {{ weatherData.prakiraan[0]?.periode[0]?.wind_dir }}
-            </p>
-          </div>
-          <p class="text-sm text-slate-400 mt-1">
-            Kecepatan {{ weatherData.prakiraan[0]?.periode[0]?.wind_speed }}
-            knot
-          </p>
-        </div>
-
-        <div
-          class="bg-slate-800/40 backdrop-blur-xl border border-slate-700/40 rounded-2xl p-4 flex flex-col justify-between"
-        >
-          <div>
-            <div class="flex items-center gap-3 mb-3 text-slate-400">
-              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M12 9.5c-1.38 0-2.5 1.12-2.5 2.5s1.12 2.5 2.5 2.5 2.5-1.12 2.5-2.5-1.12-2.5-2.5-2.5zM20 18.5c0 .28-.22.5-.5.5h-15a.5.5 0 01-.5-.5c0-.28.22-.5.5-.5h15c.28 0 .5.22.5.5zM3.5 16h17a.5.5 0 00.5-.5c0-.28-.22-.5-.5-.5H3c-.28 0-.5.22-.5.5s.22.5.5.5zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
-                ></path>
-              </svg>
-              <h4 class="font-medium uppercase text-xs">Kelembaban</h4>
-            </div>
-            <p class="text-4xl font-bold text-white">
-              {{ weatherData.prakiraan[0]?.periode[0]?.hu }}%
-            </p>
-          </div>
-          <p class="text-sm text-slate-400 mt-1">Tingkat kelembaban udara</p>
-        </div>
-      </div>
-
       <!-- Detailed Forecast Section -->
       <div
-        class="bg-slate-800/40 backdrop-blur-xl border border-slate-700/40 rounded-2xl p-5"
+        class="bg-gradient-to-br from-slate-800/60 via-slate-800/40 to-slate-700/40 backdrop-blur-xl border border-slate-600/40 rounded-3xl p-6 shadow-2xl"
       >
-        <h3 class="text-lg font-semibold text-white mb-4 font-montserrat">
+        <h3 class="text-xl font-bold text-white font-montserrat mb-6">
           Prakiraan Harian
         </h3>
 
-        <div class="space-y-2">
+        <div class="space-y-6">
           <div
-            v-for="(day) in weatherData.prakiraan"
+            v-for="(day, index) in weatherData.prakiraan"
             :key="day.hari"
-            class="p-2 -mx-2 rounded-lg hover:bg-slate-700/30 transition-colors"
+            class="group"
           >
-            <h4 class="font-medium text-slate-200 mb-3 text-lg">
-              {{ formatDay(day.hari) }}
-            </h4>
+            <div class="mb-4">
+              <h4 class="font-bold text-slate-100 text-lg">
+                {{ formatDay(day.hari) }}
+              </h4>
+            </div>
 
-            <div class="overflow-x-auto scrollbar-hide">
-              <div class="flex gap-3 pb-2">
+            <div class="overflow-x-auto pb-2 custom-scrollbar">
+              <div class="flex gap-3">
                 <div
                   v-for="(period) in day.periode"
                   :key="period.local_datetime"
-                  class="bg-slate-700/30 border border-slate-600/40 p-3 rounded-xl flex flex-col items-center flex-shrink-0 w-28"
+                  class="bg-slate-700/40 backdrop-blur-sm border border-slate-600/40 p-4 rounded-2xl flex flex-col items-center flex-shrink-0 w-32 hover:bg-slate-700/60 hover:border-slate-500/60 hover:shadow-lg transition-all duration-300"
                 >
-                  <p class="text-sm font-medium text-slate-300 text-center mb-1">
+                  <p class="text-sm font-semibold text-slate-300 mb-2">
                     {{ formatTime(period.local_datetime) }}
                   </p>
-                  <div class="w-12 h-12 mb-1 flex items-center justify-center">
+                  <div class="w-14 h-14 mb-2 flex items-center justify-center">
                     <img
                       :src="period.url_ikon"
                       :alt="period.weather_desc"
-                      class="w-10 h-10 object-contain"
+                      class="w-12 h-12 object-contain drop-shadow-lg"
                     />
                   </div>
-                  <p class="text-xl font-bold text-center text-white">
+                  <p class="text-2xl font-bold text-white mb-1">
                     {{ period.t }}°
+                  </p>
+                  <p class="text-xs text-slate-400 text-center line-clamp-2 capitalize">
+                    {{ period.weather_desc }}
                   </p>
                 </div>
               </div>
@@ -421,13 +381,13 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="!selectedVillage" class="text-center py-12">
+    <div v-else-if="!selectedVillage" class="text-center py-16">
       <div class="max-w-md mx-auto">
         <div
-          class="w-16 h-16 bg-slate-700/40 rounded-full flex items-center justify-center mx-auto mb-4"
+          class="w-20 h-20 bg-gradient-to-br from-slate-700/60 to-slate-800/60 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl"
         >
           <svg
-            class="w-8 h-8 text-slate-500"
+            class="w-10 h-10 text-slate-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -444,23 +404,25 @@
               stroke-width="2"
               d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
             ></path>
-
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-slate-300 mb-2">Pilih Lokasi</h3>
-        <p class="text-slate-500">
-          Gunakan filter di atas untuk memilih provinsi, kota, kecamatan, dan
-          kelurahan/desa yang Anda inginkan.
+        <h3 class="text-xl font-bold text-slate-200 mb-3 font-montserrat">Pilih Lokasi Anda</h3>
+        <p class="text-slate-400 leading-relaxed">
+          Gunakan filter di atas untuk memilih provinsi, kota, kecamatan, dan kelurahan/desa untuk melihat prakiraan cuaca.
         </p>
       </div>
     </div>
 
     <!-- Loading State -->
-    <div v-else-if="loading" class="text-center py-12">
-      <div
-        class="w-12 h-12 border-4 border-slate-700/40 border-t-blue-500 rounded-full animate-spin mx-auto"
-      ></div>
-      <p class="text-slate-400 mt-4">Memuat data cuaca...</p>
+    <div v-else-if="loading" class="text-center py-16">
+      <div class="relative w-16 h-16 mx-auto mb-6">
+        <div
+          class="absolute inset-0 border-4 border-slate-700/40 border-t-blue-500 rounded-full animate-spin"
+        ></div>
+        <div class="absolute inset-2 border-4 border-slate-700/20 border-t-purple-500 rounded-full animate-spin animation-delay-150"></div>
+      </div>
+      <p class="text-slate-300 font-medium">Memuat data cuaca...</p>
+      <p class="text-slate-500 text-sm mt-2">Mohon tunggu sebentar</p>
     </div>
   </section>
 </template>
@@ -604,24 +566,53 @@ function updateChart() {
       maintainAspectRatio: false,
       plugins: {
         legend: {
-          display: false,
+          display: true,
+          position: 'top',
+          labels: {
+            color: '#e2e8f0',
+            padding: 15,
+            font: {
+              size: 12,
+              weight: 'bold'
+            },
+            usePointStyle: true,
+            pointStyle: 'circle'
+          }
         },
+        tooltip: {
+          backgroundColor: 'rgba(15, 23, 42, 0.95)',
+          titleColor: '#e2e8f0',
+          bodyColor: '#cbd5e1',
+          borderColor: 'rgba(148, 163, 184, 0.3)',
+          borderWidth: 1,
+          padding: 12,
+          cornerRadius: 8,
+          displayColors: true
+        }
       },
       scales: {
         x: {
           grid: {
-            color: "rgba(100, 116, 139, 0.2)",
+            color: "rgba(100, 116, 139, 0.15)",
+            drawBorder: false
           },
           ticks: {
             color: "#94a3b8",
+            font: {
+              size: 11
+            }
           },
         },
         y: {
           grid: {
-            color: "rgba(100, 116, 139, 0.2)",
+            color: "rgba(100, 116, 139, 0.15)",
+            drawBorder: false
           },
           ticks: {
             color: "#94a3b8",
+            font: {
+              size: 11
+            }
           },
         },
       },
@@ -629,22 +620,142 @@ function updateChart() {
   });
 }
 
-// --- Formatting Functions ---
+// --- Formatting Functions (FIXED) ---
 function formatDay(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("id-ID", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  // Handle various date formats from BMKG API
+  if (!dateString) return 'Tanggal tidak tersedia';
+  
+  try {
+    // Try parsing the date string
+    let date;
+    
+    // Check if it's already a valid ISO string or parseable format
+    if (dateString.includes('T') || dateString.includes('-')) {
+      date = new Date(dateString);
+    } else {
+      // If it's just a date like "2024-11-27", append time to make it valid
+      date = new Date(dateString + 'T00:00:00');
+    }
+    
+    // Validate the date
+    if (isNaN(date.getTime())) {
+      console.warn('Invalid date:', dateString);
+      return dateString; // Return original string if parsing fails
+    }
+    
+    // Manual Indonesian formatting to ensure 'Senin, 28 Desember 2025' format
+    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const months = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+    
+    const dayName = days[date.getDay()];
+    const day = date.getDate();
+    const monthName = months[date.getMonth()];
+    const year = date.getFullYear();
+    
+    return `${dayName}, ${day} ${monthName} ${year}`;
+  } catch (error) {
+    console.error('Error formatting day:', error, dateString);
+    return dateString;
+  }
 }
 
 function formatTime(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleTimeString("id-ID", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  if (!dateString) return '--:--';
+  
+  try {
+    // Parse the datetime string
+    const date = new Date(dateString);
+    
+    // Validate the date
+    if (isNaN(date.getTime())) {
+      // Try alternative parsing for BMKG format
+      // Example: "2024-11-27 13:00:00" or "20241127130000"
+      const timeMatch = dateString.match(/(\d{2}):(\d{2})/);
+      if (timeMatch) {
+        return `${timeMatch[1]}:${timeMatch[2]}`;
+      }
+      
+      console.warn('Invalid time:', dateString);
+      return '--:--';
+    }
+    
+    return date.toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    });
+  } catch (error) {
+    console.error('Error formatting time:', error, dateString);
+    return '--:--';
+  }
 }
 </script>
+
+<style scoped>
+/* Custom scrollbar for dropdowns and horizontal scrolls */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Animation delay for loading spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animation-delay-150 {
+  animation-delay: 150ms;
+}
+
+/* Line clamp for weather description */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Custom scrollbar styling */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #4f46e5 transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4f46e5;
+  border-radius: 3px;
+  border: 1px solid transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #4338ca;
+}
+</style>
