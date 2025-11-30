@@ -1,11 +1,9 @@
 <template>
   <section id="weather-section" class="container mx-auto px-4 lg:px-8 py-6">
     <!-- Location Filter Section -->
-    <div class="mb-8">
-      <div
-        class="bg-gradient-to-br from-slate-800/60 via-slate-800/40 to-slate-700/40 backdrop-blur-xl border border-slate-600/40 rounded-3xl p-6 shadow-2xl"
-      >
-        <h2 class="text-2xl font-bold text-white font-montserrat mb-6">
+    <div class="relative z-40 mb-8">
+      <div class="mb-12">
+        <h2 class="text-2xl md:text-3xl font-bold text-white font-montserrat mb-6">
           Pilih Lokasi Anda
         </h2>
 
@@ -227,19 +225,17 @@
     <!-- Weather Data Section -->
     <div v-if="weatherData && selectedLocation">
       <!-- Location Header -->
-      <div
-        class="bg-gradient-to-br from-slate-800/80 via-slate-700/60 to-slate-800/80 backdrop-blur-xl border border-slate-600/40 rounded-3xl p-6 mb-6 shadow-2xl"
-      >
+      <div class="mb-8">
         <div class="flex flex-wrap items-center justify-between gap-4">
           <div class="flex items-center gap-4">
-            <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
-              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14v4m-4-4l-1 1m9-1l1 1M5 13H1m18 0h4M8 12L7 11m9 1l1-1m-7 0v-4m0 0a9 9 0 11-9 9h9a9 9 0 01-9-9z"></path>
               </svg>
             </div>
             <div>
-              <h3 class="text-2xl font-bold text-white font-montserrat">
+              <h3 class="text-xl md:text-2xl font-bold text-white font-montserrat">
                 {{ selectedLocation.name }}
               </h3>
               <p class="text-slate-300 text-sm mt-1">
@@ -258,15 +254,13 @@
       </div>
 
       <!-- Weather Cards Section -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <!-- Current Temperature Card -->
-        <div
-          class="bg-gradient-to-br from-orange-500/20 via-slate-800/60 to-slate-800/40 backdrop-blur-xl border border-orange-500/30 rounded-2xl p-5 shadow-xl hover:shadow-2xl hover:shadow-orange-500/10 transition-all duration-300"
-        >
+        <div class="text-center md:text-left">
           <div class="mb-4">
-            <h4 class="font-semibold uppercase text-xs tracking-wider text-orange-300">Suhu Saat Ini</h4>
+            <h4 class="font-semibold uppercase text-sm font-medium text-orange-300">Suhu Saat Ini</h4>
           </div>
-          <p class="text-5xl font-bold text-white mb-2">
+          <p class="text-2xl sm:text-3xl font-bold text-white mb-2">
             {{ weatherData.prakiraan[0]?.periode[0]?.t }}°
           </p>
           <p class="text-sm text-slate-300 capitalize">
@@ -275,13 +269,11 @@
         </div>
 
         <!-- Temperature Range Card -->
-        <div
-          class="bg-gradient-to-br from-blue-500/20 via-slate-800/60 to-slate-800/40 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-5 shadow-xl hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300"
-        >
+        <div class="text-center md:text-left">
           <div class="mb-4">
-            <h4 class="font-semibold uppercase text-xs tracking-wider text-blue-300">Rentang Suhu</h4>
+            <h4 class="font-semibold uppercase text-sm font-medium text-blue-300">Rentang Suhu</h4>
           </div>
-          <p class="text-3xl font-bold text-white mb-2">
+          <p class="text-2xl sm:text-3xl font-bold text-white mb-2">
             {{ Math.min(...weatherData.prakiraan[0]?.periode.map((p) => p.t)) }}° / 
             {{ Math.max(...weatherData.prakiraan[0]?.periode.map((p) => p.t)) }}°
           </p>
@@ -289,13 +281,11 @@
         </div>
 
         <!-- Wind Direction Card -->
-        <div
-          class="bg-gradient-to-br from-cyan-500/20 via-slate-800/60 to-slate-800/40 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-5 shadow-xl hover:shadow-2xl hover:shadow-cyan-500/10 transition-all duration-300"
-        >
+        <div class="text-center md:text-left">
           <div class="mb-4">
-            <h4 class="font-semibold uppercase text-xs tracking-wider text-cyan-300">Arah Angin</h4>
+            <h4 class="font-semibold uppercase text-sm font-medium text-cyan-300">Arah Angin</h4>
           </div>
-          <p class="text-3xl font-bold text-white mb-2">
+          <p class="text-2xl sm:text-3xl font-bold text-white mb-2">
             {{ weatherData.prakiraan[0]?.periode[0]?.wind_dir }}
           </p>
           <p class="text-sm text-slate-400">
@@ -304,13 +294,11 @@
         </div>
 
         <!-- Humidity Card -->
-        <div
-          class="bg-gradient-to-br from-teal-500/20 via-slate-800/60 to-slate-800/40 backdrop-blur-xl border border-teal-500/30 rounded-2xl p-5 shadow-xl hover:shadow-2xl hover:shadow-teal-500/10 transition-all duration-300"
-        >
+        <div class="text-center md:text-left">
           <div class="mb-4">
-            <h4 class="font-semibold uppercase text-xs tracking-wider text-teal-300">Kelembaban</h4>
+            <h4 class="font-semibold uppercase text-sm font-medium text-teal-300">Kelembaban</h4>
           </div>
-          <p class="text-5xl font-bold text-white mb-2">
+          <p class="text-2xl sm:text-3xl font-bold text-white mb-2">
             {{ weatherData.prakiraan[0]?.periode[0]?.hu }}%
           </p>
           <p class="text-sm text-slate-400">Tingkat kelembaban udara</p>
@@ -318,10 +306,8 @@
       </div>
 
       <!-- Temperature/Humidity Timeline Chart -->
-      <div
-        class="bg-gradient-to-br from-slate-800/60 via-slate-800/40 to-slate-700/40 backdrop-blur-xl border border-slate-600/40 rounded-3xl p-6 mb-6 shadow-2xl"
-      >
-        <h3 class="text-xl font-bold text-white font-montserrat mb-6">
+      <div class="my-12">
+        <h3 class="text-xl md:text-2xl font-bold text-white font-montserrat mb-6">
           Timeline Suhu & Kelembaban
         </h3>
         <div class="h-80 w-full">
@@ -330,10 +316,8 @@
       </div>
 
       <!-- Detailed Forecast Section -->
-      <div
-        class="bg-gradient-to-br from-slate-800/60 via-slate-800/40 to-slate-700/40 backdrop-blur-xl border border-slate-600/40 rounded-3xl p-6 shadow-2xl"
-      >
-        <h3 class="text-xl font-bold text-white font-montserrat mb-6">
+      <div class="my-12">
+        <h3 class="text-xl md:text-2xl font-bold text-white font-montserrat mb-6">
           Prakiraan Harian
         </h3>
 
@@ -354,7 +338,7 @@
                 <div
                   v-for="(period) in day.periode"
                   :key="period.local_datetime"
-                  class="bg-slate-700/40 backdrop-blur-sm border border-slate-600/40 p-4 rounded-2xl flex flex-col items-center flex-shrink-0 w-32 hover:bg-slate-700/60 hover:border-slate-500/60 hover:shadow-lg transition-all duration-300"
+                  class="p-4 flex flex-col items-center flex-shrink-0 w-32 bg-slate-800/50 border border-slate-700/80 rounded-xl"
                 >
                   <p class="text-sm font-semibold text-slate-300 mb-2">
                     {{ formatTime(period.local_datetime) }}

@@ -5,7 +5,7 @@
         <h2 class="text-3xl md:text-4xl font-bold text-white">
           Pertanyaan Umum (FAQ)
         </h2>
-        <p class="text-slate-400 mt-2 max-w-2xl mx-auto text-justify">
+        <p class="text-slate-400 mt-2 max-w-2xl mx-auto text-center md:text-justify">
           Jawaban atas beberapa pertanyaan yang mungkin Anda miliki tentang
           Cumulus, dari sumber data hingga cara kerja fitur-fitur utama kami.
         </p>

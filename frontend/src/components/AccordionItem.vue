@@ -28,7 +28,7 @@
       @after-leave="afterLeave"
     >
       <div v-show="isOpen" class="overflow-hidden">
-        <div class="pb-5 text-slate-300 text-justify">
+        <div class="pb-5 text-slate-300 text-left md:text-justify">
           <p><slot /></p>
         </div>
       </div>

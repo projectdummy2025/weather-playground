@@ -114,7 +114,7 @@ if (typeof window !== 'undefined') {
       <!-- Left Column: Content -->
       <div class="text-left space-y-6 md:space-y-8">
         <div class="space-y-4">
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight font-montserrat">
+          <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight font-montserrat">
             Cuaca di Sekitarmu, <br />
             <span class="text-blue-400">Tanpa Perlu Mencarinya</span>
           </h1>

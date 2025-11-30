@@ -5,7 +5,7 @@
         <h2 class="text-3xl md:text-4xl font-bold text-white">
           Mengapa Memilih Cumulus?
         </h2>
-        <p class="text-slate-400 mt-2 max-w-2xl mx-auto text-justify">
+        <p class="text-slate-400 mt-2 max-w-2xl mx-auto text-center md:text-justify">
           Fitur-fitur unggulan yang dirancang untuk memberikan pengalaman
           terbaik dalam memantau cuaca, dengan antarmuka yang bersih, cepat,
           dan intuitif.
@@ -17,7 +17,7 @@
       >
         <!-- Feature 1: Fast Access -->
         <div
-          class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700/50"
+          class="bg-slate-800/50 p-6 md:p-8 rounded-2xl border border-slate-700/50"
         >
           <div
             class="w-14 h-14 bg-blue-500/10 text-blue-300 rounded-xl flex items-center justify-center mx-auto mb-5"
@@ -45,7 +45,7 @@
 
         <!-- Feature 2: Smart Caching -->
         <div
-          class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700/50"
+          class="bg-slate-800/50 p-6 md:p-8 rounded-2xl border border-slate-700/50"
         >
           <div
             class="w-14 h-14 bg-blue-500/10 text-blue-300 rounded-xl flex items-center justify-center mx-auto mb-5"
@@ -75,7 +75,7 @@
 
         <!-- Feature 3: Responsive SPA -->
         <div
-          class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700/50"
+          class="bg-slate-800/50 p-6 md:p-8 rounded-2xl border border-slate-700/50"
         >
           <div
             class="w-14 h-14 bg-blue-500/10 text-blue-300 rounded-xl flex items-center justify-center mx-auto mb-5"
@@ -101,9 +101,9 @@
           </p>
         </div>
 
-        <!-- Feature 4: Offline Mode -->
+        <!-- Feature 4: National Coverage -->
         <div
-          class="bg-slate-800/50 p-8 rounded-2xl border border-slate-700/50"
+          class="bg-slate-800/50 p-6 md:p-8 rounded-2xl border border-slate-700/50"
         >
           <div
             class="w-14 h-14 bg-blue-500/10 text-blue-300 rounded-xl flex items-center justify-center mx-auto mb-5"
@@ -113,19 +113,22 @@
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
             >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"
+                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13v-6m0 6l5.447 2.724A1 1 0 0015 20.382V9.618a1 1 0 00-1.447-.894L9 11m0-4v6m0 0l6-3m-6 3V7"
               ></path>
             </svg>
           </div>
-          <h3 class="text-lg font-semibold text-white mb-2">Mode Offline</h3>
+          <h3 class="text-lg font-semibold text-white mb-2">
+            Cakupan Nasional
+          </h3>
           <p class="text-slate-400 text-sm text-justify">
-            Akses data cuaca terakhir yang Anda lihat bahkan saat tidak
-            terhubung ke internet berkat sistem cache.
+            Data cuaca dan pencarian lokasi tersedia untuk seluruh wilayah
+            administratif di Indonesia, dari provinsi hingga desa.
           </p>
         </div>
       </div>
