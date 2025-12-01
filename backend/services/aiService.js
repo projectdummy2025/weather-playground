@@ -17,6 +17,7 @@ async function explainWeather(weatherData) {
             throw new Error('OpenRouter API Key is missing or invalid.');
         }
 
+        console.log('Inspecting client.chat object:', client.chat);
         const completion = await client.chat.send({
             model: "openai/gpt-oss-20b:free",
             messages: [
