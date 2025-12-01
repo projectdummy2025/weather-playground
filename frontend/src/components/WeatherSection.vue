@@ -249,6 +249,20 @@
             >
               Kode: {{ selectedVillage }}
             </span>
+            <button
+              @click="explainForecast"
+              :disabled="isExplaining"
+              class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white text-xs font-bold rounded-full shadow-lg shadow-indigo-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg v-if="isExplaining" class="animate-spin h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <svg v-else class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              {{ isExplaining ? 'Menganalisis...' : 'Jelaskan dengan AI' }}
+            </button>
           </div>
         </div>
       </div>
@@ -302,6 +316,28 @@
             {{ weatherData.prakiraan[0]?.periode[0]?.hu }}%
           </p>
           <p class="text-sm text-slate-400">Tingkat kelembaban udara</p>
+        </div>
+      </div>
+
+      <!-- AI Explanation Section -->
+      <div v-if="explanation" class="mb-8 p-6 bg-gradient-to-br from-indigo-900/40 to-violet-900/40 border border-indigo-500/30 rounded-2xl relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4 opacity-10">
+          <svg class="w-32 h-32 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2L2 7v3c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
+          </svg>
+        </div>
+        <div class="relative z-10">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="p-2 bg-indigo-500/20 rounded-lg">
+              <svg class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-bold text-indigo-100 font-montserrat">Analisis Cuaca AI</h3>
+          </div>
+          <div class="prose prose-invert prose-sm max-w-none text-indigo-100/90 leading-relaxed whitespace-pre-wrap">
+            {{ explanation }}
+          </div>
         </div>
       </div>
 
@@ -471,6 +507,39 @@ const props = defineProps({
   loading: Boolean,
   error: String,
 });
+
+const explanation = ref(null);
+const isExplaining = ref(false);
+
+async function explainForecast() {
+  if (!props.weatherData) return;
+
+  isExplaining.value = true;
+  explanation.value = null;
+
+  try {
+    const response = await fetch('/api/explain-forecast', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(props.weatherData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Gagal mendapatkan penjelasan.');
+    }
+
+    explanation.value = data.explanation;
+  } catch (err) {
+    console.error('Error explaining forecast:', err);
+    explanation.value = "Maaf, terjadi kesalahan saat membuat penjelasan AI. Silakan coba lagi nanti.";
+  } finally {
+    isExplaining.value = false;
+  }
+}
 
 const emit = defineEmits([
   "update:selectedProvince",

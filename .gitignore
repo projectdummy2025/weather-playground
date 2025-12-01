@@ -38,4 +38,4 @@ dump.sql
 *.sln
 
 # Folders to keep clean
-/documentation
+/documentation/

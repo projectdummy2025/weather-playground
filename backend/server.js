@@ -7,6 +7,7 @@ const https = require('https');
 require('dotenv').config(); // Load .env
 const path = require('path'); // Import path module
 const { db, cache } = require('./config/database'); // Import database configuration and cache
+const { explainWeather } = require('./services/aiService'); // Import AI service
 
 // Create axios instance with optimized defaults for BMKG API
 const bmkgAxios = axios.create({
@@ -575,6 +576,23 @@ app.get('/api/cuaca', async (req, res) => {
     }
 
     return res.status(statusCode).json({ error: errorMessage, details: error.message });
+  }
+});
+
+// API endpoint for AI weather explanation
+app.post('/api/explain-forecast', async (req, res) => {
+  const weatherData = req.body;
+
+  if (!weatherData || !weatherData.lokasi || !weatherData.prakiraan) {
+    return res.status(400).json({ error: 'Data cuaca tidak valid.' });
+  }
+
+  try {
+    const explanation = await explainWeather(weatherData);
+    res.json({ explanation });
+  } catch (error) {
+    console.error('Error generating explanation:', error);
+    res.status(500).json({ error: 'Gagal membuat penjelasan AI.', details: error.message });
   }
 });
 
