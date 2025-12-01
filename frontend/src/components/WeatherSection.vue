@@ -320,24 +320,36 @@
       </div>
 
       <!-- AI Explanation Section -->
-      <div v-if="explanation" class="mb-8 p-6 bg-gradient-to-br from-indigo-900/40 to-violet-900/40 border border-indigo-500/30 rounded-2xl relative overflow-hidden">
+      <div v-if="explanation" class="mb-8 p-6 bg-gradient-to-br from-indigo-900/40 to-violet-900/40 border border-indigo-500/30 rounded-2xl relative overflow-hidden ai-explanation-card">
         <div class="absolute top-0 right-0 p-4 opacity-10">
           <svg class="w-32 h-32 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 2L2 7v3c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
           </svg>
         </div>
         <div class="relative z-10">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="p-2 bg-indigo-500/20 rounded-lg">
-              <svg class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
+          <div class="flex items-center justify-between gap-3 mb-4">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-gradient-to-br from-indigo-500/30 to-violet-500/30 rounded-xl shadow-lg">
+                <svg class="w-5 h-5 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-bold text-indigo-100 font-montserrat">Analisis Cuaca AI</h3>
             </div>
-            <h3 class="text-lg font-bold text-indigo-100 font-montserrat">Analisis Cuaca AI</h3>
+            <button
+              @click="explanation = null"
+              class="p-1.5 hover:bg-indigo-500/20 rounded-lg transition-colors group"
+              title="Tutup"
+            >
+              <svg class="w-4 h-4 text-indigo-300 group-hover:text-indigo-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-          <div class="prose prose-invert prose-sm max-w-none text-indigo-100/90 leading-relaxed whitespace-pre-wrap">
-            {{ explanation }}
-          </div>
+          <div 
+            class="ai-content prose prose-invert prose-sm max-w-none leading-relaxed"
+            v-html="renderedExplanation"
+          ></div>
         </div>
       </div>
 
@@ -448,7 +460,8 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, nextTick } from "vue";
+import { ref, watch, onMounted, nextTick, computed } from "vue";
+import { marked } from 'marked';
 import {
   Chart,
   LineController,
@@ -461,6 +474,14 @@ import {
   Legend,
   Filler,
 } from "chart.js";
+
+// Configure marked options
+marked.setOptions({
+  breaks: true,
+  gfm: true,
+  headerIds: false,
+  mangle: false
+});
 
 // Register chart components
 Chart.register(
@@ -510,6 +531,12 @@ const props = defineProps({
 
 const explanation = ref(null);
 const isExplaining = ref(false);
+
+// Computed property to render markdown
+const renderedExplanation = computed(() => {
+  if (!explanation.value) return '';
+  return marked.parse(explanation.value);
+});
 
 async function explainForecast() {
   if (!props.weatherData) return;
@@ -811,4 +838,215 @@ function formatTime(dateString) {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: #4338ca;
 }
+
+/* AI Content Styling */
+.ai-explanation-card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ai-content {
+  color: #e0e7ff;
+  font-size: 0.935rem;
+  line-height: 1.7;
+}
+
+/* Headings */
+.ai-content :deep(h1),
+.ai-content :deep(h2),
+.ai-content :deep(h3),
+.ai-content :deep(h4),
+.ai-content :deep(h5),
+.ai-content :deep(h6) {
+  color: #c7d2fe;
+  font-weight: 700;
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  font-family: 'Montserrat', sans-serif;
+  line-height: 1.3;
+}
+
+.ai-content :deep(h1) { font-size: 1.5rem; }
+.ai-content :deep(h2) { font-size: 1.35rem; }
+.ai-content :deep(h3) { font-size: 1.2rem; }
+.ai-content :deep(h4) { font-size: 1.1rem; }
+
+.ai-content :deep(h1):first-child,
+.ai-content :deep(h2):first-child,
+.ai-content :deep(h3):first-child {
+  margin-top: 0;
+}
+
+/* Paragraphs */
+.ai-content :deep(p) {
+  margin-bottom: 1em;
+  color: #e0e7ff;
+}
+
+.ai-content :deep(p:last-child) {
+  margin-bottom: 0;
+}
+
+/* Strong and Emphasis */
+.ai-content :deep(strong),
+.ai-content :deep(b) {
+  color: #a5b4fc;
+  font-weight: 700;
+}
+
+.ai-content :deep(em),
+.ai-content :deep(i) {
+  color: #c7d2fe;
+  font-style: italic;
+}
+
+/* Lists */
+.ai-content :deep(ul),
+.ai-content :deep(ol) {
+  margin: 1em 0;
+  padding-left: 1.75rem;
+  color: #e0e7ff;
+}
+
+.ai-content :deep(li) {
+  margin-bottom: 0.5em;
+  padding-left: 0.25em;
+}
+
+.ai-content :deep(ul li) {
+  list-style-type: none;
+  position: relative;
+}
+
+.ai-content :deep(ul li)::before {
+  content: "•";
+  color: #818cf8;
+  font-weight: bold;
+  font-size: 1.2em;
+  position: absolute;
+  left: -1.25rem;
+}
+
+.ai-content :deep(ol li) {
+  list-style-type: decimal;
+  color: #e0e7ff;
+}
+
+.ai-content :deep(ol li)::marker {
+  color: #818cf8;
+  font-weight: 600;
+}
+
+/* Nested Lists */
+.ai-content :deep(li > ul),
+.ai-content :deep(li > ol) {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Blockquotes */
+.ai-content :deep(blockquote) {
+  margin: 1.5em 0;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid #6366f1;
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 0.5rem;
+  color: #c7d2fe;
+  font-style: italic;
+}
+
+.ai-content :deep(blockquote p) {
+  margin: 0;
+}
+
+/* Code */
+.ai-content :deep(code) {
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  padding: 0.2em 0.4em;
+  border-radius: 0.375rem;
+  font-size: 0.875em;
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-weight: 500;
+}
+
+.ai-content :deep(pre) {
+  background: rgba(30, 27, 75, 0.5);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin: 1.5em 0;
+  overflow-x: auto;
+}
+
+.ai-content :deep(pre code) {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: #e0e7ff;
+  font-size: 0.875rem;
+}
+
+/* Links */
+.ai-content :deep(a) {
+  color: #818cf8;
+  text-decoration: underline;
+  text-decoration-color: rgba(129, 140, 248, 0.4);
+  text-underline-offset: 2px;
+  transition: all 0.2s ease;
+}
+
+.ai-content :deep(a:hover) {
+  color: #a5b4fc;
+  text-decoration-color: rgba(165, 180, 252, 0.6);
+}
+
+/* Horizontal Rule */
+.ai-content :deep(hr) {
+  border: none;
+  border-top: 1px solid rgba(99, 102, 241, 0.3);
+  margin: 2em 0;
+}
+
+/* Tables */
+.ai-content :deep(table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  background: rgba(30, 27, 75, 0.3);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.ai-content :deep(th),
+.ai-content :deep(td) {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.ai-content :deep(th) {
+  background: rgba(99, 102, 241, 0.2);
+  color: #c7d2fe;
+  font-weight: 700;
+}
+
+.ai-content :deep(tr:last-child td) {
+  border-bottom: none;
+}
+
+.ai-content :deep(tr:hover) {
+  background: rgba(99, 102, 241, 0.1);
+}
+
 </style>

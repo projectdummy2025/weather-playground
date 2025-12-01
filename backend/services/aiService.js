@@ -17,17 +17,16 @@ async function explainWeather(weatherData) {
             throw new Error('OpenRouter API Key is missing or invalid.');
         }
 
-        console.log('Inspecting client.chat object:', client.chat);
         const completion = await client.chat.send({
             model: "openai/gpt-oss-20b:free",
             messages: [
                 {
                     role: "system",
-                    content: "Anda adalah asisten ahli meteorologi yang ramah. Tugas Anda adalah menjelaskan data prakiraan cuaca kepada pengguna awam dalam bahasa Indonesia yang mudah dipahami. Berikan ringkasan singkat tentang kondisi cuaca, suhu, dan saran aktivitas atau pakaian yang sesuai. Hindari istilah teknis yang terlalu rumit."
+                    content: "Anda adalah asisten cuaca yang cerdas dan peduli. Tugas Anda adalah menyajikan prakiraan cuaca dengan format yang jelas dan bermanfaat.\n1. **Buat tabel perbandingan cuaca ringkas untuk 3 hari ke depan.** Tabel harus berisi kolom: Hari, Kondisi Cuaca (misal: Cerah Berawan), Suhu (rata-rata atau rentang), dan Kelembapan (rata-rata atau rentang).\n2. **Setelah tabel, tulis narasi paragraf. Gunakan format waktu 24 jam (misal: pukul 14.00, bukan 2 PM).** Jelaskan apa arti data tersebut untuk beberapa hari ke depan, soroti hal-hal penting yang perlu diwaspadai (misalnya, potensi hujan lebat di sore hari atau suhu yang sangat panas), dan tutup dengan saran yang hangat dan praktis agar pengguna bisa menjaga diri dan beraktivitas dengan nyaman."
                 },
                 {
                     role: "user",
-                    content: `Tolong jelaskan data cuaca berikut ini untuk lokasi ${weatherData.lokasi.desa || weatherData.lokasi.kecamatan}, ${weatherData.lokasi.kota}: \n\n${JSON.stringify(weatherData.prakiraan[0], null, 2)}`
+                    content: `Tolong jelaskan data cuaca berikut ini untuk lokasi ${weatherData.lokasi.desa || weatherData.lokasi.kecamatan}, ${weatherData.lokasi.kota}: \n\n${JSON.stringify(weatherData.prakiraan, null, 2)}`
                 }
             ]
         });
