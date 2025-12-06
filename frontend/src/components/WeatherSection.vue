@@ -84,20 +84,29 @@
             <div class="relative group">
               <input
                 type="text"
-                :value="selectedVillage ? villages.find((v) => v.code === selectedVillage)?.name : villageSearch"
-                @input="emit('update:villageSearch', $event.target.value); emit('update:villageDropdownOpen', true)"
+                :value="villageSearch || (selectedVillage ? villages.find((v) => v.code === selectedVillage)?.name : '')"
+                @input="emit('update:villageSearch', $event.target.value); emit('update:villageDropdownOpen', true); emit('update:selectedVillage', '')"
                 @click="emit('update:villageDropdownOpen', !villageDropdownOpen)"
                 :disabled="!selectedDistrict"
-                placeholder="Kelurahan/Desa..."
+                placeholder="Ketik untuk mencari desa/kelurahan..."
                 class="w-full px-4 py-3 bg-black/20 text-white rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-white/50 transition-all disabled:opacity-40"
               />
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg class="w-4 h-4 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </div>
             </div>
-            <div v-show="villageDropdownOpen" class="absolute z-50 w-full mt-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl max-h-64 overflow-y-auto custom-scrollbar">
+            <div v-show="villageDropdownOpen && filteredVillages.length > 0" class="absolute z-50 w-full mt-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl max-h-64 overflow-y-auto custom-scrollbar">
               <ul class="py-2">
-                <li v-for="village in filteredVillages" :key="village.code" class="px-4 py-2 text-slate-200 hover:bg-white/10 cursor-pointer" @click="emit('update:selectedVillage', village.code); emit('update:villageSearch', village.name); emit('update:villageDropdownOpen', false)">
-                  {{ village.name }}
+                <li v-for="village in filteredVillages" :key="village.code" class="px-4 py-2 text-slate-200 hover:bg-white/10 cursor-pointer transition-colors" @click="emit('update:selectedVillage', village.code); emit('update:villageSearch', village.name); emit('update:villageDropdownOpen', false)">
+                  <div class="font-medium">{{ village.name }}</div>
+                  <div v-if="village.village_type" class="text-xs text-slate-400 mt-0.5">{{ village.village_type }}</div>
                 </li>
               </ul>
+            </div>
+            <div v-show="villageDropdownOpen && filteredVillages.length === 0 && villageSearch" class="absolute z-50 w-full mt-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl p-4">
+              <p class="text-sm text-slate-400 text-center">Tidak ada hasil untuk "{{ villageSearch }}"</p>
             </div>
           </div>
         </div>
