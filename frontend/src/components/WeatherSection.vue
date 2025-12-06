@@ -22,7 +22,7 @@
                 @input="emit('update:provinceSearch', $event.target.value); emit('update:provinceDropdownOpen', true)"
                 @click="emit('update:provinceDropdownOpen', !provinceDropdownOpen)"
                 placeholder="Provinsi..."
-                class="w-full px-4 py-3 bg-black/20 text-white rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-white/50 transition-all"
+                class="w-full px-4 py-3 bg-slate-800/60 text-white rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-white/50 transition-all"
               />
             </div>
             <div v-show="provinceDropdownOpen" class="absolute z-50 w-full mt-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl max-h-64 overflow-y-auto custom-scrollbar">
@@ -44,7 +44,7 @@
                 @click="emit('update:cityDropdownOpen', !cityDropdownOpen)"
                 :disabled="!selectedProvince"
                 placeholder="Kota/Kabupaten..."
-                class="w-full px-4 py-3 bg-black/20 text-white rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-white/50 transition-all disabled:opacity-40"
+                class="w-full px-4 py-3 bg-slate-800/60 text-white rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-white/50 transition-all disabled:opacity-40"
               />
             </div>
             <div v-show="cityDropdownOpen" class="absolute z-50 w-full mt-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl max-h-64 overflow-y-auto custom-scrollbar">
@@ -66,7 +66,7 @@
                 @click="emit('update:districtDropdownOpen', !districtDropdownOpen)"
                 :disabled="!selectedCity"
                 placeholder="Kecamatan..."
-                class="w-full px-4 py-3 bg-black/20 text-white rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-white/50 transition-all disabled:opacity-40"
+                class="w-full px-4 py-3 bg-slate-800/60 text-white rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-white/50 transition-all disabled:opacity-40"
               />
             </div>
             <div v-show="districtDropdownOpen" class="absolute z-50 w-full mt-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl max-h-64 overflow-y-auto custom-scrollbar">
@@ -88,7 +88,7 @@
                 @click="emit('update:villageDropdownOpen', !villageDropdownOpen)"
                 :disabled="!selectedDistrict"
                 placeholder="Ketik untuk mencari desa/kelurahan..."
-                class="w-full px-4 py-3 bg-black/20 text-white rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-white/50 transition-all disabled:opacity-40"
+                class="w-full px-4 py-3 bg-slate-800/60 text-white rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-white/50 transition-all disabled:opacity-40"
               />
               <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                 <svg class="w-4 h-4 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -122,7 +122,7 @@
       
       <!-- A. HEADER SECTION (CONTEXT) -->
       <div class="mb-10 text-center md:text-left animate-fade-in-up">
-        <h1 class="text-4xl md:text-6xl font-bold tracking-tight font-montserrat mb-2 drop-shadow-lg">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight font-montserrat mb-2 drop-shadow-lg">
           {{ selectedLocation.location.kecamatan }}
         </h1>
         <h2 class="text-xl md:text-3xl font-medium opacity-90 mb-4">
@@ -138,7 +138,7 @@
 
       <!-- D. WARNING SYSTEM -->
       <div v-if="warningMessage && !warningDismissed" class="mb-10 animate-bounce-in">
-        <div class="relative overflow-hidden bg-gradient-to-r from-red-600 to-orange-600 rounded-2xl shadow-2xl p-1">
+        <div class="relative overflow-hidden bg-gradient-to-r from-red-500/20 to-rose-500/20 border border-red-500/30 rounded-2xl shadow-2xl p-1">
           <div class="absolute inset-0 bg-pattern opacity-10"></div>
           <div class="relative bg-black/10 backdrop-blur-sm p-4 md:p-6 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-4">
             <div class="p-3 bg-white/20 rounded-full animate-pulse">
@@ -169,7 +169,7 @@
               />
             </div>
             <div>
-              <div class="text-7xl md:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70">
+              <div class="text-6xl md:text-8xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70">
                 {{ currentWeather.t }}°
               </div>
               <div class="text-2xl md:text-4xl font-medium capitalize mt-2 text-white/90 font-montserrat">
@@ -223,13 +223,13 @@
             <div 
               v-for="(item, index) in hourlyForecast" 
               :key="index" 
-              class="flex-shrink-0 w-28 p-4 rounded-3xl backdrop-blur-md border flex flex-col items-center justify-center snap-start transition-all duration-300 hover:scale-105"
-              :class="isClosestTime(item.local_datetime) ? 'bg-white/20 border-white/40 ring-2 ring-white/30 shadow-lg scale-105' : 'bg-white/5 border-white/10 hover:bg-white/10'"
+              class="flex-shrink-0 w-32 p-4 rounded-3xl backdrop-blur-md border flex flex-col items-center justify-center snap-start transition-all duration-300 hover:scale-105"
+              :class="isClosestTime(item.local_datetime) ? 'bg-white/20 border-white/40 ring-2 ring-white/30 shadow-lg scale-105' : 'bg-slate-800/50 border-slate-700/80 hover:bg-white/10'"
             >
               <span class="text-sm font-medium opacity-80 mb-3">{{ formatTime(item.local_datetime) }}</span>
               <img :src="item.url_ikon || item.image" class="w-12 h-12 mb-3 object-contain drop-shadow-md" />
               <span class="text-2xl font-bold mb-1">{{ item.t }}°</span>
-              <span class="text-xs text-center opacity-60 line-clamp-1 w-full">{{ item.weather_desc }}</span>
+              <span class="text-xs text-center opacity-60 line-clamp-2 w-full">{{ item.weather_desc }}</span>
             </div>
           </div>
           <!-- Fade effect on sides -->
@@ -239,9 +239,9 @@
       </div>
 
       <!-- AI Explanation Section (Restyled) -->
-      <div class="mb-16">
-         <div class="flex items-center justify-between mb-6">
-            <h3 class="text-xl font-bold opacity-90">Analisis Cerdas AI</h3>
+       <div class="mb-16">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold text-indigo-200">Analisis Cerdas AI</h3>
             <button
               @click="explainForecast"
               :disabled="isExplaining"
@@ -252,8 +252,7 @@
               {{ isExplaining ? 'Menganalisis...' : 'Jelaskan Cuaca' }}
             </button>
          </div>
-         
-         <div v-if="explanation" class="p-8 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-xl relative overflow-hidden animate-fade-in-up">
+                  <div v-if="explanation" class="p-8 bg-gradient-to-br from-indigo-900/40 to-violet-900/40 backdrop-blur-xl border border-indigo-500/30 rounded-2xl shadow-xl relative overflow-hidden animate-fade-in-up hover:bg-indigo-500/20 transition-all">
             <div class="absolute top-0 right-0 p-8 opacity-5">
                <svg class="w-48 h-48" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7v3c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" /></svg>
             </div>
