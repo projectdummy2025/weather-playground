@@ -1,7 +1,7 @@
 <template>
   <section
     id="weather-section"
-    class="min-h-screen w-full transition-all duration-1000 ease-in-out px-4 py-8 lg:px-12"
+    class="min-h-screen w-full transition-all duration-1000 ease-in-out px-6 py-8 md:px-12"
     :class="themeClass"
   >
     <!-- Location Filter Section -->
