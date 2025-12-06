@@ -1,5 +1,5 @@
 <template>
-  <footer class="bg-gradient-to-b from-slate-900 to-slate-950 border-t border-slate-800">
+  <footer class="bg-black/20 backdrop-blur-sm border-t border-white/10">
     <div class="container mx-auto px-6 md:px-12 py-16">
       <!-- Main Footer Content -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">

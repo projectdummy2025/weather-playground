@@ -95,7 +95,7 @@ if (typeof window !== 'undefined') {
 </script>
 
 <template>
-  <section class="relative w-full min-h-[85vh] flex items-center overflow-hidden bg-slate-900 pt-24 pb-12 md:py-32">
+  <section class="relative w-full min-h-[85vh] flex items-center overflow-hidden pt-24 pb-12 md:py-32">
     <!-- Background Elements -->
     <div class="absolute inset-0 pointer-events-none overflow-hidden">
       <!-- Right side illustration container -->
@@ -106,8 +106,8 @@ if (typeof window !== 'undefined') {
       </div>
 
       <!-- Gradient Overlay (Placed AFTER map to overlay it, but adjusted transparency) -->
-      <div class="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/90 to-slate-900 z-10"></div>
-      <div class="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent z-10"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-transparent z-10"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-black/40 via-black/20 to-transparent z-10"></div>
     </div>
 
     <div class="container relative mx-auto px-6 md:px-12 z-20 grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center">

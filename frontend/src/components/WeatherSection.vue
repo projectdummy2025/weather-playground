@@ -1,8 +1,7 @@
 <template>
   <section
     id="weather-section"
-    class="min-h-screen w-full transition-all duration-1000 ease-in-out py-8"
-    :class="themeClass"
+    class="min-h-screen w-full py-8"
   >
     <div class="container mx-auto px-6 md:px-12">
     <!-- Location Filter Section -->
@@ -389,30 +388,6 @@ const hourlyForecast = computed(() => {
   if (!props.weatherData?.prakiraan) return [];
   // Flatten the array as per spec and take first 24 items (approx 24 hours if hourly, or just all)
   return props.weatherData.prakiraan.flatMap(day => day.periode);
-});
-
-const themeClass = computed(() => {
-  if (!currentWeather.value) return 'bg-slate-900';
-  
-  // Try to use English description if available, otherwise fallback to ID
-  const desc = (currentWeather.value.weather_desc_en || currentWeather.value.weather_desc || '').toLowerCase();
-  
-  if (desc.includes('thunderstorm') || desc.includes('petir') || desc.includes('hebat')) {
-    // Deep Purple/Dark Grey Gradient
-    return 'bg-gradient-to-br from-gray-900 via-purple-900 to-slate-900';
-  } else if (desc.includes('rain') || desc.includes('hujan') || desc.includes('drizzle')) {
-    // Desaturated Blue
-    return 'bg-gradient-to-br from-slate-800 via-blue-900 to-slate-950';
-  } else if (desc.includes('cloud') || desc.includes('berawan') || desc.includes('mendung')) {
-    // Blue-Grey Gradient
-    return 'bg-gradient-to-br from-slate-700 via-slate-600 to-slate-800';
-  } else if (desc.includes('clear') || desc.includes('cerah')) {
-    // Clear Sky (Bonus)
-    return 'bg-gradient-to-br from-blue-500 via-blue-400 to-cyan-300';
-  } else {
-    // Default
-    return 'bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800';
-  }
 });
 
 const warningMessage = ref(null);

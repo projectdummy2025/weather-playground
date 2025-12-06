@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from "vue";
+import { ref, onMounted, onUnmounted, watch, computed } from "vue";
 import HeroSection from "./components/HeroSection.vue";
 import AboutSection from "./components/AboutSection.vue";
 import FaqSection from "./components/FaqSection.vue";
@@ -316,15 +316,36 @@ function handleVillageSelected(village) {
   // This is acceptable for the "random village" feature as the priority is showing the weather.
   selectedVillage.value = village.code;
 }
+
+// Dynamic theme based on weather
+const themeClass = computed(() => {
+  if (!weatherData.value?.prakiraan?.[0]?.periode?.[0]) return 'bg-slate-900';
+  
+  const currentWeather = weatherData.value.prakiraan[0].periode[0];
+  const desc = (currentWeather.weather_desc_en || currentWeather.weather_desc || '').toLowerCase();
+  
+  if (desc.includes('thunderstorm') || desc.includes('petir') || desc.includes('hebat')) {
+    return 'bg-gradient-to-br from-gray-900 via-purple-900 to-slate-900';
+  } else if (desc.includes('rain') || desc.includes('hujan') || desc.includes('drizzle')) {
+    return 'bg-gradient-to-br from-slate-800 via-blue-900 to-slate-950';
+  } else if (desc.includes('cloud') || desc.includes('berawan') || desc.includes('mendung')) {
+    return 'bg-gradient-to-br from-slate-700 via-slate-600 to-slate-800';
+  } else if (desc.includes('clear') || desc.includes('cerah')) {
+    return 'bg-gradient-to-br from-blue-500 via-blue-400 to-cyan-300';
+  } else {
+    return 'bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800';
+  }
+});
 </script>
 
 <template>
   <div
-    class="min-h-screen bg-slate-900 font-sans text-slate-100"
+    class="min-h-screen font-sans text-slate-100 transition-all duration-1000 ease-in-out"
+    :class="themeClass"
   >
     <!-- Header Section -->
     <header
-      class="bg-slate-900/60 backdrop-blur-xl border-b border-slate-700/30 sticky top-0 z-50"
+      class="bg-black/20 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50"
     >
       <div class="container mx-auto px-6 md:px-12 py-4">
         <div class="flex items-center justify-between">
