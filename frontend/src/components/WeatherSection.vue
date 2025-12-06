@@ -1,11 +1,12 @@
 <template>
   <section
     id="weather-section"
-    class="min-h-screen w-full transition-all duration-1000 ease-in-out px-6 py-8 md:px-12"
+    class="min-h-screen w-full transition-all duration-1000 ease-in-out py-8"
     :class="themeClass"
   >
+    <div class="container mx-auto px-6 md:px-12">
     <!-- Location Filter Section -->
-    <div class="relative z-40 mb-12 max-w-7xl mx-auto">
+    <div class="relative z-40 mb-12">
       <div class="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20 shadow-2xl">
         <h2 class="text-xl md:text-2xl font-bold text-white font-montserrat mb-6 flex items-center gap-2">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
@@ -278,6 +279,7 @@
         <div class="absolute inset-4 border-4 border-white/10 border-t-white/50 rounded-full animate-spin animation-delay-150"></div>
       </div>
       <p class="text-xl font-medium animate-pulse">Memuat Data Satelit...</p>
+    </div>
     </div>
   </section>
 </template>

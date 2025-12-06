@@ -326,7 +326,7 @@ function handleVillageSelected(village) {
     <header
       class="bg-slate-900/60 backdrop-blur-xl border-b border-slate-700/30 sticky top-0 z-50"
     >
-      <div class="container mx-auto px-4 lg:px-8 py-4">
+      <div class="container mx-auto px-6 md:px-12 py-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div>
