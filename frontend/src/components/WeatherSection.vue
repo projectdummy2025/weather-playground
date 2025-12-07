@@ -1,18 +1,18 @@
 <template>
   <section
     id="weather-section"
-    class="min-h-screen w-full py-8"
+    class="min-h-screen w-full py-4 sm:py-8"
   >
-    <div class="container mx-auto px-6 md:px-12">
+    <div class="container mx-auto px-4 sm:px-6 md:px-12">
     <!-- Location Filter Section -->
     <div class="relative z-40 mb-12">
-      <div class="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20 shadow-2xl">
-        <h2 class="text-xl md:text-2xl font-bold text-white font-montserrat mb-6 flex items-center gap-2">
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/20 shadow-2xl">
+        <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-white font-montserrat mb-4 sm:mb-6 flex items-center gap-2">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
           Pilih Lokasi
         </h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <!-- Province Filter -->
           <div class="relative" data-province-dropdown>
             <div class="relative group">
@@ -122,10 +122,10 @@
       
       <!-- A. HEADER SECTION (CONTEXT) -->
       <div class="mb-10 text-center md:text-left animate-fade-in-up">
-        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight font-montserrat mb-2 drop-shadow-lg">
+        <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight font-montserrat mb-2 drop-shadow-lg">
           {{ selectedLocation.location.kecamatan }}
         </h1>
-        <h2 class="text-xl md:text-3xl font-medium opacity-90 mb-4">
+        <h2 class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium opacity-90 mb-3 sm:mb-4">
           {{ selectedLocation.location.kotkab }}
         </h2>
         <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
@@ -170,94 +170,94 @@
             </div>
             <div class="flex flex-col">
               <div class="flex items-start">
-                <span class="text-8xl md:text-9xl font-thin tracking-tighter text-white leading-none">
+                <span class="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-thin tracking-tighter text-white leading-none">
                   {{ currentWeather.t }}°
                 </span>
               </div>
-              <div class="text-2xl md:text-3xl font-light text-indigo-100 capitalize mt-2 ml-2">
+              <div class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light text-indigo-100 capitalize mt-1 sm:mt-2 ml-1 sm:ml-2">
                 {{ currentWeather.weather_desc }}
               </div>
             </div>
           </div>
-          <div class="mt-6 flex items-center gap-6 text-white/60 ml-4 text-sm font-medium tracking-wide uppercase">
+          <div class="mt-4 sm:mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-6 text-white/60 ml-0 sm:ml-4 text-xs sm:text-sm font-medium tracking-wide uppercase">
              <span class="flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                 {{ formatDay(currentWeather.local_datetime) }}
              </span>
-             <span class="w-1 h-1 bg-white/40 rounded-full"></span>
-             <span>Terakhir update: {{ formatTime(currentWeather.local_datetime) }}</span>
+             <span class="hidden sm:block w-1 h-1 bg-white/40 rounded-full"></span>
+             <span class="text-[10px] sm:text-xs">Terakhir update: {{ formatTime(currentWeather.local_datetime) }}</span>
           </div>
         </div>
 
         <!-- Secondary Grid -->
-        <div class="grid grid-cols-3 gap-4 w-full lg:w-auto">
+        <div class="grid grid-cols-3 gap-2 sm:gap-4 w-full lg:w-auto">
           <!-- Humidity -->
-          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 flex flex-col items-center justify-center hover:bg-white/10 transition-all duration-300 group min-w-[100px]">
-            <div class="text-blue-300 mb-3 group-hover:scale-110 transition-transform">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col items-center justify-center hover:bg-white/10 transition-all duration-300 group">
+            <div class="text-blue-300 mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
+              <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
             </div>
-            <div class="text-2xl font-semibold mb-1">{{ currentWeather.hu }}%</div>
-            <div class="text-[10px] uppercase tracking-widest opacity-60">Kelembaban</div>
+            <div class="text-lg sm:text-2xl font-semibold mb-0.5 sm:mb-1">{{ currentWeather.hu }}%</div>
+            <div class="text-[8px] sm:text-[10px] uppercase tracking-widest opacity-60">Kelembaban</div>
           </div>
 
           <!-- Wind -->
-          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 flex flex-col items-center justify-center hover:bg-white/10 transition-all duration-300 group min-w-[100px]">
-            <div class="text-cyan-300 mb-3 group-hover:scale-110 transition-transform">
-              <svg class="w-6 h-6" :style="{ transform: `rotate(${currentWeather.wind_dir}deg)` }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col items-center justify-center hover:bg-white/10 transition-all duration-300 group">
+            <div class="text-cyan-300 mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
+              <svg class="w-5 h-5 sm:w-6 sm:h-6" :style="{ transform: `rotate(${currentWeather.wind_dir}deg)` }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
             </div>
-            <div class="text-2xl font-semibold mb-1 flex items-baseline gap-0.5">
-              {{ currentWeather.wind_speed }} <span class="text-xs font-normal opacity-70">km/h</span>
+            <div class="text-lg sm:text-2xl font-semibold mb-0.5 sm:mb-1 flex items-baseline gap-0.5">
+              {{ currentWeather.wind_speed }} <span class="text-[8px] sm:text-xs font-normal opacity-70">km/h</span>
             </div>
-            <div class="text-[10px] uppercase tracking-widest opacity-60">Angin</div>
+            <div class="text-[8px] sm:text-[10px] uppercase tracking-widest opacity-60">Angin</div>
           </div>
 
           <!-- Visibility -->
-          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 flex flex-col items-center justify-center hover:bg-white/10 transition-all duration-300 group min-w-[100px]">
-            <div class="text-emerald-300 mb-3 group-hover:scale-110 transition-transform">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col items-center justify-center hover:bg-white/10 transition-all duration-300 group">
+            <div class="text-emerald-300 mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
+              <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
             </div>
-            <div class="text-2xl font-semibold mb-1">{{ currentWeather.vs_text || '10km+' }}</div>
-            <div class="text-[10px] uppercase tracking-widest opacity-60">Visibilitas</div>
+            <div class="text-lg sm:text-2xl font-semibold mb-0.5 sm:mb-1">{{ currentWeather.vs_text || '10km+' }}</div>
+            <div class="text-[8px] sm:text-[10px] uppercase tracking-widest opacity-60">Visibilitas</div>
           </div>
         </div>
       </div>
 
       <!-- C. HOURLY SCROLL -->
-      <div class="mb-16 animate-fade-in-up delay-200">
-        <h3 class="text-lg font-bold text-white/90 mb-6 flex items-center gap-2">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <div class="mb-10 sm:mb-16 animate-fade-in-up delay-200">
+        <h3 class="text-base sm:text-lg font-bold text-white/90 mb-4 sm:mb-6 flex items-center gap-2">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           Prakiraan 24 Jam
         </h3>
-        <div class="relative bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 overflow-hidden shadow-inner">
-          <div class="flex overflow-x-auto gap-0 pb-4 scrollbar-hide snap-x divide-x divide-white/5">
+        <div class="relative bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-8 overflow-hidden shadow-inner">
+          <div class="flex overflow-x-auto gap-0 pb-2 sm:pb-4 scrollbar-hide snap-x divide-x divide-white/5">
             <div 
               v-for="(item, index) in hourlyForecast" 
               :key="index" 
-              class="flex-shrink-0 w-24 px-2 flex flex-col items-center justify-between snap-start group cursor-default hover:bg-white/5 transition-colors rounded-lg py-2"
+              class="flex-shrink-0 w-16 sm:w-24 px-1 sm:px-2 flex flex-col items-center justify-between snap-start group cursor-default hover:bg-white/5 transition-colors rounded-lg py-2"
             >
-              <span class="text-sm font-medium text-white/50 mb-4 group-hover:text-white/80 transition-colors">{{ formatTime(item.local_datetime) }}</span>
-              <img :src="item.url_ikon || item.image" class="w-10 h-10 mb-4 object-contain group-hover:scale-110 transition-transform drop-shadow-md" />
-              <span class="text-xl font-bold text-white mb-3">{{ item.t }}°</span>
+              <span class="text-[10px] sm:text-sm font-medium text-white/50 mb-2 sm:mb-4 group-hover:text-white/80 transition-colors">{{ formatTime(item.local_datetime) }}</span>
+              <img :src="item.url_ikon || item.image" class="w-8 h-8 sm:w-10 sm:h-10 mb-2 sm:mb-4 object-contain group-hover:scale-110 transition-transform drop-shadow-md" />
+              <span class="text-base sm:text-xl font-bold text-white mb-2 sm:mb-3">{{ item.t }}°</span>
               
               <!-- Humidity Indicator -->
-               <div class="flex items-center gap-1 text-xs font-medium text-blue-300/70 bg-blue-500/10 px-2 py-1 rounded-full">
-                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+               <div class="flex items-center gap-0.5 sm:gap-1 text-[8px] sm:text-xs font-medium text-blue-300/70 bg-blue-500/10 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                  <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
                   {{ item.hu }}%
                </div>
             </div>
           </div>
           
           <!-- Fade effect on sides -->
-          <div class="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-slate-900/50 to-transparent pointer-events-none rounded-l-3xl"></div>
-          <div class="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-slate-900/50 to-transparent pointer-events-none rounded-r-3xl"></div>
+          <div class="absolute inset-y-0 left-0 w-8 sm:w-12 bg-gradient-to-r from-slate-900/50 to-transparent pointer-events-none rounded-l-2xl sm:rounded-l-3xl"></div>
+          <div class="absolute inset-y-0 right-0 w-8 sm:w-12 bg-gradient-to-l from-slate-900/50 to-transparent pointer-events-none rounded-r-2xl sm:rounded-r-3xl"></div>
         </div>
       </div>
 
       <!-- AI Explanation Section (Restyled) -->
-      <div class="mb-16">
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="text-xl font-bold text-indigo-200 flex items-center gap-2">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="mb-10 sm:mb-16">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
+          <h3 class="text-base sm:text-xl font-bold text-indigo-200 flex items-center gap-2">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
             </svg>
             Analisis Cerdas AI
@@ -265,7 +265,7 @@
           <button
             @click="explainForecast"
             :disabled="isExplaining"
-            class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-sm font-bold rounded-full shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            class="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-xs sm:text-sm font-bold rounded-full shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto justify-center"
           >
             <svg v-if="isExplaining" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -280,137 +280,137 @@
         </div>
 
         <!-- Skeleton Loader during AI analysis -->
-        <div v-if="isExplaining" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-pulse">
-          <div v-for="i in 4" :key="i" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-            <div class="flex items-center gap-3 mb-4">
-              <div class="w-10 h-10 bg-white/10 rounded-lg"></div>
-              <div class="space-y-2">
-                <div class="h-4 w-16 bg-white/10 rounded"></div>
-                <div class="h-3 w-20 bg-white/10 rounded"></div>
+        <div v-if="isExplaining" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-pulse">
+          <div v-for="i in 4" :key="i" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+            <div class="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+              <div class="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 rounded-lg"></div>
+              <div class="space-y-1.5 sm:space-y-2">
+                <div class="h-3 sm:h-4 w-12 sm:w-16 bg-white/10 rounded"></div>
+                <div class="h-2 sm:h-3 w-16 sm:w-20 bg-white/10 rounded"></div>
               </div>
             </div>
-            <div class="space-y-2">
-              <div class="h-3 w-full bg-white/10 rounded"></div>
-              <div class="h-3 w-3/4 bg-white/10 rounded"></div>
+            <div class="space-y-1.5 sm:space-y-2">
+              <div class="h-2 sm:h-3 w-full bg-white/10 rounded"></div>
+              <div class="h-2 sm:h-3 w-3/4 bg-white/10 rounded"></div>
             </div>
           </div>
         </div>
 
         <!-- Timeline-Based Layout -->
-        <div v-else-if="explanation && parsedExplanation" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in-up">
+        <div v-else-if="explanation && parsedExplanation" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-fade-in-up">
           
           <!-- Morning Card -->
-          <div v-if="parsedExplanation.morning" class="bg-gradient-to-br from-amber-500/20 to-orange-500/20 backdrop-blur-xl border border-amber-500/30 rounded-2xl p-6 hover:scale-105 transition-transform">
-            <div class="flex items-center gap-3 mb-4">
-              <div class="p-2 bg-amber-400/20 rounded-lg">
-                <svg class="w-6 h-6 text-amber-300" fill="currentColor" viewBox="0 0 24 24">
+          <div v-if="parsedExplanation.morning" class="bg-gradient-to-br from-amber-500/20 to-orange-500/20 backdrop-blur-xl border border-amber-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-6 hover:scale-105 transition-transform">
+            <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+              <div class="p-1.5 sm:p-2 bg-amber-400/20 rounded-lg">
+                <svg class="w-4 h-4 sm:w-6 sm:h-6 text-amber-300" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"/>
                 </svg>
               </div>
               <div>
-                <h4 class="font-bold text-lg text-white">Pagi</h4>
-                <p class="text-xs text-amber-200/80">06:00 - 11:00</p>
+                <h4 class="font-bold text-sm sm:text-lg text-white">Pagi</h4>
+                <p class="text-[10px] sm:text-xs text-amber-200/80">06:00 - 11:00</p>
               </div>
-              <span v-html="getWeatherIcon(parsedExplanation.morning.condition)" class="ml-auto text-2xl"></span>
+              <span v-html="getWeatherIcon(parsedExplanation.morning.condition)" class="ml-auto text-lg sm:text-2xl"></span>
             </div>
-            <p class="text-sm text-white/90 leading-relaxed mb-3">{{ parsedExplanation.morning.condition }}</p>
-            <div v-if="parsedExplanation.morning.action" class="flex items-start gap-2 p-3 bg-white/10 rounded-lg">
-              <svg class="w-4 h-4 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <p class="text-xs sm:text-sm text-white/90 leading-relaxed mb-2 sm:mb-3 line-clamp-3 sm:line-clamp-none">{{ parsedExplanation.morning.condition }}</p>
+            <div v-if="parsedExplanation.morning.action" class="flex items-start gap-1.5 sm:gap-2 p-2 sm:p-3 bg-white/10 rounded-lg">
+              <svg class="w-3 h-3 sm:w-4 sm:h-4 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              <span class="text-xs text-green-200">{{ parsedExplanation.morning.action }}</span>
+              <span class="text-[10px] sm:text-xs text-green-200">{{ parsedExplanation.morning.action }}</span>
             </div>
           </div>
 
           <!-- Afternoon Card -->
-          <div v-if="parsedExplanation.afternoon" class="bg-gradient-to-br from-sky-500/20 to-blue-500/20 backdrop-blur-xl border border-sky-500/30 rounded-2xl p-6 hover:scale-105 transition-transform">
-            <div class="flex items-center gap-3 mb-4">
-              <div class="p-2 bg-sky-400/20 rounded-lg">
-                <svg class="w-6 h-6 text-sky-300" fill="currentColor" viewBox="0 0 24 24">
+          <div v-if="parsedExplanation.afternoon" class="bg-gradient-to-br from-sky-500/20 to-blue-500/20 backdrop-blur-xl border border-sky-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-6 hover:scale-105 transition-transform">
+            <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+              <div class="p-1.5 sm:p-2 bg-sky-400/20 rounded-lg">
+                <svg class="w-4 h-4 sm:w-6 sm:h-6 text-sky-300" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
               </div>
               <div>
-                <h4 class="font-bold text-lg text-white">Siang</h4>
-                <p class="text-xs text-sky-200/80">12:00 - 15:00</p>
+                <h4 class="font-bold text-sm sm:text-lg text-white">Siang</h4>
+                <p class="text-[10px] sm:text-xs text-sky-200/80">12:00 - 15:00</p>
               </div>
-              <span v-html="getWeatherIcon(parsedExplanation.afternoon.condition)" class="ml-auto text-2xl"></span>
+              <span v-html="getWeatherIcon(parsedExplanation.afternoon.condition)" class="ml-auto text-lg sm:text-2xl"></span>
             </div>
-            <p class="text-sm text-white/90 leading-relaxed mb-3">{{ parsedExplanation.afternoon.condition }}</p>
-            <div v-if="parsedExplanation.afternoon.action" class="flex items-start gap-2 p-3 bg-white/10 rounded-lg">
-              <svg class="w-4 h-4 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <p class="text-xs sm:text-sm text-white/90 leading-relaxed mb-2 sm:mb-3 line-clamp-3 sm:line-clamp-none">{{ parsedExplanation.afternoon.condition }}</p>
+            <div v-if="parsedExplanation.afternoon.action" class="flex items-start gap-1.5 sm:gap-2 p-2 sm:p-3 bg-white/10 rounded-lg">
+              <svg class="w-3 h-3 sm:w-4 sm:h-4 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              <span class="text-xs text-green-200">{{ parsedExplanation.afternoon.action }}</span>
+              <span class="text-[10px] sm:text-xs text-green-200">{{ parsedExplanation.afternoon.action }}</span>
             </div>
           </div>
 
           <!-- Evening Card -->
-          <div v-if="parsedExplanation.evening" class="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-6 hover:scale-105 transition-transform">
-            <div class="flex items-center gap-3 mb-4">
-              <div class="p-2 bg-purple-400/20 rounded-lg">
-                <svg class="w-6 h-6 text-purple-300" fill="currentColor" viewBox="0 0 24 24">
+          <div v-if="parsedExplanation.evening" class="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-xl border border-purple-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-6 hover:scale-105 transition-transform">
+            <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+              <div class="p-1.5 sm:p-2 bg-purple-400/20 rounded-lg">
+                <svg class="w-4 h-4 sm:w-6 sm:h-6 text-purple-300" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/>
                 </svg>
               </div>
               <div>
-                <h4 class="font-bold text-lg text-white">Sore</h4>
-                <p class="text-xs text-purple-200/80">16:00 - 18:00</p>
+                <h4 class="font-bold text-sm sm:text-lg text-white">Sore</h4>
+                <p class="text-[10px] sm:text-xs text-purple-200/80">16:00 - 18:00</p>
               </div>
-              <span v-html="getWeatherIcon(parsedExplanation.evening.condition)" class="ml-auto text-2xl"></span>
+              <span v-html="getWeatherIcon(parsedExplanation.evening.condition)" class="ml-auto text-lg sm:text-2xl"></span>
             </div>
-            <p class="text-sm text-white/90 leading-relaxed mb-3">{{ parsedExplanation.evening.condition }}</p>
-            <div v-if="parsedExplanation.evening.action" class="flex items-start gap-2 p-3 bg-white/10 rounded-lg">
-              <svg class="w-4 h-4 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <p class="text-xs sm:text-sm text-white/90 leading-relaxed mb-2 sm:mb-3 line-clamp-3 sm:line-clamp-none">{{ parsedExplanation.evening.condition }}</p>
+            <div v-if="parsedExplanation.evening.action" class="flex items-start gap-1.5 sm:gap-2 p-2 sm:p-3 bg-white/10 rounded-lg">
+              <svg class="w-3 h-3 sm:w-4 sm:h-4 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              <span class="text-xs text-green-200">{{ parsedExplanation.evening.action }}</span>
+              <span class="text-[10px] sm:text-xs text-green-200">{{ parsedExplanation.evening.action }}</span>
             </div>
           </div>
 
           <!-- Night Card -->
-          <div v-if="parsedExplanation.night" class="bg-gradient-to-br from-indigo-500/20 to-slate-700/20 backdrop-blur-xl border border-indigo-500/30 rounded-2xl p-6 hover:scale-105 transition-transform">
-            <div class="flex items-center gap-3 mb-4">
-              <div class="p-2 bg-indigo-400/20 rounded-lg">
-                <svg class="w-6 h-6 text-indigo-300" fill="currentColor" viewBox="0 0 24 24">
+          <div v-if="parsedExplanation.night" class="bg-gradient-to-br from-indigo-500/20 to-slate-700/20 backdrop-blur-xl border border-indigo-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-6 hover:scale-105 transition-transform">
+            <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+              <div class="p-1.5 sm:p-2 bg-indigo-400/20 rounded-lg">
+                <svg class="w-4 h-4 sm:w-6 sm:h-6 text-indigo-300" fill="currentColor" viewBox="0 0 24 24">
                   <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clip-rule="evenodd"/>
                 </svg>
               </div>
               <div>
-                <h4 class="font-bold text-lg text-white">Malam</h4>
-                <p class="text-xs text-indigo-200/80">19:00 - 05:00</p>
+                <h4 class="font-bold text-sm sm:text-lg text-white">Malam</h4>
+                <p class="text-[10px] sm:text-xs text-indigo-200/80">19:00 - 05:00</p>
               </div>
-              <span v-html="getWeatherIcon(parsedExplanation.night.condition)" class="ml-auto text-2xl"></span>
+              <span v-html="getWeatherIcon(parsedExplanation.night.condition)" class="ml-auto text-lg sm:text-2xl"></span>
             </div>
-            <p class="text-sm text-white/90 leading-relaxed mb-3">{{ parsedExplanation.night.condition }}</p>
-            <div v-if="parsedExplanation.night.action" class="flex items-start gap-2 p-3 bg-white/10 rounded-lg">
-              <svg class="w-4 h-4 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <p class="text-xs sm:text-sm text-white/90 leading-relaxed mb-2 sm:mb-3 line-clamp-3 sm:line-clamp-none">{{ parsedExplanation.night.condition }}</p>
+            <div v-if="parsedExplanation.night.action" class="flex items-start gap-1.5 sm:gap-2 p-2 sm:p-3 bg-white/10 rounded-lg">
+              <svg class="w-3 h-3 sm:w-4 sm:h-4 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              <span class="text-xs text-green-200">{{ parsedExplanation.night.action }}</span>
+              <span class="text-[10px] sm:text-xs text-green-200">{{ parsedExplanation.night.action }}</span>
             </div>
           </div>
 
         </div>
 
         <!-- Fallback for non-structured response -->
-        <div v-else-if="explanation && !isExplaining" class="p-6 bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="p-2 bg-indigo-500/20 rounded-lg">
-              <svg class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div v-else-if="explanation && !isExplaining" class="p-4 sm:p-6 bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/10 rounded-xl sm:rounded-2xl">
+          <div class="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <div class="p-1.5 sm:p-2 bg-indigo-500/20 rounded-lg">
+              <svg class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
               </svg>
             </div>
-            <h4 class="font-bold text-white">Analisis AI</h4>
+            <h4 class="font-bold text-sm sm:text-base text-white">Analisis AI</h4>
           </div>
-          <div class="text-sm text-white/90 leading-relaxed space-y-2" v-html="formattedFallbackExplanation"></div>
+          <div class="text-xs sm:text-sm text-white/90 leading-relaxed space-y-2" v-html="formattedFallbackExplanation"></div>
         </div>
       </div>
 
       <!-- Chart Section (Restyled) -->
-      <div class="mb-12 p-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl">
-        <h3 class="text-xl font-bold mb-6 opacity-90">Grafik Tren</h3>
-        <div class="h-80 w-full">
+      <div class="mb-8 sm:mb-12 p-4 sm:p-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl sm:rounded-3xl">
+        <h3 class="text-base sm:text-xl font-bold mb-4 sm:mb-6 opacity-90">Grafik Tren</h3>
+        <div class="h-48 sm:h-64 md:h-80 w-full">
           <canvas ref="chartRef"></canvas>
         </div>
       </div>
@@ -418,21 +418,21 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="!selectedVillage && !loading" class="flex flex-col items-center justify-center min-h-[60vh] text-center text-white p-6">
-      <div class="w-32 h-32 bg-white/5 rounded-full flex items-center justify-center mb-8 animate-pulse">
-        <svg class="w-16 h-16 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    <div v-else-if="!selectedVillage && !loading" class="flex flex-col items-center justify-center min-h-[50vh] sm:min-h-[60vh] text-center text-white p-4 sm:p-6">
+      <div class="w-20 h-20 sm:w-32 sm:h-32 bg-white/5 rounded-full flex items-center justify-center mb-6 sm:mb-8 animate-pulse">
+        <svg class="w-10 h-10 sm:w-16 sm:h-16 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
       </div>
-      <h3 class="text-3xl font-bold mb-4 font-montserrat">Mulai Eksplorasi Cuaca</h3>
-      <p class="text-xl opacity-70 max-w-md">Pilih lokasi di atas untuk melihat prakiraan cuaca yang akurat dan mendetail.</p>
+      <h3 class="text-xl sm:text-3xl font-bold mb-3 sm:mb-4 font-montserrat">Mulai Eksplorasi Cuaca</h3>
+      <p class="text-sm sm:text-xl opacity-70 max-w-md px-4">Pilih lokasi di atas untuk melihat prakiraan cuaca yang akurat dan mendetail.</p>
     </div>
 
     <!-- Loading State -->
-    <div v-else-if="loading" class="flex flex-col items-center justify-center min-h-[60vh] text-white">
-      <div class="relative w-24 h-24 mb-8">
+    <div v-else-if="loading" class="flex flex-col items-center justify-center min-h-[50vh] sm:min-h-[60vh] text-white">
+      <div class="relative w-16 h-16 sm:w-24 sm:h-24 mb-6 sm:mb-8">
         <div class="absolute inset-0 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
-        <div class="absolute inset-4 border-4 border-white/10 border-t-white/50 rounded-full animate-spin animation-delay-150"></div>
+        <div class="absolute inset-3 sm:inset-4 border-4 border-white/10 border-t-white/50 rounded-full animate-spin animation-delay-150"></div>
       </div>
-      <p class="text-xl font-medium animate-pulse">Memuat Data Satelit...</p>
+      <p class="text-base sm:text-xl font-medium animate-pulse">Memuat Data Satelit...</p>
     </div>
     </div>
   </section>
