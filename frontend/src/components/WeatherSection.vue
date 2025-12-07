@@ -156,85 +156,100 @@
       </div>
 
       <!-- B. MAIN HERO SECTION (CURRENT WEATHER) -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center mb-16">
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-16 mb-16 animate-fade-in-left">
         <!-- Primary Element -->
-        <div class="flex flex-col items-center lg:items-start animate-fade-in-left">
-          <div class="flex items-center gap-6 md:gap-10">
+        <div class="flex flex-col items-center lg:items-start">
+          <div class="flex items-center gap-4">
             <div class="relative">
-              <div class="absolute inset-0 bg-white/20 blur-3xl rounded-full"></div>
+              <div class="absolute inset-0 bg-indigo-500/20 blur-3xl rounded-full"></div>
               <img 
                 :src="currentWeather.url_ikon || currentWeather.image" 
                 :alt="currentWeather.weather_desc" 
-                class="relative w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-2xl floating-animation" 
+                class="relative w-32 h-32 md:w-40 md:h-40 object-contain drop-shadow-2xl floating-animation" 
               />
             </div>
-            <div>
-              <div class="text-6xl md:text-8xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70">
-                {{ currentWeather.t }}°
+            <div class="flex flex-col">
+              <div class="flex items-start">
+                <span class="text-8xl md:text-9xl font-thin tracking-tighter text-white leading-none">
+                  {{ currentWeather.t }}°
+                </span>
               </div>
-              <div class="text-2xl md:text-4xl font-medium capitalize mt-2 text-white/90 font-montserrat">
+              <div class="text-2xl md:text-3xl font-light text-indigo-100 capitalize mt-2 ml-2">
                 {{ currentWeather.weather_desc }}
               </div>
             </div>
           </div>
+          <div class="mt-6 flex items-center gap-6 text-white/60 ml-4 text-sm font-medium tracking-wide uppercase">
+             <span class="flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                {{ formatDay(currentWeather.local_datetime) }}
+             </span>
+             <span class="w-1 h-1 bg-white/40 rounded-full"></span>
+             <span>Terakhir update: {{ formatTime(currentWeather.local_datetime) }}</span>
+          </div>
         </div>
 
         <!-- Secondary Grid -->
-        <div class="grid grid-cols-3 gap-4 animate-fade-in-right">
+        <div class="grid grid-cols-3 gap-4 w-full lg:w-auto">
           <!-- Humidity -->
-          <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-6 flex flex-col items-center justify-center hover:bg-white/20 transition-all duration-300 group">
-            <div class="text-blue-300 mb-2 group-hover:scale-110 transition-transform">
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 flex flex-col items-center justify-center hover:bg-white/10 transition-all duration-300 group min-w-[100px]">
+            <div class="text-blue-300 mb-3 group-hover:scale-110 transition-transform">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
             </div>
-            <div class="text-3xl font-bold mb-1">{{ currentWeather.hu }}%</div>
-            <div class="text-xs uppercase tracking-wider opacity-70">Kelembaban</div>
+            <div class="text-2xl font-semibold mb-1">{{ currentWeather.hu }}%</div>
+            <div class="text-[10px] uppercase tracking-widest opacity-60">Kelembaban</div>
           </div>
 
           <!-- Wind -->
-          <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-6 flex flex-col items-center justify-center hover:bg-white/20 transition-all duration-300 group">
-            <div class="text-cyan-300 mb-2 group-hover:scale-110 transition-transform">
-              <svg class="w-8 h-8" :style="{ transform: `rotate(${currentWeather.wind_dir}deg)` }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 flex flex-col items-center justify-center hover:bg-white/10 transition-all duration-300 group min-w-[100px]">
+            <div class="text-cyan-300 mb-3 group-hover:scale-110 transition-transform">
+              <svg class="w-6 h-6" :style="{ transform: `rotate(${currentWeather.wind_dir}deg)` }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
             </div>
-            <div class="text-3xl font-bold mb-1 flex items-baseline gap-1">
-              {{ currentWeather.wind_speed }} <span class="text-sm font-normal">km/h</span>
+            <div class="text-2xl font-semibold mb-1 flex items-baseline gap-0.5">
+              {{ currentWeather.wind_speed }} <span class="text-xs font-normal opacity-70">km/h</span>
             </div>
-            <div class="text-xs uppercase tracking-wider opacity-70">Angin</div>
+            <div class="text-[10px] uppercase tracking-widest opacity-60">Angin</div>
           </div>
 
           <!-- Visibility -->
-          <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-6 flex flex-col items-center justify-center hover:bg-white/20 transition-all duration-300 group">
-            <div class="text-emerald-300 mb-2 group-hover:scale-110 transition-transform">
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 flex flex-col items-center justify-center hover:bg-white/10 transition-all duration-300 group min-w-[100px]">
+            <div class="text-emerald-300 mb-3 group-hover:scale-110 transition-transform">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
             </div>
-            <div class="text-3xl font-bold mb-1">{{ currentWeather.vs_text || '10km+' }}</div>
-            <div class="text-xs uppercase tracking-wider opacity-70">Visibilitas</div>
+            <div class="text-2xl font-semibold mb-1">{{ currentWeather.vs_text || '10km+' }}</div>
+            <div class="text-[10px] uppercase tracking-widest opacity-60">Visibilitas</div>
           </div>
         </div>
       </div>
 
       <!-- C. HOURLY SCROLL -->
       <div class="mb-16 animate-fade-in-up delay-200">
-        <h3 class="text-xl font-bold mb-6 opacity-90 flex items-center gap-2">
+        <h3 class="text-lg font-bold text-white/90 mb-6 flex items-center gap-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           Prakiraan 24 Jam
         </h3>
-        <div class="relative group">
-          <div class="flex overflow-x-auto gap-4 pb-6 scrollbar-hide snap-x px-2">
+        <div class="relative bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 overflow-hidden shadow-inner">
+          <div class="flex overflow-x-auto gap-0 pb-4 scrollbar-hide snap-x divide-x divide-white/5">
             <div 
               v-for="(item, index) in hourlyForecast" 
               :key="index" 
-              class="flex-shrink-0 w-32 p-4 rounded-3xl backdrop-blur-md border flex flex-col items-center justify-center snap-start transition-all duration-300 hover:scale-105"
-              :class="isClosestTime(item.local_datetime) ? 'bg-white/20 border-white/40 ring-2 ring-white/30 shadow-lg scale-105' : 'bg-slate-800/50 border-slate-700/80 hover:bg-white/10'"
+              class="flex-shrink-0 w-24 px-2 flex flex-col items-center justify-between snap-start group cursor-default hover:bg-white/5 transition-colors rounded-lg py-2"
             >
-              <span class="text-sm font-medium opacity-80 mb-3">{{ formatTime(item.local_datetime) }}</span>
-              <img :src="item.url_ikon || item.image" class="w-12 h-12 mb-3 object-contain drop-shadow-md" />
-              <span class="text-2xl font-bold mb-1">{{ item.t }}°</span>
-              <span class="text-xs text-center opacity-60 line-clamp-2 w-full">{{ item.weather_desc }}</span>
+              <span class="text-sm font-medium text-white/50 mb-4 group-hover:text-white/80 transition-colors">{{ formatTime(item.local_datetime) }}</span>
+              <img :src="item.url_ikon || item.image" class="w-10 h-10 mb-4 object-contain group-hover:scale-110 transition-transform drop-shadow-md" />
+              <span class="text-xl font-bold text-white mb-3">{{ item.t }}°</span>
+              
+              <!-- Humidity Indicator -->
+               <div class="flex items-center gap-1 text-xs font-medium text-blue-300/70 bg-blue-500/10 px-2 py-1 rounded-full">
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                  {{ item.hu }}%
+               </div>
             </div>
           </div>
+          
           <!-- Fade effect on sides -->
-          <div class="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black/20 to-transparent pointer-events-none rounded-l-3xl"></div>
-          <div class="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black/20 to-transparent pointer-events-none rounded-r-3xl"></div>
+          <div class="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-slate-900/50 to-transparent pointer-events-none rounded-l-3xl"></div>
+          <div class="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-slate-900/50 to-transparent pointer-events-none rounded-r-3xl"></div>
         </div>
       </div>
 
