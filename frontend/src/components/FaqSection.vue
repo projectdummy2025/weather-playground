@@ -11,7 +11,7 @@
         </p>
       </div>
 
-      <div class="max-w-3xl mx-auto">
+      <div class="w-full">
         <AccordionItem question="Dari mana sumber data cuaca?">
           Data cuaca kami disediakan secara real-time oleh
           <a

@@ -189,36 +189,120 @@
           </div>
         </div>
 
-        <!-- Secondary Grid -->
-        <div class="grid grid-cols-3 gap-2 sm:gap-4 w-full lg:w-auto">
-          <!-- Humidity -->
-          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col items-center justify-center hover:bg-white/10 transition-all duration-300 group">
-            <div class="text-blue-300 mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
-              <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+        <!-- Secondary Grid - Enhanced Weather Stats -->
+        <div class="grid grid-cols-3 gap-2 sm:gap-3 w-full lg:w-auto">
+          
+          <!-- Humidity Card with Circular Progress -->
+          <div class="relative overflow-hidden bg-gradient-to-br from-blue-500/20 via-blue-600/10 to-cyan-500/20 backdrop-blur-xl border border-blue-400/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col items-center justify-center hover:border-blue-400/40 transition-all duration-500 group">
+            <!-- Glow Effect -->
+            <div class="absolute inset-0 bg-gradient-to-t from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <!-- Circular Progress Ring -->
+            <div class="relative w-12 h-12 sm:w-16 sm:h-16 mb-2 sm:mb-3">
+              <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                <!-- Background circle -->
+                <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="3"/>
+                <!-- Progress circle -->
+                <circle 
+                  cx="18" cy="18" r="14" 
+                  fill="none" 
+                  stroke="url(#humidity-gradient)" 
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  :stroke-dasharray="`${(currentWeather.hu / 100) * 88} 88`"
+                  class="transition-all duration-1000 ease-out"
+                />
+                <defs>
+                  <linearGradient id="humidity-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#60a5fa"/>
+                    <stop offset="100%" stop-color="#22d3ee"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <!-- Center Icon -->
+              <div class="absolute inset-0 flex items-center justify-center">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-300" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                </svg>
+              </div>
             </div>
-            <div class="text-lg sm:text-2xl font-semibold mb-0.5 sm:mb-1">{{ currentWeather.hu }}%</div>
-            <div class="text-[8px] sm:text-[10px] uppercase tracking-widest opacity-60">Kelembaban</div>
+            
+            <!-- Value -->
+            <div class="relative z-10 text-xl sm:text-2xl font-bold text-white mb-0.5">
+              {{ currentWeather.hu }}<span class="text-sm sm:text-base font-normal text-blue-200">%</span>
+            </div>
+            
+            <!-- Label & Status -->
+            <div class="text-[8px] sm:text-[10px] uppercase tracking-widest text-blue-200/80 font-medium">Kelembaban</div>
+            <div class="mt-1 text-[7px] sm:text-[8px] px-2 py-0.5 rounded-full" :class="getHumidityStatus(currentWeather.hu).class">
+              {{ getHumidityStatus(currentWeather.hu).text }}
+            </div>
           </div>
 
-          <!-- Wind -->
-          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col items-center justify-center hover:bg-white/10 transition-all duration-300 group">
-            <div class="text-cyan-300 mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
-              <svg class="w-5 h-5 sm:w-6 sm:h-6" :style="{ transform: `rotate(${currentWeather.wind_dir}deg)` }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+          <!-- Wind Card with Compass -->
+          <div class="relative overflow-hidden bg-gradient-to-br from-cyan-500/20 via-teal-600/10 to-emerald-500/20 backdrop-blur-xl border border-cyan-400/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col items-center justify-center hover:border-cyan-400/40 transition-all duration-500 group">
+            <!-- Glow Effect -->
+            <div class="absolute inset-0 bg-gradient-to-t from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <!-- Compass with Direction Arrow -->
+            <div class="relative w-12 h-12 sm:w-16 sm:h-16 mb-2 sm:mb-3">
+              <!-- Compass Ring -->
+              <div class="absolute inset-0 rounded-full border-2 border-white/10">
+                <!-- Cardinal Points -->
+                <span class="absolute -top-0.5 left-1/2 -translate-x-1/2 text-[6px] sm:text-[8px] font-bold text-cyan-300">N</span>
+                <span class="absolute -bottom-0.5 left-1/2 -translate-x-1/2 text-[6px] sm:text-[8px] text-white/40">S</span>
+                <span class="absolute top-1/2 -left-1 -translate-y-1/2 text-[6px] sm:text-[8px] text-white/40">W</span>
+                <span class="absolute top-1/2 -right-1 -translate-y-1/2 text-[6px] sm:text-[8px] text-white/40">E</span>
+              </div>
+              <!-- Direction Arrow -->
+              <div class="absolute inset-0 flex items-center justify-center transition-transform duration-700" :style="{ transform: `rotate(${currentWeather.wind_dir || 0}deg)` }">
+                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-cyan-300 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2L4 20l8-6 8 6z"/>
+                </svg>
+              </div>
             </div>
-            <div class="text-lg sm:text-2xl font-semibold mb-0.5 sm:mb-1 flex items-baseline gap-0.5">
-              {{ currentWeather.wind_speed }} <span class="text-[8px] sm:text-xs font-normal opacity-70">km/h</span>
+            
+            <!-- Value -->
+            <div class="relative z-10 flex items-baseline gap-0.5 text-xl sm:text-2xl font-bold text-white mb-0.5">
+              {{ currentWeather.wind_speed }}<span class="text-[8px] sm:text-xs font-normal text-cyan-200">km/h</span>
             </div>
-            <div class="text-[8px] sm:text-[10px] uppercase tracking-widest opacity-60">Angin</div>
+            
+            <!-- Label & Status -->
+            <div class="text-[8px] sm:text-[10px] uppercase tracking-widest text-cyan-200/80 font-medium">Angin</div>
+            <div class="mt-1 text-[7px] sm:text-[8px] px-2 py-0.5 rounded-full" :class="getWindStatus(currentWeather.wind_speed).class">
+              {{ getWindStatus(currentWeather.wind_speed).text }}
+            </div>
           </div>
 
-          <!-- Visibility -->
-          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col items-center justify-center hover:bg-white/10 transition-all duration-300 group">
-            <div class="text-emerald-300 mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
-              <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+          <!-- Visibility Card with Eye Animation -->
+          <div class="relative overflow-hidden bg-gradient-to-br from-emerald-500/20 via-green-600/10 to-teal-500/20 backdrop-blur-xl border border-emerald-400/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col items-center justify-center hover:border-emerald-400/40 transition-all duration-500 group">
+            <!-- Glow Effect -->
+            <div class="absolute inset-0 bg-gradient-to-t from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            <!-- Eye Icon with Pulse -->
+            <div class="relative w-12 h-12 sm:w-16 sm:h-16 mb-2 sm:mb-3 flex items-center justify-center">
+              <!-- Outer Glow Ring -->
+              <div class="absolute inset-0 rounded-full border border-emerald-400/30 group-hover:border-emerald-400/50 transition-colors"></div>
+              <div class="absolute inset-1 sm:inset-2 rounded-full border border-emerald-400/20"></div>
+              <!-- Eye Icon -->
+              <svg class="w-6 h-6 sm:w-8 sm:h-8 text-emerald-300 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
             </div>
-            <div class="text-lg sm:text-2xl font-semibold mb-0.5 sm:mb-1">{{ currentWeather.vs_text || '10km+' }}</div>
-            <div class="text-[8px] sm:text-[10px] uppercase tracking-widest opacity-60">Visibilitas</div>
+            
+            <!-- Value -->
+            <div class="relative z-10 text-xl sm:text-2xl font-bold text-white mb-0.5">
+              {{ currentWeather.vs_text || '10km+' }}
+            </div>
+            
+            <!-- Label & Status -->
+            <div class="text-[8px] sm:text-[10px] uppercase tracking-widest text-emerald-200/80 font-medium">Visibilitas</div>
+            <div class="mt-1 text-[7px] sm:text-[8px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-200">
+              {{ getVisibilityStatus(currentWeather.vs_text) }}
+            </div>
           </div>
+          
         </div>
       </div>
 
@@ -647,6 +731,49 @@ function getWeatherIcon(condition) {
     return '❄️';
   } else {
     return '🌤️'; // Default: partly cloudy
+  }
+}
+
+// Helper function to get humidity status with styling
+function getHumidityStatus(hu) {
+  const humidity = parseInt(hu) || 0;
+  if (humidity < 30) {
+    return { text: 'Kering', class: 'bg-amber-500/20 text-amber-200' };
+  } else if (humidity < 60) {
+    return { text: 'Normal', class: 'bg-blue-500/20 text-blue-200' };
+  } else if (humidity < 80) {
+    return { text: 'Lembab', class: 'bg-cyan-500/20 text-cyan-200' };
+  } else {
+    return { text: 'Sangat Lembab', class: 'bg-indigo-500/20 text-indigo-200' };
+  }
+}
+
+// Helper function to get wind status with styling
+function getWindStatus(speed) {
+  const windSpeed = parseFloat(speed) || 0;
+  if (windSpeed < 5) {
+    return { text: 'Tenang', class: 'bg-emerald-500/20 text-emerald-200' };
+  } else if (windSpeed < 15) {
+    return { text: 'Sepoi', class: 'bg-cyan-500/20 text-cyan-200' };
+  } else if (windSpeed < 30) {
+    return { text: 'Sedang', class: 'bg-amber-500/20 text-amber-200' };
+  } else {
+    return { text: 'Kencang', class: 'bg-red-500/20 text-red-200' };
+  }
+}
+
+// Helper function to get visibility status
+function getVisibilityStatus(vsText) {
+  if (!vsText) return 'Sangat Baik';
+  const text = vsText.toLowerCase();
+  if (text.includes('10') || text.includes('+')) {
+    return 'Sangat Baik';
+  } else if (text.includes('5') || text.includes('6') || text.includes('7') || text.includes('8') || text.includes('9')) {
+    return 'Baik';
+  } else if (text.includes('3') || text.includes('4')) {
+    return 'Sedang';
+  } else {
+    return 'Buruk';
   }
 }
 

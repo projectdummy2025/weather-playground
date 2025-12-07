@@ -1,16 +1,10 @@
 const { OpenRouter } = require("@openrouter/sdk");
 require('dotenv').config();
 
-// Initialize OpenRouter client
 const client = new OpenRouter({
     apiKey: process.env.OPENROUTER_API_KEY,
 });
 
-/**
- * Explains the weather forecast using AI.
- * @param {Object} weatherData - The weather data object to explain.
- * @returns {Promise<string>} - The explanation text.
- */
 async function explainWeather(weatherData) {
     try {
         if (!process.env.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY.includes('YOUR_API_KEY')) {
@@ -19,23 +13,37 @@ async function explainWeather(weatherData) {
 
         const completion = await client.chat.send({
             model: "openai/gpt-oss-20b:free",
+            response_format: { type: "json_object" },
+            max_tokens: 350,                   
+            stop: ["END_JSON"],                
             messages: [
                 {
                     role: "system",
-                    content: `Anda adalah asisten cuaca pribadi yang efisien. Tugas Anda adalah menganalisis data cuaca dan memberikan ringkasan yang dapat ditindaklanjuti (actionable insights).
-JANGAN gunakan bahasa puitis. Gunakan bahasa yang jelas, padat, dan langsung pada intinya.
-Output HARUS berupa JSON valid (raw JSON, tanpa markdown block) dengan struktur berikut:
-{
-  "morning": { "condition": "Ringkasan cuaca pagi (06:00-11:00)", "action": "Saran aktivitas/pakaian" },
-  "afternoon": { "condition": "Ringkasan cuaca siang (12:00-15:00)", "action": "Saran aktivitas/pakaian" },
-  "evening": { "condition": "Ringkasan cuaca sore (16:00-18:00)", "action": "Saran aktivitas/pakaian" },
-  "night": { "condition": "Ringkasan cuaca malam (19:00-05:00)", "action": "Saran aktivitas/pakaian" }
-}
-Pastikan saran yang diberikan spesifik dan berguna (contoh: "Bawa payung", "Hindari jemur pakaian").`
+                    content: `
+                                Anda adalah parser cuaca otomatis. 
+                                TUGAS ANDA HANYA: menghasilkan JSON VALID. 
+                                Dilarang menggunakan gaya puitis, metafora, opini, atau kalimat deskriptif panjang.
+
+                                Output format WAJIB:
+
+                                {
+                                "morning": { "condition": "", "action": "" },
+                                "afternoon": { "condition": "", "action": "" },
+                                "evening": { "condition": "", "action": "" },
+                                "night": { "condition": "", "action": "" }
+                                }
+
+                                Aturan keras:
+                                - Tidak ada narasi.
+                                - Tidak ada kalimat indah.
+                                - Tidak ada paragraf panjang.
+                                - Hanya ringkasan faktual + saran langsung.
+                                - Tulis singkat, faktual, 1–2 kalimat per field.
+                                Akhiri JSON dengan tulisan: END_JSON`
                 },
                 {
                     role: "user",
-                    content: `Analisis data cuaca berikut untuk lokasi ${weatherData.lokasi.desa || weatherData.lokasi.kecamatan}, ${weatherData.lokasi.kota}: \n\n${JSON.stringify(weatherData.prakiraan, null, 2)}`
+                    content: `Data cuaca: ${JSON.stringify(weatherData.prakiraan)}`
                 }
             ]
         });
