@@ -363,118 +363,120 @@
           </button>
         </div>
 
-        <!-- Skeleton Loader during AI analysis -->
-        <div v-if="isExplaining" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-pulse">
-          <div v-for="i in 4" :key="i" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6">
-            <div class="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-              <div class="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 rounded-lg"></div>
-              <div class="space-y-1.5 sm:space-y-2">
-                <div class="h-3 sm:h-4 w-12 sm:w-16 bg-white/10 rounded"></div>
-                <div class="h-2 sm:h-3 w-16 sm:w-20 bg-white/10 rounded"></div>
+        <!-- Skeleton Loader during AI analysis - 4 Card Grid -->
+        <div v-if="isExplaining" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-pulse">
+          <div v-for="i in 4" :key="i" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-5">
+            <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+              <div class="w-7 h-7 sm:w-9 sm:h-9 bg-white/10 rounded-lg"></div>
+              <div class="flex-1 space-y-1.5">
+                <div class="h-3 sm:h-4 w-12 sm:w-14 bg-white/10 rounded"></div>
+                <div class="h-2 sm:h-2.5 w-16 sm:w-20 bg-white/10 rounded"></div>
               </div>
+              <div class="w-5 h-5 sm:w-6 sm:h-6 bg-white/10 rounded"></div>
             </div>
-            <div class="space-y-1.5 sm:space-y-2">
-              <div class="h-2 sm:h-3 w-full bg-white/10 rounded"></div>
-              <div class="h-2 sm:h-3 w-3/4 bg-white/10 rounded"></div>
+            <div class="space-y-1.5 sm:space-y-2 mb-2">
+              <div class="h-2 sm:h-2.5 w-full bg-white/10 rounded"></div>
+              <div class="h-2 sm:h-2.5 w-4/5 bg-white/10 rounded"></div>
             </div>
+            <div class="h-6 sm:h-8 w-full bg-white/10 rounded-lg"></div>
           </div>
         </div>
 
-        <!-- Timeline-Based Layout -->
-        <div v-else-if="explanation && parsedExplanation" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-fade-in-up">
+        <!-- Timeline-Based Layout - 4 Card Grid -->
+        <div v-else-if="explanation && parsedExplanation" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-fade-in-up">
           
           <!-- Morning Card -->
-          <div v-if="parsedExplanation.morning" class="bg-gradient-to-br from-amber-500/20 to-orange-500/20 backdrop-blur-xl border border-amber-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-6 hover:scale-105 transition-transform">
-            <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+          <div class="bg-gradient-to-br from-amber-500/20 to-orange-500/20 backdrop-blur-xl border border-amber-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-5 hover:scale-[1.02] transition-transform">
+            <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
               <div class="p-1.5 sm:p-2 bg-amber-400/20 rounded-lg">
-                <svg class="w-4 h-4 sm:w-6 sm:h-6 text-amber-300" fill="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-amber-300" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"/>
                 </svg>
               </div>
-              <div>
-                <h4 class="font-bold text-sm sm:text-lg text-white">Pagi</h4>
-                <p class="text-[10px] sm:text-xs text-amber-200/80">06:00 - 11:00</p>
+              <div class="flex-1 min-w-0">
+                <h4 class="font-bold text-sm sm:text-base text-white">Pagi</h4>
+                <p class="text-[9px] sm:text-[10px] text-amber-200/70">06:00 - 11:00</p>
               </div>
-              <span v-html="getWeatherIcon(parsedExplanation.morning.condition)" class="ml-auto text-lg sm:text-2xl"></span>
+              <span v-if="parsedExplanation.morning" v-html="getWeatherIcon(parsedExplanation.morning.condition)" class="text-lg sm:text-xl"></span>
             </div>
-            <p class="text-xs sm:text-sm text-white/90 leading-relaxed mb-2 sm:mb-3 line-clamp-3 sm:line-clamp-none">{{ parsedExplanation.morning.condition }}</p>
-            <div v-if="parsedExplanation.morning.action" class="flex items-start gap-1.5 sm:gap-2 p-2 sm:p-3 bg-white/10 rounded-lg">
-              <svg class="w-3 h-3 sm:w-4 sm:h-4 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <p class="text-[10px] sm:text-xs text-white/80 leading-relaxed mb-2 line-clamp-2">{{ parsedExplanation.morning?.condition || 'Data tidak tersedia' }}</p>
+            <div v-if="parsedExplanation.morning?.action" class="flex items-start gap-1.5 p-1.5 sm:p-2 bg-white/10 rounded-lg">
+              <svg class="w-3 h-3 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              <span class="text-[10px] sm:text-xs text-green-200">{{ parsedExplanation.morning.action }}</span>
+              <span class="text-[9px] sm:text-[10px] text-green-200 line-clamp-2">{{ parsedExplanation.morning.action }}</span>
             </div>
           </div>
 
           <!-- Afternoon Card -->
-          <div v-if="parsedExplanation.afternoon" class="bg-gradient-to-br from-sky-500/20 to-blue-500/20 backdrop-blur-xl border border-sky-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-6 hover:scale-105 transition-transform">
-            <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+          <div class="bg-gradient-to-br from-sky-500/20 to-blue-500/20 backdrop-blur-xl border border-sky-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-5 hover:scale-[1.02] transition-transform">
+            <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
               <div class="p-1.5 sm:p-2 bg-sky-400/20 rounded-lg">
-                <svg class="w-4 h-4 sm:w-6 sm:h-6 text-sky-300" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-sky-300" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0z"/>
                 </svg>
               </div>
-              <div>
-                <h4 class="font-bold text-sm sm:text-lg text-white">Siang</h4>
-                <p class="text-[10px] sm:text-xs text-sky-200/80">12:00 - 15:00</p>
+              <div class="flex-1 min-w-0">
+                <h4 class="font-bold text-sm sm:text-base text-white">Siang</h4>
+                <p class="text-[9px] sm:text-[10px] text-sky-200/70">12:00 - 15:00</p>
               </div>
-              <span v-html="getWeatherIcon(parsedExplanation.afternoon.condition)" class="ml-auto text-lg sm:text-2xl"></span>
+              <span v-if="parsedExplanation.afternoon" v-html="getWeatherIcon(parsedExplanation.afternoon.condition)" class="text-lg sm:text-xl"></span>
             </div>
-            <p class="text-xs sm:text-sm text-white/90 leading-relaxed mb-2 sm:mb-3 line-clamp-3 sm:line-clamp-none">{{ parsedExplanation.afternoon.condition }}</p>
-            <div v-if="parsedExplanation.afternoon.action" class="flex items-start gap-1.5 sm:gap-2 p-2 sm:p-3 bg-white/10 rounded-lg">
-              <svg class="w-3 h-3 sm:w-4 sm:h-4 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <p class="text-[10px] sm:text-xs text-white/80 leading-relaxed mb-2 line-clamp-2">{{ parsedExplanation.afternoon?.condition || 'Data tidak tersedia' }}</p>
+            <div v-if="parsedExplanation.afternoon?.action" class="flex items-start gap-1.5 p-1.5 sm:p-2 bg-white/10 rounded-lg">
+              <svg class="w-3 h-3 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              <span class="text-[10px] sm:text-xs text-green-200">{{ parsedExplanation.afternoon.action }}</span>
+              <span class="text-[9px] sm:text-[10px] text-green-200 line-clamp-2">{{ parsedExplanation.afternoon.action }}</span>
             </div>
           </div>
 
           <!-- Evening Card -->
-          <div v-if="parsedExplanation.evening" class="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-xl border border-purple-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-6 hover:scale-105 transition-transform">
-            <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+          <div class="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-xl border border-purple-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-5 hover:scale-[1.02] transition-transform">
+            <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
               <div class="p-1.5 sm:p-2 bg-purple-400/20 rounded-lg">
-                <svg class="w-4 h-4 sm:w-6 sm:h-6 text-purple-300" fill="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-purple-300" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/>
                 </svg>
               </div>
-              <div>
-                <h4 class="font-bold text-sm sm:text-lg text-white">Sore</h4>
-                <p class="text-[10px] sm:text-xs text-purple-200/80">16:00 - 18:00</p>
+              <div class="flex-1 min-w-0">
+                <h4 class="font-bold text-sm sm:text-base text-white">Sore</h4>
+                <p class="text-[9px] sm:text-[10px] text-purple-200/70">16:00 - 18:00</p>
               </div>
-              <span v-html="getWeatherIcon(parsedExplanation.evening.condition)" class="ml-auto text-lg sm:text-2xl"></span>
+              <span v-if="parsedExplanation.evening" v-html="getWeatherIcon(parsedExplanation.evening.condition)" class="text-lg sm:text-xl"></span>
             </div>
-            <p class="text-xs sm:text-sm text-white/90 leading-relaxed mb-2 sm:mb-3 line-clamp-3 sm:line-clamp-none">{{ parsedExplanation.evening.condition }}</p>
-            <div v-if="parsedExplanation.evening.action" class="flex items-start gap-1.5 sm:gap-2 p-2 sm:p-3 bg-white/10 rounded-lg">
-              <svg class="w-3 h-3 sm:w-4 sm:h-4 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <p class="text-[10px] sm:text-xs text-white/80 leading-relaxed mb-2 line-clamp-2">{{ parsedExplanation.evening?.condition || 'Data tidak tersedia' }}</p>
+            <div v-if="parsedExplanation.evening?.action" class="flex items-start gap-1.5 p-1.5 sm:p-2 bg-white/10 rounded-lg">
+              <svg class="w-3 h-3 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              <span class="text-[10px] sm:text-xs text-green-200">{{ parsedExplanation.evening.action }}</span>
+              <span class="text-[9px] sm:text-[10px] text-green-200 line-clamp-2">{{ parsedExplanation.evening.action }}</span>
             </div>
           </div>
 
           <!-- Night Card -->
-          <div v-if="parsedExplanation.night" class="bg-gradient-to-br from-indigo-500/20 to-slate-700/20 backdrop-blur-xl border border-indigo-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-6 hover:scale-105 transition-transform">
-            <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+          <div class="bg-gradient-to-br from-indigo-500/20 to-slate-700/20 backdrop-blur-xl border border-indigo-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-5 hover:scale-[1.02] transition-transform">
+            <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
               <div class="p-1.5 sm:p-2 bg-indigo-400/20 rounded-lg">
-                <svg class="w-4 h-4 sm:w-6 sm:h-6 text-indigo-300" fill="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-300" fill="currentColor" viewBox="0 0 24 24">
                   <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clip-rule="evenodd"/>
                 </svg>
               </div>
-              <div>
-                <h4 class="font-bold text-sm sm:text-lg text-white">Malam</h4>
-                <p class="text-[10px] sm:text-xs text-indigo-200/80">19:00 - 05:00</p>
+              <div class="flex-1 min-w-0">
+                <h4 class="font-bold text-sm sm:text-base text-white">Malam</h4>
+                <p class="text-[9px] sm:text-[10px] text-indigo-200/70">19:00 - 05:00</p>
               </div>
-              <span v-html="getWeatherIcon(parsedExplanation.night.condition)" class="ml-auto text-lg sm:text-2xl"></span>
+              <span v-if="parsedExplanation.night" v-html="getWeatherIcon(parsedExplanation.night.condition)" class="text-lg sm:text-xl"></span>
             </div>
-            <p class="text-xs sm:text-sm text-white/90 leading-relaxed mb-2 sm:mb-3 line-clamp-3 sm:line-clamp-none">{{ parsedExplanation.night.condition }}</p>
-            <div v-if="parsedExplanation.night.action" class="flex items-start gap-1.5 sm:gap-2 p-2 sm:p-3 bg-white/10 rounded-lg">
-              <svg class="w-3 h-3 sm:w-4 sm:h-4 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <p class="text-[10px] sm:text-xs text-white/80 leading-relaxed mb-2 line-clamp-2">{{ parsedExplanation.night?.condition || 'Data tidak tersedia' }}</p>
+            <div v-if="parsedExplanation.night?.action" class="flex items-start gap-1.5 p-1.5 sm:p-2 bg-white/10 rounded-lg">
+              <svg class="w-3 h-3 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              <span class="text-[10px] sm:text-xs text-green-200">{{ parsedExplanation.night.action }}</span>
+              <span class="text-[9px] sm:text-[10px] text-green-200 line-clamp-2">{{ parsedExplanation.night.action }}</span>
             </div>
           </div>
-
+            
         </div>
 
         <!-- Fallback for non-structured response -->
@@ -663,11 +665,29 @@ const parsedExplanation = computed(() => {
   
   // Attempt to parse structured JSON response from backend
   try {
-    const parsed = JSON.parse(explanation.value);
+    let jsonStr = explanation.value.trim();
+    
+    // Remove END_JSON suffix if present (from AI service stop sequence)
+    jsonStr = jsonStr.replace(/END_JSON\s*$/i, '').trim();
+    
+    // Try to extract JSON from response (handle markdown code blocks)
+    const jsonMatch = jsonStr.match(/```json\s*([\s\S]*?)\s*```/);
+    if (jsonMatch) {
+      jsonStr = jsonMatch[1].trim();
+    }
+    
+    // Also try to find JSON object in the response
+    const jsonObjMatch = jsonStr.match(/\{[\s\S]*\}/);
+    if (jsonObjMatch) {
+      jsonStr = jsonObjMatch[0];
+    }
+    
+    const parsed = JSON.parse(jsonStr);
     if (parsed.morning || parsed.afternoon || parsed.evening || parsed.night) {
       return parsed;
     }
   } catch (e) {
+    console.log('Failed to parse AI response as JSON:', e.message);
     // Not JSON, return null to use fallback render
   }
   
