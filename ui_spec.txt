@@ -1,0 +1,80 @@
+ANALISIS UI/UX SECTION "ANALISIS CERDAS AI" (PROJECT CUMULUS)
+
+OBJECTIVE:
+Mengevaluasi efektivitas penyampaian informasi prediksi cuaca pada section "Analisis Cerdas AI" yang saat ini menampilkan blok teks naratif panjang.
+
+1. KELEMAHAN SEKARANG (CURRENT PAIN POINTS)
+
+A. "Wall of Text" (Dinding Teks):
+- Tampilan berupa satu paragraf raksasa tanpa spasi antar baris yang cukup atau pembagian paragraf. Ini sangat mengintimidasi pengguna secara visual.
+
+B. Gaya Bahasa Tidak Fungsional (Over-Poetic):
+- AI menggunakan gaya bahasa sastra/novel (contoh: "memeluk langit", "aroma tanah seperti cerita lama", "menyalakan lilin kecil").
+- Konteks aplikasi cuaca membutuhkan data faktual, bukan prosa emosional.
+
+C. Keterbacaan (Readability) & Pemindaian (Scannability) Rendah:
+- Pengguna tidak bisa melakukan "skimming" (membaca cepat) untuk mencari poin penting seperti "Kapan hujan turun?" atau "Berapa suhu nanti siang?".
+- Panjang baris (line length) terlalu lebar, membuat mata lelah saat berpindah dari ujung kanan kembali ke kiri.
+
+D. Rasio Signal-to-Noise Buruk:
+- Informasi penting (jam, suhu, kondisi) terkubur dalam kata-kata pengantar yang tidak perlu.
+- Sekitar 70-80% teks adalah "filler" (bunga-bunga bahasa) yang tidak memberikan nilai informatif bagi pengguna yang ingin bersiap-siap keluar rumah.
+
+2. RESIKO UNTUK PEMBACA/PENGGUNA
+
+A. Cognitive Overload (Beban Kognitif):
+- Pengguna dipaksa berpikir keras dan membaca lama hanya untuk mendapatkan informasi sederhana. Ini meningkatkan friksi mental.
+
+B. Miskonsepsi & Kebingungan:
+- Bahasa kiasan bisa disalahartikan. Pengguna mungkin bingung apakah saran "menyalakan lilin" adalah instruksi darurat (mati listrik karena badai) atau sekadar saran suasana (romantis).
+
+C. Kehilangan Informasi Kritis (Missed Critical Info):
+- Jika ada peringatan cuaca ekstrem di tengah paragraf, besar kemungkinan pengguna akan melewatkannya karena mereka cenderung malas membaca teks sepanjang itu.
+
+D. User Abandonment (Ditinggalkan Pengguna):
+- Pengguna akan merasa fitur ini tidak berguna ("gimmick") dan berhenti membacanya setelah percobaan pertama, kembali hanya melihat angka/grafik.
+
+3. SARAN PERBAIKAN (RECOMMENDATIONS)
+
+A. Perubahan Format Konten (Content Formatting):
+- Ganti format paragraf naratif menjadi Bullet Points atau List Kronologis.
+- Gunakan huruf tebal (Bold) pada kata kunci (Waktu, Suhu, Kondisi) jika memungkinkan secara visual, atau letakkan di awal kalimat.
+
+B. Penyesuaian Prompt AI (Backend):
+- Ubah persona AI dari "Penyair/Novelis" menjadi "Asisten Pribadi yang Efisien".
+- Instruksikan AI untuk memberikan Actionable Insights (Saran yang bisa dilakukan).
+- Contoh: "Bawa payung jam 3 sore", "Hindari jemur pakaian pagi ini".
+
+C. Layout UI Baru (Visual Reference):
+- Timeline Summary: Bagi teks berdasarkan segmen waktu (Pagi, Siang, Sore, Malam).
+- Highlight Cards: Kotak kecil berisi ringkasan 1 kalimat. Contoh: "Hari ini cerah berawan, hujan ringan diprediksi pukul 15:00."
+- Iconography: Sisipkan ikon kecil (matahari, awan, payung) di samping teks untuk konteks visual cepat.
+
+D. Contoh Output Teks yang Lebih Baik:
+"Halo! Hari ini Temuwuh akan didominasi cuaca berawan.
+- 06:00 s.d 12:00: Berawan, suhu naik perlahan ke 28 derajat C. Nyaman untuk aktivitas luar.
+- 15:00: Hujan ringan diprediksi turun. Siapkan payung jika bepergian.
+- Malam: Suhu sejuk (24 derajat C), cocok untuk istirahat."
+
+4. URUTAN FASE/LANGKAH PENGERJAAN
+
+Fase 1: Prompt Engineering (Perbaikan Backend)
+- Tweak prompt AI untuk membatasi panjang karakter (max 50-80 kata per segmen).
+- Larang penggunaan kata sifat emosional/puitis.
+- Wajibkan output terstruktur (JSON atau format list sederhana).
+
+Fase 2: UI Wireframing (Desain Ulang Layout)
+- Pecah container teks besar menjadi 3-4 kolom atau kartu (Pagi, Siang, Malam).
+- Tambahkan elemen tipografi (Heading, Teks Tebal).
+
+Fase 3: Frontend Implementation
+- Parsing output AI baru ke dalam komponen UI yang baru.
+- Implementasi loading state yang menarik saat AI menulis (efek mengetik).
+
+Fase 4: User Testing
+- A/B Testing: Bandingkan versi puitis vs versi ringkas.
+- Ukur seberapa cepat pengguna menemukan informasi "Kapan hujan?".
+
+=============================================================
+Dibuat oleh AI Assistant untuk analisis perbaikan UX Cumulus.
+```

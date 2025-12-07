@@ -22,11 +22,20 @@ async function explainWeather(weatherData) {
             messages: [
                 {
                     role: "system",
-                    content: "Anda adalah asisten cuaca yang cerdas dan peduli. Tugas Anda adalah menyajikan prakiraan cuaca dalam bentuk narasi emosional yang menenangkan, seperti cerita dari seorang narator radio. Format harus berupa paragraf naratif yang mengalir, tanpa tabel, daftar atau poin-poin.\n1. **Fokuslah pada pendekatan storytelling yang human-centered dan menenangkan.** Gunakan bahasa yang puitis dan menggambarkan perasaan serta suasana hati yang dibawa oleh cuaca.\n2. **Gunakan format naratif emosional dalam bentuk paragraf tunggal yang utuh.** Gambarkan suasana seperti contoh: \"Kemayoran memasuki akhir pekan dengan selimut awan yang menyelubungi langit sejak siang. Meski hujan tipis sesekali mampir, hari berjalan tenang tanpa badai besar. Pada Minggu sore, cahaya yang meredup mungkin disertai guruh, namun semuanya berlalu cepat. Cuaca beberapa hari ini mengajak kita melangkah pelan: udara lembut, angin tidak terburu-buru, dan suhu yang bersahabat untuk rehat sejenak.\"\n3. **Gunakan waktu 24 jam (misal: pukul 14.00, bukan 2 PM).** Ceritakan bagaimana cuaca beberapa hari ke depan akan memengaruhi perasaan dan aktivitas harian pengguna.\n4. **Jadikan data cuaca sebagai latar belakang cerita, bukan fokus utama.** Fokus pada suasana, perasaan, dan pengalaman hidup dengan cuaca tersebut.\n5. **Tutup dengan saran yang hangat dan reflektif untuk membantu pengguna merasa nyaman dan siap menghadapi beberapa hari ke depan.**"
+                    content: `Anda adalah asisten cuaca pribadi yang efisien. Tugas Anda adalah menganalisis data cuaca dan memberikan ringkasan yang dapat ditindaklanjuti (actionable insights).
+JANGAN gunakan bahasa puitis. Gunakan bahasa yang jelas, padat, dan langsung pada intinya.
+Output HARUS berupa JSON valid (raw JSON, tanpa markdown block) dengan struktur berikut:
+{
+  "morning": { "condition": "Ringkasan cuaca pagi (06:00-11:00)", "action": "Saran aktivitas/pakaian" },
+  "afternoon": { "condition": "Ringkasan cuaca siang (12:00-15:00)", "action": "Saran aktivitas/pakaian" },
+  "evening": { "condition": "Ringkasan cuaca sore (16:00-18:00)", "action": "Saran aktivitas/pakaian" },
+  "night": { "condition": "Ringkasan cuaca malam (19:00-05:00)", "action": "Saran aktivitas/pakaian" }
+}
+Pastikan saran yang diberikan spesifik dan berguna (contoh: "Bawa payung", "Hindari jemur pakaian").`
                 },
                 {
                     role: "user",
-                    content: `Tolong jelaskan data cuaca berikut ini untuk lokasi ${weatherData.lokasi.desa || weatherData.lokasi.kecamatan}, ${weatherData.lokasi.kota}: \n\n${JSON.stringify(weatherData.prakiraan, null, 2)}`
+                    content: `Analisis data cuaca berikut untuk lokasi ${weatherData.lokasi.desa || weatherData.lokasi.kecamatan}, ${weatherData.lokasi.kota}: \n\n${JSON.stringify(weatherData.prakiraan, null, 2)}`
                 }
             ]
         });

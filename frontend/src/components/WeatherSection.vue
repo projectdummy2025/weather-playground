@@ -239,25 +239,157 @@
       </div>
 
       <!-- AI Explanation Section (Restyled) -->
-       <div class="mb-16">
-          <div class="flex items-center justify-between mb-6">
-            <h3 class="text-xl font-bold text-indigo-200">Analisis Cerdas AI</h3>
-            <button
-              @click="explainForecast"
-              :disabled="isExplaining"
-              class="flex items-center gap-2 px-5 py-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white text-sm font-bold rounded-full border border-white/20 transition-all disabled:opacity-50"
-            >
-              <svg v-if="isExplaining" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-              <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-              {{ isExplaining ? 'Menganalisis...' : 'Jelaskan Cuaca' }}
-            </button>
-         </div>
-                  <div v-if="explanation" class="p-8 bg-gradient-to-br from-indigo-900/40 to-violet-900/40 backdrop-blur-xl border border-indigo-500/30 rounded-2xl shadow-xl relative overflow-hidden animate-fade-in-up hover:bg-indigo-500/20 transition-all">
-            <div class="absolute top-0 right-0 p-8 opacity-5">
-               <svg class="w-48 h-48" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7v3c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" /></svg>
+      <div class="mb-16">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-bold text-indigo-200 flex items-center gap-2">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+            </svg>
+            Analisis Cerdas AI
+          </h3>
+          <button
+            @click="explainForecast"
+            :disabled="isExplaining"
+            class="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-sm font-bold rounded-full shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <svg v-if="isExplaining" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            <span v-if="isExplaining">Menganalisis<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span></span>
+            <span v-else>Analisis Cuaca</span>
+          </button>
+        </div>
+
+        <!-- Skeleton Loader during AI analysis -->
+        <div v-if="isExplaining" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-pulse">
+          <div v-for="i in 4" :key="i" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 bg-white/10 rounded-lg"></div>
+              <div class="space-y-2">
+                <div class="h-4 w-16 bg-white/10 rounded"></div>
+                <div class="h-3 w-20 bg-white/10 rounded"></div>
+              </div>
             </div>
-            <div class="relative z-10 prose prose-invert prose-lg max-w-none" v-html="renderedExplanation"></div>
-         </div>
+            <div class="space-y-2">
+              <div class="h-3 w-full bg-white/10 rounded"></div>
+              <div class="h-3 w-3/4 bg-white/10 rounded"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline-Based Layout -->
+        <div v-else-if="explanation && parsedExplanation" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in-up">
+          
+          <!-- Morning Card -->
+          <div v-if="parsedExplanation.morning" class="bg-gradient-to-br from-amber-500/20 to-orange-500/20 backdrop-blur-xl border border-amber-500/30 rounded-2xl p-6 hover:scale-105 transition-transform">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="p-2 bg-amber-400/20 rounded-lg">
+                <svg class="w-6 h-6 text-amber-300" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"/>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-bold text-lg text-white">Pagi</h4>
+                <p class="text-xs text-amber-200/80">06:00 - 11:00</p>
+              </div>
+              <span v-html="getWeatherIcon(parsedExplanation.morning.condition)" class="ml-auto text-2xl"></span>
+            </div>
+            <p class="text-sm text-white/90 leading-relaxed mb-3">{{ parsedExplanation.morning.condition }}</p>
+            <div v-if="parsedExplanation.morning.action" class="flex items-start gap-2 p-3 bg-white/10 rounded-lg">
+              <svg class="w-4 h-4 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-xs text-green-200">{{ parsedExplanation.morning.action }}</span>
+            </div>
+          </div>
+
+          <!-- Afternoon Card -->
+          <div v-if="parsedExplanation.afternoon" class="bg-gradient-to-br from-sky-500/20 to-blue-500/20 backdrop-blur-xl border border-sky-500/30 rounded-2xl p-6 hover:scale-105 transition-transform">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="p-2 bg-sky-400/20 rounded-lg">
+                <svg class="w-6 h-6 text-sky-300" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-bold text-lg text-white">Siang</h4>
+                <p class="text-xs text-sky-200/80">12:00 - 15:00</p>
+              </div>
+              <span v-html="getWeatherIcon(parsedExplanation.afternoon.condition)" class="ml-auto text-2xl"></span>
+            </div>
+            <p class="text-sm text-white/90 leading-relaxed mb-3">{{ parsedExplanation.afternoon.condition }}</p>
+            <div v-if="parsedExplanation.afternoon.action" class="flex items-start gap-2 p-3 bg-white/10 rounded-lg">
+              <svg class="w-4 h-4 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-xs text-green-200">{{ parsedExplanation.afternoon.action }}</span>
+            </div>
+          </div>
+
+          <!-- Evening Card -->
+          <div v-if="parsedExplanation.evening" class="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-6 hover:scale-105 transition-transform">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="p-2 bg-purple-400/20 rounded-lg">
+                <svg class="w-6 h-6 text-purple-300" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-bold text-lg text-white">Sore</h4>
+                <p class="text-xs text-purple-200/80">16:00 - 18:00</p>
+              </div>
+              <span v-html="getWeatherIcon(parsedExplanation.evening.condition)" class="ml-auto text-2xl"></span>
+            </div>
+            <p class="text-sm text-white/90 leading-relaxed mb-3">{{ parsedExplanation.evening.condition }}</p>
+            <div v-if="parsedExplanation.evening.action" class="flex items-start gap-2 p-3 bg-white/10 rounded-lg">
+              <svg class="w-4 h-4 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-xs text-green-200">{{ parsedExplanation.evening.action }}</span>
+            </div>
+          </div>
+
+          <!-- Night Card -->
+          <div v-if="parsedExplanation.night" class="bg-gradient-to-br from-indigo-500/20 to-slate-700/20 backdrop-blur-xl border border-indigo-500/30 rounded-2xl p-6 hover:scale-105 transition-transform">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="p-2 bg-indigo-400/20 rounded-lg">
+                <svg class="w-6 h-6 text-indigo-300" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-bold text-lg text-white">Malam</h4>
+                <p class="text-xs text-indigo-200/80">19:00 - 05:00</p>
+              </div>
+              <span v-html="getWeatherIcon(parsedExplanation.night.condition)" class="ml-auto text-2xl"></span>
+            </div>
+            <p class="text-sm text-white/90 leading-relaxed mb-3">{{ parsedExplanation.night.condition }}</p>
+            <div v-if="parsedExplanation.night.action" class="flex items-start gap-2 p-3 bg-white/10 rounded-lg">
+              <svg class="w-4 h-4 text-green-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-xs text-green-200">{{ parsedExplanation.night.action }}</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Fallback for non-structured response -->
+        <div v-else-if="explanation && !isExplaining" class="p-6 bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="p-2 bg-indigo-500/20 rounded-lg">
+              <svg class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+              </svg>
+            </div>
+            <h4 class="font-bold text-white">Analisis AI</h4>
+          </div>
+          <div class="text-sm text-white/90 leading-relaxed space-y-2" v-html="formattedFallbackExplanation"></div>
+        </div>
       </div>
 
       <!-- Chart Section (Restyled) -->
@@ -427,10 +559,81 @@ function isClosestTime(datetime) {
 const explanation = ref(null);
 const isExplaining = ref(false);
 
+const parsedExplanation = computed(() => {
+  if (!explanation.value) return null;
+  
+  // Attempt to parse structured JSON response from backend
+  try {
+    const parsed = JSON.parse(explanation.value);
+    if (parsed.morning || parsed.afternoon || parsed.evening || parsed.night) {
+      return parsed;
+    }
+  } catch (e) {
+    // Not JSON, return null to use fallback render
+  }
+  
+  return null;
+});
+
 const renderedExplanation = computed(() => {
   if (!explanation.value) return '';
   return marked.parse(explanation.value);
 });
+
+// Format fallback explanation as bullet points instead of wall of text
+const formattedFallbackExplanation = computed(() => {
+  if (!explanation.value) return '';
+  
+  // Split by sentences or line breaks
+  const text = explanation.value.trim();
+  
+  // If it contains line breaks, split by them
+  let points = text.split(/[\n]+/).filter(p => p.trim());
+  
+  // If no line breaks, try to split by sentences
+  if (points.length <= 1) {
+    points = text.split(/(?<=[.!?])\s+/).filter(p => p.trim());
+  }
+  
+  // If still just one point, wrap it
+  if (points.length <= 1) {
+    return `<p class="p-3 bg-white/5 rounded-lg">${text}</p>`;
+  }
+  
+  // Format as bullet points
+  return `<ul class="space-y-2">${points.map(p => 
+    `<li class="flex items-start gap-2 p-2 bg-white/5 rounded-lg">
+      <span class="text-indigo-400 mt-0.5">•</span>
+      <span>${p.trim()}</span>
+    </li>`
+  ).join('')}</ul>`;
+});
+
+// Get weather emoji icon based on condition text
+function getWeatherIcon(condition) {
+  if (!condition) return '';
+  const text = condition.toLowerCase();
+  
+  if (text.includes('petir') || text.includes('thunderstorm')) {
+    return '⛈️';
+  } else if (text.includes('hujan lebat') || text.includes('heavy rain')) {
+    return '🌧️';
+  } else if (text.includes('hujan') || text.includes('rain') || text.includes('gerimis') || text.includes('drizzle')) {
+    return '🌦️';
+  } else if (text.includes('berawan') || text.includes('cloud') || text.includes('mendung')) {
+    return '☁️';
+  } else if (text.includes('cerah') || text.includes('sunny') || text.includes('clear')) {
+    return '☀️';
+  } else if (text.includes('kabut') || text.includes('fog') || text.includes('asap')) {
+    return '🌫️';
+  } else if (text.includes('panas') || text.includes('hot')) {
+    return '🔥';
+  } else if (text.includes('dingin') || text.includes('cold') || text.includes('sejuk')) {
+    return '❄️';
+  } else {
+    return '🌤️'; // Default: partly cloudy
+  }
+}
 
 async function explainForecast() {
   if (!props.weatherData) return;
@@ -692,5 +895,26 @@ function formatTime(dateString) {
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Typing dots animation */
+.typing-dots span {
+  animation: typing-dot 1.4s infinite;
+  opacity: 0;
+}
+.typing-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+.typing-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing-dot {
+  0%, 20% { opacity: 0; }
+  40% { opacity: 1; }
+  60%, 100% { opacity: 0; }
 }
 </style>
