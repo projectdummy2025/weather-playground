@@ -1,12 +1,11 @@
 <template>
-  <div class="relative z-40 mb-12">
-    <div class="bg-white/10 backdrop-blur-md rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/20 shadow-2xl">
-      <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-white font-montserrat mb-4 sm:mb-6 flex items-center gap-2">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-        Pilih Lokasi
-      </h2>
+  <div class="relative z-40 mb-8 sm:mb-12">
+    <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-white font-montserrat mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+      <svg class="w-5 h-5 sm:w-6 sm:h-6 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+      Pilih Lokasi
+    </h2>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
         <!-- Province Filter -->
         <div class="relative" data-province-dropdown>
           <div class="relative group">
@@ -16,7 +15,7 @@
               @input="emit('update:provinceSearch', $event.target.value); emit('update:provinceDropdownOpen', true)"
               @click="emit('update:provinceDropdownOpen', !provinceDropdownOpen)"
               placeholder="Provinsi..."
-              class="w-full px-4 py-3 bg-slate-800/60 text-white rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-white/50 transition-all"
+              class="w-full px-4 py-3 bg-white/5 backdrop-blur-md text-white rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 placeholder-white/40 transition-all hover:bg-white/10"
             />
           </div>
           <div v-show="provinceDropdownOpen" class="absolute z-50 w-full mt-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl max-h-64 overflow-y-auto custom-scrollbar">
@@ -38,7 +37,7 @@
               @click="emit('update:cityDropdownOpen', !cityDropdownOpen)"
               :disabled="!selectedProvince"
               placeholder="Kota/Kabupaten..."
-              class="w-full px-4 py-3 bg-slate-800/60 text-white rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-white/50 transition-all disabled:opacity-40"
+              class="w-full px-4 py-3 bg-white/5 backdrop-blur-md text-white rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 placeholder-white/40 transition-all hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
             />
           </div>
           <div v-show="cityDropdownOpen" class="absolute z-50 w-full mt-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl max-h-64 overflow-y-auto custom-scrollbar">
@@ -60,7 +59,7 @@
               @click="emit('update:districtDropdownOpen', !districtDropdownOpen)"
               :disabled="!selectedCity"
               placeholder="Kecamatan..."
-              class="w-full px-4 py-3 bg-slate-800/60 text-white rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-white/50 transition-all disabled:opacity-40"
+              class="w-full px-4 py-3 bg-white/5 backdrop-blur-md text-white rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 placeholder-white/40 transition-all hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
             />
           </div>
           <div v-show="districtDropdownOpen" class="absolute z-50 w-full mt-2 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl max-h-64 overflow-y-auto custom-scrollbar">
@@ -82,7 +81,7 @@
               @click="emit('update:villageDropdownOpen', !villageDropdownOpen)"
               :disabled="!selectedDistrict"
               placeholder="Ketik untuk mencari desa/kelurahan..."
-              class="w-full px-4 py-3 bg-slate-800/60 text-white rounded-xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-white/50 transition-all disabled:opacity-40"
+              class="w-full px-4 py-3 bg-white/5 backdrop-blur-md text-white rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 placeholder-white/40 transition-all hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
             />
             <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
               <svg class="w-4 h-4 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,11 +102,10 @@
           </div>
         </div>
       </div>
-      
-      <div v-if="error" class="mt-4 p-3 bg-red-500/20 border border-red-500/40 rounded-lg text-red-200 text-sm flex items-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        {{ error }}
-      </div>
+    
+    <div v-if="error" class="mt-4 p-3 sm:p-4 bg-red-500/20 border border-red-500/40 rounded-xl text-red-200 text-sm sm:text-base flex items-center gap-2 sm:gap-3 backdrop-blur-sm">
+      <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      {{ error }}
     </div>
   </div>
 </template>

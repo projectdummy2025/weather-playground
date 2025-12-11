@@ -3,7 +3,7 @@
     id="weather-section"
     class="min-h-screen w-full py-4 sm:py-8"
   >
-    <div class="container mx-auto px-4 sm:px-6 md:px-12">
+    <div class="container mx-auto px-6 md:px-12">
       <!-- Location Filter Section -->
       <LocationFilter
         :provinces="provinces"
