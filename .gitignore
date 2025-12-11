@@ -37,5 +37,9 @@ dump.sql
 *.njsproj
 *.sln
 
+# Analysis reports (temporary)
+.analysis_report.md
+.analysis_*.md
+
 # Folders to keep clean
 /documentation/
