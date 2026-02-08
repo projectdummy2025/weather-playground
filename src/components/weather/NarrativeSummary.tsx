@@ -7,13 +7,26 @@
 
 import { type FC, useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
-import { 
-  generateActionItems, 
-  findBestActivityWindow, 
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  LightbulbIcon,
+  CheckCircleIcon,
+  WarningTriangleIcon,
+  InfoCircleIcon,
+  SunIcon,
+  CloudRainIcon,
+  ThermometerIcon,
+  CloudIcon,
+} from '@/components/ui';
+import {
+  generateActionItems,
+  findBestActivityWindow,
   findWorstActivityWindow,
   type ActionItem,
-  type TimeWindow 
+  type TimeWindow
 } from '@/services/interpreter';
 import type { HourlyForecast, DailySummary } from '@/types/weather';
 
@@ -36,11 +49,11 @@ export const NarrativeSummary: FC<NarrativeSummaryProps> = ({
     <Card className={className}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <span>💡</span>
+          <LightbulbIcon size={24} />
           <span>Rekomendasi Hari Ini</span>
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {/* Action Items - Bullet Points */}
         <div className="space-y-2">
@@ -67,8 +80,12 @@ export const NarrativeSummary: FC<NarrativeSummaryProps> = ({
 
         {/* Temperature Info */}
         <div className="pt-3 border-t border-slate-100 flex items-center gap-4 text-sm text-slate-500">
-          <span>🌡️ {summary.minTemp}° - {summary.maxTemp}°C</span>
-          <span>☁️ {summary.dominantWeather}</span>
+          <span className="flex items-center gap-1">
+            <ThermometerIcon size={18} /> {summary.minTemp}° - {summary.maxTemp}°C
+          </span>
+          <span className="flex items-center gap-1">
+            <CloudIcon size={18} /> {summary.dominantWeather}
+          </span>
         </div>
       </CardContent>
     </Card>
@@ -84,16 +101,16 @@ interface ActionItemRowProps {
 }
 
 const ActionItemRow: FC<ActionItemRowProps> = ({ item }) => {
-  const icon = {
-    'safe': '✓',
-    'warning': '⚠',
-    'info': 'ℹ',
-  }[item.type];
-
   const colorClass = {
     'safe': 'text-green-700 bg-green-50',
     'warning': 'text-yellow-700 bg-yellow-50',
     'info': 'text-blue-700 bg-blue-50',
+  }[item.type];
+
+  const IconComponent = {
+    'safe': CheckCircleIcon,
+    'warning': WarningTriangleIcon,
+    'info': InfoCircleIcon,
   }[item.type];
 
   return (
@@ -101,7 +118,7 @@ const ActionItemRow: FC<ActionItemRowProps> = ({ item }) => {
       'flex items-center gap-3 p-3 rounded-lg',
       colorClass
     )}>
-      <span className="text-lg">{icon}</span>
+      <IconComponent size={20} />
       <span className="text-sm font-medium">{item.text}</span>
     </div>
   );
@@ -123,25 +140,25 @@ const TimeWindowCard: FC<TimeWindowCardProps> = ({
   className,
 }) => {
   const isBest = type === 'best';
-  
-  const formatHour = (hour: number) => 
+
+  const formatHour = (hour: number) =>
     `${String(hour).padStart(2, '0')}:00`;
 
   // Format waktu: jika start dan end berbeda, tampilkan range
-  const timeDisplay = window.start === window.end 
+  const timeDisplay = window.start === window.end
     ? formatHour(window.start)
     : `${formatHour(window.start)} - ${formatHour(window.end)}`;
 
   return (
     <div className={cn(
       'rounded-xl border-2 p-4 text-center',
-      isBest 
-        ? 'border-green-300 bg-green-50' 
+      isBest
+        ? 'border-green-300 bg-green-50'
         : 'border-red-300 bg-red-50',
       className
     )}>
-      <div className="text-2xl mb-1">
-        {isBest ? '☀️' : '🌧️'}
+      <div className="flex justify-center mb-1">
+        {isBest ? <SunIcon size={32} /> : <CloudRainIcon size={32} />}
       </div>
       <div className={cn(
         'text-sm font-bold',
