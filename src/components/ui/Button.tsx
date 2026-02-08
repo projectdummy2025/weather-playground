@@ -35,10 +35,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               variant === 'ghost',
           },
           
-          // Sizes
+          // Sizes — min 44px touch target on mobile
           {
-            'h-8 px-3 text-sm': size === 'sm',
-            'h-10 px-4 text-sm': size === 'md',
+            'h-11 px-3 text-sm': size === 'sm',
+            'h-11 px-4 text-sm': size === 'md',
             'h-12 px-6 text-base': size === 'lg',
           },
           
