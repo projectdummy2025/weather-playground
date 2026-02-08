@@ -35,17 +35,17 @@ export default function RootLayout({
   return (
     <html lang="id" className={inter.variable}>
       <body className="bg-slate-50 text-slate-900 antialiased min-h-screen">
-        <div className="max-w-lg mx-auto">
+        <div className="max-w-lg md:max-w-5xl mx-auto">
           {children}
         </div>
-        
+
         {/* BMKG Attribution */}
         <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 py-2 px-4">
           <p className="text-center text-xs text-slate-500">
             Data prakiraan cuaca disediakan oleh{' '}
-            <a 
-              href="https://www.bmkg.go.id" 
-              target="_blank" 
+            <a
+              href="https://www.bmkg.go.id"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 hover:underline"
             >
