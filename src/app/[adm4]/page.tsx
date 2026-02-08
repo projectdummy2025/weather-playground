@@ -1,10 +1,10 @@
 /**
- * Weather Page - Halaman Cuaca per Lokasi
+ * Weather Page - Halaman Cuaca per Lokasi (Redesigned)
  * Dynamic route: /[adm4]
+ * Mobile & Desktop responsive layout
  */
 
 import { notFound } from 'next/navigation';
-import { Suspense } from 'react';
 import { getWeatherData } from '@/services/weather';
 import { isValidAdm4Code } from '@/lib/bmkg';
 import { formatDateIndonesia } from '@/lib/utils';
@@ -15,7 +15,6 @@ import {
   NarrativeSummary, 
   DailyForecastCard 
 } from '@/components/weather';
-import { LoadingPage } from '@/components/ui';
 
 interface WeatherPageProps {
   params: Promise<{ adm4: string }>;
@@ -54,42 +53,86 @@ export default async function WeatherPage({ params }: WeatherPageProps) {
   }
   
   return (
-    <main className="px-4 py-4 pb-16 space-y-4">
+    <main className="px-4 py-4 pb-16 max-w-5xl mx-auto">
       {/* Location Header */}
       <LocationHeader location={location} />
       
-      {/* Current Weather Card */}
-      <WeatherCard 
-        location={location} 
-        currentWeather={currentWeather} 
-      />
-      
-      {/* Today's Timeline */}
-      <Timeline forecasts={todayForecast.hourlyForecasts} />
-      
-      {/* Daily Summary */}
-      <NarrativeSummary summary={todayForecast.summary} />
-      
-      {/* Upcoming Days */}
-      {upcomingForecasts.length > 0 && (
-        <section>
-          <h2 className="font-semibold text-slate-900 mb-3">
-            Prakiraan Beberapa Hari ke Depan
-          </h2>
-          <div className="space-y-3">
-            {upcomingForecasts.map((forecast, index) => (
-              <DailyForecastCard
-                key={forecast.dateString}
-                forecast={forecast}
-                locationCode={adm4}
-              />
-            ))}
-          </div>
-        </section>
-      )}
+      {/* Mobile Layout: Stacked */}
+      <div className="md:hidden space-y-4 mt-4">
+        {/* Hero: Weather Card with Status */}
+        <WeatherCard 
+          location={location} 
+          currentWeather={currentWeather}
+          forecasts={todayForecast.hourlyForecasts}
+        />
+        
+        {/* Timeline Bar */}
+        <Timeline forecasts={todayForecast.hourlyForecasts} />
+        
+        {/* Recommendations */}
+        <NarrativeSummary 
+          summary={todayForecast.summary}
+          forecasts={todayForecast.hourlyForecasts}
+        />
+        
+        {/* Upcoming Days */}
+        {upcomingForecasts.length > 0 && (
+          <section>
+            <h2 className="font-semibold text-slate-900 mb-3">
+              Prakiraan Beberapa Hari ke Depan
+            </h2>
+            <div className="space-y-3">
+              {upcomingForecasts.map((forecast) => (
+                <DailyForecastCard
+                  key={forecast.dateString}
+                  forecast={forecast}
+                  locationCode={adm4}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+
+      {/* Desktop Layout: Grid */}
+      <div className="hidden md:block space-y-6 mt-4">
+        {/* Top Row: Hero + Timeline side by side */}
+        <div className="grid grid-cols-2 gap-6">
+          <WeatherCard 
+            location={location} 
+            currentWeather={currentWeather}
+            forecasts={todayForecast.hourlyForecasts}
+          />
+          <Timeline forecasts={todayForecast.hourlyForecasts} />
+        </div>
+        
+        {/* Recommendations - Full width */}
+        <NarrativeSummary 
+          summary={todayForecast.summary}
+          forecasts={todayForecast.hourlyForecasts}
+        />
+        
+        {/* Upcoming Days - 3 column grid */}
+        {upcomingForecasts.length > 0 && (
+          <section>
+            <h2 className="font-semibold text-slate-900 mb-3 text-lg">
+              Prakiraan Beberapa Hari ke Depan
+            </h2>
+            <div className="grid grid-cols-3 gap-4">
+              {upcomingForecasts.map((forecast) => (
+                <DailyForecastCard
+                  key={forecast.dateString}
+                  forecast={forecast}
+                  locationCode={adm4}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
       
       {/* Last updated */}
-      <div className="text-center text-xs text-slate-400 pt-4">
+      <div className="text-center text-xs text-slate-400 pt-6">
         Diperbarui: {formatDateIndonesia(lastUpdated)}, {lastUpdated.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
       </div>
     </main>
