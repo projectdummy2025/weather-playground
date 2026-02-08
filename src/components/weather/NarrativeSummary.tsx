@@ -1,6 +1,6 @@
 /**
- * NarrativeSummary Component - Redesigned
- * Bullet points singkat + Time Window Cards
+ * NarrativeSummary Component
+ * Rekomendasi sederhana dan jujur berdasarkan data
  */
 
 'use client';
@@ -9,26 +9,14 @@ import { type FC, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import {
   Card,
+  CardContent,
   CardHeader,
   CardTitle,
-  CardContent,
   LightbulbIcon,
-  CheckCircleIcon,
-  WarningTriangleIcon,
-  InfoCircleIcon,
-  SunIcon,
-  CloudRainIcon,
   ThermometerIcon,
   CloudIcon,
 } from '@/components/ui';
-import {
-  generateActionItems,
-  findBestActivityWindow,
-  findWorstActivityWindow,
-  type ActionItem,
-  type TimeWindow
-} from '@/services/interpreter';
-import type { HourlyForecast, DailySummary } from '@/types/weather';
+import type { DailySummary, HourlyForecast } from '@/types/weather';
 
 interface NarrativeSummaryProps {
   summary: DailySummary;
@@ -41,140 +29,102 @@ export const NarrativeSummary: FC<NarrativeSummaryProps> = ({
   forecasts = [],
   className,
 }) => {
-  const actionItems = useMemo(() => generateActionItems(forecasts), [forecasts]);
-  const bestWindow = useMemo(() => findBestActivityWindow(forecasts), [forecasts]);
-  const worstWindow = useMemo(() => findWorstActivityWindow(forecasts), [forecasts]);
+  // Hitung statistik sederhana
+  const stats = useMemo(() => {
+    if (forecasts.length === 0) {
+      return { amanCount: 0, waspadaCount: 0, bahayaCount: 0, total: 0 };
+    }
+
+    const amanCount = forecasts.filter(f => f.riskLevel === 'AMAN').length;
+    const waspadaCount = forecasts.filter(f => f.riskLevel === 'RISIKO_RINGAN').length;
+    const bahayaCount = forecasts.filter(f => f.riskLevel === 'RISIKO_TINGGI').length;
+
+    return { amanCount, waspadaCount, bahayaCount, total: forecasts.length };
+  }, [forecasts]);
+
+  // Generate rekomendasi JUJUR
+  const recommendation = useMemo(() => {
+    if (stats.total === 0) {
+      return {
+        type: 'info' as const,
+        text: 'Data prakiraan sedang dimuat',
+      };
+    }
+
+    // Jika ada bahaya
+    if (stats.bahayaCount > 0) {
+      return {
+        type: 'danger' as const,
+        text: 'Cuaca buruk diprediksi hari ini. Hindari aktivitas luar ruangan.',
+      };
+    }
+
+    // Jika ada waspada tapi tidak ada aman
+    if (stats.waspadaCount > 0 && stats.amanCount === 0) {
+      return {
+        type: 'warning' as const,
+        text: 'Cuaca tidak stabil. Siapkan payung jika harus keluar.',
+      };
+    }
+
+    // Jika campuran aman dan waspada
+    if (stats.waspadaCount > 0 && stats.amanCount > 0) {
+      return {
+        type: 'warning' as const,
+        text: 'Cuaca berubah-ubah. Cek prakiraan sebelum beraktivitas.',
+      };
+    }
+
+    // Semua aman
+    return {
+      type: 'safe' as const,
+      text: 'Cuaca cerah. Cocok untuk aktivitas luar ruangan.',
+    };
+  }, [stats]);
+
+  const bgColor = {
+    safe: 'bg-green-50 border-green-200',
+    warning: 'bg-amber-50 border-amber-200',
+    danger: 'bg-red-50 border-red-200',
+    info: 'bg-blue-50 border-blue-200',
+  }[recommendation.type];
+
+  const textColor = {
+    safe: 'text-green-800',
+    warning: 'text-amber-800',
+    danger: 'text-red-800',
+    info: 'text-blue-800',
+  }[recommendation.type];
 
   return (
     <Card className={className}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <LightbulbIcon size={24} />
-          <span>Rekomendasi Hari Ini</span>
+          <span>Rekomendasi</span>
         </CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Action Items - Bullet Points */}
-        <div className="space-y-2">
-          {actionItems.map((item, index) => (
-            <ActionItemRow key={index} item={item} />
-          ))}
+        {/* Rekomendasi utama */}
+        <div className={cn('p-4 rounded-lg border', bgColor)}>
+          <p className={cn('font-medium', textColor)}>
+            {recommendation.text}
+          </p>
         </div>
 
-        {/* Time Window Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {bestWindow && (
-            <TimeWindowCard
-              type="best"
-              window={bestWindow}
-            />
-          )}
-          {worstWindow && (
-            <TimeWindowCard
-              type="worst"
-              window={worstWindow}
-            />
-          )}
-        </div>
-
-        {/* Temperature Info */}
-        <div className="pt-3 border-t border-slate-100 flex items-center gap-4 text-sm text-slate-500">
+        {/* Info cuaca */}
+        <div className="flex items-center gap-4 text-sm text-slate-600">
           <span className="flex items-center gap-1">
-            <ThermometerIcon size={18} /> {summary.minTemp}° - {summary.maxTemp}°C
+            <ThermometerIcon size={18} />
+            {summary.minTemp}° - {summary.maxTemp}°C
           </span>
           <span className="flex items-center gap-1">
-            <CloudIcon size={18} /> {summary.dominantWeather}
+            <CloudIcon size={18} />
+            {summary.dominantWeather}
           </span>
         </div>
       </CardContent>
     </Card>
-  );
-};
-
-// ============================================
-// ActionItemRow Component
-// ============================================
-
-interface ActionItemRowProps {
-  item: ActionItem;
-}
-
-const ActionItemRow: FC<ActionItemRowProps> = ({ item }) => {
-  const colorClass = {
-    'safe': 'text-green-700 bg-green-50',
-    'warning': 'text-yellow-700 bg-yellow-50',
-    'info': 'text-blue-700 bg-blue-50',
-  }[item.type];
-
-  const IconComponent = {
-    'safe': CheckCircleIcon,
-    'warning': WarningTriangleIcon,
-    'info': InfoCircleIcon,
-  }[item.type];
-
-  return (
-    <div className={cn(
-      'flex items-center gap-3 p-3 rounded-lg',
-      colorClass
-    )}>
-      <IconComponent size={20} />
-      <span className="text-sm font-medium">{item.text}</span>
-    </div>
-  );
-};
-
-// ============================================
-// TimeWindowCard Component
-// ============================================
-
-interface TimeWindowCardProps {
-  type: 'best' | 'worst';
-  window: TimeWindow;
-  className?: string;
-}
-
-const TimeWindowCard: FC<TimeWindowCardProps> = ({
-  type,
-  window,
-  className,
-}) => {
-  const isBest = type === 'best';
-
-  const formatHour = (hour: number) =>
-    `${String(hour).padStart(2, '0')}:00`;
-
-  // Format waktu: jika start dan end berbeda, tampilkan range
-  const timeDisplay = window.start === window.end
-    ? formatHour(window.start)
-    : `${formatHour(window.start)} - ${formatHour(window.end)}`;
-
-  return (
-    <div className={cn(
-      'rounded-xl border-2 p-4 text-center',
-      isBest
-        ? 'border-green-300 bg-green-50'
-        : 'border-red-300 bg-red-50',
-      className
-    )}>
-      <div className="flex justify-center mb-1">
-        {isBest ? <SunIcon size={32} /> : <CloudRainIcon size={32} />}
-      </div>
-      <div className={cn(
-        'text-sm font-bold',
-        isBest ? 'text-green-700' : 'text-red-700'
-      )}>
-        {isBest ? 'WAKTU TERBAIK' : 'HINDARI'}
-      </div>
-      <div className={cn(
-        'text-lg font-semibold mt-2',
-        isBest ? 'text-green-800' : 'text-red-800'
-      )}>
-        {timeDisplay}
-      </div>
-      <div className="text-xs text-slate-500 mt-1">
-        ({window.duration} jam)
-      </div>
-    </div>
   );
 };

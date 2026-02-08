@@ -1,5 +1,5 @@
 /**
- * Timeline Component - Redesigned
+ * Timeline Component
  * Visual bar untuk mobile, segment cards untuk desktop
  */
 
@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardHeader, CardTitle } from '@/components/ui';
 import { HorizontalRiskBar, RiskLegend } from './HorizontalRiskBar';
 import { SegmentGrid } from './SegmentCard';
-import { groupIntoSegments, findBestActivityWindow } from '@/services/interpreter';
+import { groupIntoSegments } from '@/services/interpreter';
 import type { HourlyForecast } from '@/types/weather';
 
 interface TimelineProps {
@@ -20,29 +20,31 @@ interface TimelineProps {
 
 export const Timeline: FC<TimelineProps> = ({ forecasts, className }) => {
   const segments = useMemo(() => groupIntoSegments(forecasts), [forecasts]);
-  const bestWindow = useMemo(() => findBestActivityWindow(forecasts), [forecasts]);
 
-  // Generate recommendation text
+  // Generate rekomendasi JUJUR berdasarkan data
   const recommendation = useMemo(() => {
-    if (bestWindow) {
-      const start = String(bestWindow.start).padStart(2, '0');
-      const end = String(bestWindow.end).padStart(2, '0');
-      
-      // Jika durasi panjang (lebih dari 6 jam), sebutkan cuaca bagus
-      if (bestWindow.duration >= 6) {
-        return `Cuaca mendukung aktivitas dari jam ${start}:00 - ${end}:00`;
-      }
-      return `Waktu terbaik untuk aktivitas luar: ${start}:00 - ${end}:00`;
+    if (forecasts.length === 0) {
+      return 'Sedang memuat data prakiraan...';
     }
-    
-    // Cek apakah semua aman
+
+    const hasHighRisk = forecasts.some(f => f.riskLevel === 'RISIKO_TINGGI');
+    const hasMediumRisk = forecasts.some(f => f.riskLevel === 'RISIKO_RINGAN');
     const allSafe = forecasts.every(f => f.riskLevel === 'AMAN');
-    if (allSafe) {
-      return 'Cuaca cerah sepanjang hari, cocok untuk aktivitas luar';
+
+    if (hasHighRisk) {
+      return 'Cuaca buruk diprediksi. Hindari aktivitas luar.';
     }
-    
-    return 'Pantau kondisi cuaca sebelum beraktivitas';
-  }, [bestWindow, forecasts]);
+
+    if (hasMediumRisk && !allSafe) {
+      return 'Cuaca berubah-ubah. Siapkan payung jika keluar.';
+    }
+
+    if (allSafe) {
+      return 'Cuaca cerah sepanjang hari.';
+    }
+
+    return 'Pantau kondisi cuaca sebelum beraktivitas.';
+  }, [forecasts]);
 
   return (
     <Card className={className}>
@@ -59,14 +61,13 @@ export const Timeline: FC<TimelineProps> = ({ forecasts, className }) => {
         <CardHeader>
           <CardTitle>Timeline Hari Ini</CardTitle>
         </CardHeader>
-        
+
         {/* Segment Grid */}
         <SegmentGrid segments={segments} className="mb-4" />
 
         {/* Recommendation */}
-        <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
+        <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg text-sm text-slate-700">
           <span>💡</span>
-          <span className="font-medium">Rekomendasi:</span>
           <span>{recommendation}</span>
         </div>
 
