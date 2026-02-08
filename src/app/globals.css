@@ -42,3 +42,23 @@ body {
     @apply rounded-xl bg-white p-4 shadow-lg;
   }
 }
+
+/* Hide scrollbar but keep scroll functionality */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Ensure tap highlight is invisible */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth font rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

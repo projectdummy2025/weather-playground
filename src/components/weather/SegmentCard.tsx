@@ -122,14 +122,22 @@ export const SegmentGrid: FC<SegmentGridProps> = ({
   const activeSegment = getActiveSegment();
 
   return (
-    <div className={cn('grid grid-cols-4 gap-3', className)}>
-      {segments.map(segment => (
-        <SegmentCard
-          key={segment.label}
-          segment={segment}
-          isActive={segment.label === activeSegment}
-        />
-      ))}
+    <div className="relative">
+      <div className={cn(
+        'flex gap-3 overflow-x-auto scrollbar-hide md:grid md:grid-cols-4 md:overflow-visible',
+        className
+      )}>
+        {segments.map(segment => (
+          <SegmentCard
+            key={segment.label}
+            segment={segment}
+            isActive={segment.label === activeSegment}
+            className="min-w-[140px] flex-shrink-0 md:min-w-0"
+          />
+        ))}
+      </div>
+      {/* Scroll fade hint (mobile only) */}
+      <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-white to-transparent pointer-events-none md:hidden" />
     </div>
   );
 };
