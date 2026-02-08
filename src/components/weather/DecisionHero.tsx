@@ -7,6 +7,7 @@
 
 import { type FC } from 'react';
 import { cn } from '@/lib/utils';
+import { AnimatedSunIcon, AnimatedCloudIcon, AnimatedStormIcon } from '@/components/ui';
 import type { RiskLevel } from '@/types/weather';
 
 interface DecisionHeroProps {
@@ -24,7 +25,7 @@ export const DecisionHero: FC<DecisionHeroProps> = ({
     const style = getDecisionStyle(riskLevel);
 
     return (
-        <div className={cn('relative overflow-hidden', style.glow, className)}>
+        <div className={cn('relative overflow-hidden rounded-2xl', style.glow, className)}>
             {/* Subtle pattern overlay */}
             <div
                 className="absolute inset-0 opacity-10 pointer-events-none"
@@ -36,20 +37,25 @@ export const DecisionHero: FC<DecisionHeroProps> = ({
             {/* Main content */}
             <div
                 className={cn(
-                    'relative w-full py-14 px-6 flex flex-col items-center justify-center text-center transition-all duration-300',
+                    'relative w-full py-10 px-6 flex flex-col items-center justify-center text-center transition-all duration-300',
                     style.bg,
                     style.text
                 )}
             >
+                {/* Weather Icon */}
+                <div className="mb-3">
+                    <WeatherIcon riskLevel={riskLevel} />
+                </div>
+
                 {/* Status label with subtle text shadow */}
                 <h1
-                    className="text-6xl font-black tracking-tight mb-3"
+                    className="text-5xl md:text-6xl font-black tracking-tight mb-3"
                     style={{ textShadow: style.textShadow }}
                 >
                     {style.label}
                 </h1>
 
-                <p className="text-xl font-medium max-w-lg opacity-90">
+                <p className="text-lg md:text-xl font-medium max-w-lg opacity-90">
                     {summary}
                 </p>
 
@@ -60,45 +66,58 @@ export const DecisionHero: FC<DecisionHeroProps> = ({
     );
 };
 
+// Weather icon based on risk level
+function WeatherIcon({ riskLevel }: { riskLevel: RiskLevel }) {
+    switch (riskLevel) {
+        case 'AMAN':
+            return <AnimatedSunIcon size={64} />;
+        case 'RISIKO_RINGAN':
+            return <AnimatedCloudIcon size={64} />;
+        case 'RISIKO_TINGGI':
+            return <AnimatedStormIcon size={64} />;
+        default:
+            return <AnimatedCloudIcon size={64} />;
+    }
+}
+
 // Helper for styles and labels
 function getDecisionStyle(risk: RiskLevel) {
     switch (risk) {
         case 'AMAN':
             return {
-                bg: 'bg-green-600',
+                bg: 'bg-gradient-to-br from-green-500 to-emerald-600',
                 text: 'text-white',
                 label: 'AMAN',
-                glow: 'shadow-[0_0_40px_rgba(34,197,94,0.25)]',
+                glow: 'shadow-[0_0_50px_rgba(34,197,94,0.3)]',
                 textShadow: '0 2px 4px rgba(0,0,0,0.15)',
-                accentBar: 'bg-gradient-to-r from-green-400 via-emerald-300 to-green-400',
+                accentBar: 'bg-gradient-to-r from-green-300 via-emerald-200 to-green-300',
             };
         case 'RISIKO_RINGAN':
             return {
-                bg: 'bg-amber-400',
+                bg: 'bg-gradient-to-br from-amber-400 to-yellow-500',
                 text: 'text-slate-900',
                 label: 'WASPADA',
-                glow: 'shadow-[0_0_40px_rgba(234,179,8,0.25)]',
+                glow: 'shadow-[0_0_50px_rgba(234,179,8,0.3)]',
                 textShadow: '0 1px 2px rgba(255,255,255,0.3)',
-                accentBar: 'bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-300',
+                accentBar: 'bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-200',
             };
         case 'RISIKO_TINGGI':
             return {
-                bg: 'bg-red-600',
+                bg: 'bg-gradient-to-br from-red-500 to-rose-600',
                 text: 'text-white',
                 label: 'RISIKO',
-                glow: 'shadow-[0_0_40px_rgba(239,68,68,0.25)]',
+                glow: 'shadow-[0_0_50px_rgba(239,68,68,0.3)]',
                 textShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                accentBar: 'bg-gradient-to-r from-red-400 via-rose-300 to-red-400',
+                accentBar: 'bg-gradient-to-r from-red-300 via-rose-200 to-red-300',
             };
         default:
             return {
-                bg: 'bg-slate-500',
+                bg: 'bg-gradient-to-br from-slate-500 to-slate-600',
                 text: 'text-white',
                 label: 'INFO',
-                glow: 'shadow-[0_0_20px_rgba(100,116,139,0.2)]',
+                glow: 'shadow-[0_0_30px_rgba(100,116,139,0.2)]',
                 textShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                accentBar: 'bg-gradient-to-r from-slate-400 via-slate-300 to-slate-400',
+                accentBar: 'bg-gradient-to-r from-slate-300 via-slate-200 to-slate-300',
             };
     }
 }
-
