@@ -1,6 +1,6 @@
 /**
  * HorizontalRiskBar Component
- * Visual bar menampilkan distribusi risiko sepanjang hari
+ * Rolling 24-hour forecast dari sekarang ke depan
  */
 
 'use client';
@@ -22,88 +22,92 @@ export const HorizontalRiskBar: FC<HorizontalRiskBarProps> = ({
   const now = new Date();
   const currentHour = now.getHours();
 
-  // Generate risiko per jam dengan interpolasi untuk interval BMKG 3-jam
-  const hourlyRisks = useMemo(() => {
-    const risks: (RiskLevel | null)[] = Array(24).fill(null);
-
-    // Sort forecasts by hour
-    const sorted = [...forecasts].sort((a, b) => a.hour - b.hour);
-
-    sorted.forEach((f, idx) => {
-      if (f.hour >= 0 && f.hour < 24) {
-        // Set current hour
-        risks[f.hour] = f.riskLevel;
-
-        // Interpolasi: extend ke jam berikutnya sampai forecast berikutnya
-        const nextForecast = sorted[idx + 1];
-        const endHour = nextForecast ? nextForecast.hour : Math.min(f.hour + 3, 24);
-
-        for (let h = f.hour + 1; h < endHour && h < 24; h++) {
-          risks[h] = f.riskLevel;
+  // Get upcoming forecasts (from now onwards, sorted by time)
+  const upcomingForecasts = useMemo(() => {
+    return forecasts
+      .filter(f => {
+        // Include forecasts from current hour onwards
+        // Handle day wrap-around by checking localDatetime if available
+        return true; // We'll sort and take what we need
+      })
+      .sort((a, b) => {
+        // Sort by localDatetime if available, otherwise by hour
+        if (a.localDatetime && b.localDatetime) {
+          return new Date(a.localDatetime).getTime() - new Date(b.localDatetime).getTime();
         }
-      }
-    });
-
-    return risks;
+        return a.hour - b.hour;
+      })
+      .slice(0, 8); // Take up to 8 forecasts (24 hours / 3 hour intervals)
   }, [forecasts]);
 
-  // Generate rekomendasi
+  // Generate recommendation based on upcoming forecasts
   const recommendation = useMemo(() => {
-    // Filter forecast dari jam sekarang sampai malam
-    const futureForecasts = forecasts
-      .filter(f => f.hour >= currentHour && f.hour <= 21)
-      .sort((a, b) => a.hour - b.hour);
-
-    if (futureForecasts.length === 0) {
+    if (upcomingForecasts.length === 0) {
       return 'Tidak ada data prakiraan tersedia';
     }
 
-    const allSafe = futureForecasts.every(f => f.riskLevel === 'AMAN');
-    const firstRisky = futureForecasts.find(f => f.riskLevel === 'RISIKO_TINGGI');
+    const allSafe = upcomingForecasts.every(f => f.riskLevel === 'AMAN');
+    const firstRisky = upcomingForecasts.find(f => f.riskLevel === 'RISIKO_TINGGI');
+    const firstCaution = upcomingForecasts.find(f => f.riskLevel === 'RISIKO_RINGAN');
 
     if (allSafe) {
-      return 'Cuaca cerah, cocok untuk aktivitas luar ruangan';
+      return 'Cuaca cerah sepanjang hari, cocok untuk aktivitas luar ruangan';
     }
 
     if (firstRisky) {
-      const jamRisky = String(firstRisky.hour).padStart(2, '0');
-      return `Waspada cuaca buruk mulai jam ${jamRisky}:00`;
+      const time = formatForecastTime(firstRisky);
+      return `Waspada cuaca buruk sekitar ${time}`;
     }
 
-    // Ada risiko ringan
-    return 'Waspada perubahan cuaca, siapkan payung';
-  }, [forecasts, currentHour]);
+    if (firstCaution) {
+      return 'Siapkan payung, ada kemungkinan hujan ringan';
+    }
 
-  // Time markers sesuai interval BMKG API: 02, 05, 08, 11, 14, 17, 20, 23
-  const timeMarkers = [2, 5, 8, 11, 14, 17, 20, 23];
+    return 'Pantau terus kondisi cuaca';
+  }, [upcomingForecasts]);
+
+  if (upcomingForecasts.length === 0) {
+    return (
+      <div className={cn('p-4 bg-slate-100 rounded-xl text-center text-slate-500', className)}>
+        Tidak ada data prakiraan tersedia
+      </div>
+    );
+  }
 
   return (
     <div className={cn('space-y-3', className)}>
       {/* Title */}
       <h3 className="font-semibold text-slate-900 text-sm">
-        KAPAN AMAN BERAKTIVITAS?
+        PRAKIRAAN 24 JAM KE DEPAN
       </h3>
 
-      {/* Time labels - aligned with bar */}
+      {/* Time labels */}
       <div className="flex text-xs text-slate-500">
-        {timeMarkers.map(hour => (
-          <span key={hour} className="flex-1 text-center">
-            {String(hour).padStart(2, '0')}
+        {upcomingForecasts.map((forecast, idx) => (
+          <span key={idx} className="flex-1 text-center truncate px-0.5">
+            {idx === 0 ? 'Skrg' : formatShortTime(forecast)}
           </span>
         ))}
       </div>
 
-      {/* Risk bar - only show hours with data */}
+      {/* Risk bar */}
       <div className="w-full flex h-10 md:h-12 rounded-xl overflow-hidden shadow-inner border border-slate-200">
-        {timeMarkers.map(hour => (
+        {upcomingForecasts.map((forecast, idx) => (
           <div
-            key={hour}
+            key={idx}
             className={cn(
-              'flex-1 transition-colors',
-              getRiskBarColor(hourlyRisks[hour])
+              'flex-1 transition-colors relative',
+              getRiskBarColor(forecast.riskLevel)
             )}
-            title={`${String(hour).padStart(2, '0')}:00 - ${getRiskTooltip(hourlyRisks[hour])}`}
-          />
+            title={`${formatForecastTime(forecast)} - ${getRiskTooltip(forecast.riskLevel)}`}
+          >
+            {/* Current time marker */}
+            {idx === 0 && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-2 h-2 bg-white rounded-full shadow-md animate-pulse" />
+              </div>
+            )}
+          </div>
         ))}
       </div>
 
@@ -146,6 +150,25 @@ export const RiskLegend: FC<{ className?: string }> = ({ className }) => {
 // Helper functions
 // ============================================
 
+function formatShortTime(forecast: HourlyForecast): string {
+  if (forecast.localDatetime) {
+    const date = new Date(forecast.localDatetime);
+    return `${String(date.getHours()).padStart(2, '0')}:00`;
+  }
+  return `${String(forecast.hour).padStart(2, '0')}:00`;
+}
+
+function formatForecastTime(forecast: HourlyForecast): string {
+  if (forecast.localDatetime) {
+    const date = new Date(forecast.localDatetime);
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+    const hour = String(date.getHours()).padStart(2, '0');
+    return isToday ? `jam ${hour}:00` : `besok jam ${hour}:00`;
+  }
+  return `jam ${String(forecast.hour).padStart(2, '0')}:00`;
+}
+
 function getRiskBarColor(risk: RiskLevel | null): string {
   switch (risk) {
     case 'AMAN':
@@ -171,3 +194,4 @@ function getRiskTooltip(risk: RiskLevel | null): string {
       return 'Tidak ada data';
   }
 }
+
