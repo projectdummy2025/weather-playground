@@ -42,7 +42,7 @@ export default function RootLayout({
         </div>
 
         {/* BMKG Attribution */}
-        <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 py-2 px-4">
+        <footer className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-white/60 py-2 px-4 z-50">
           <p className="text-center text-xs text-slate-500">
             Data prakiraan cuaca disediakan oleh{' '}
             <a
