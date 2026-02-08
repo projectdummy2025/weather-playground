@@ -16,11 +16,14 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          'rounded-xl bg-white p-4',
+          'rounded-xl bg-white p-4 transition-shadow duration-200',
           {
-            'shadow-sm': variant === 'default',
-            'shadow-lg': variant === 'elevated',
-            'border border-slate-200': variant === 'bordered',
+            // Default: subtle depth with inner highlight
+            'shadow-[0_1px_3px_rgba(0,0,0,0.06),0_4px_12px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.8)] border border-slate-200/60': variant === 'default',
+            // Elevated: stronger shadow, softer border
+            'shadow-[0_4px_20px_rgba(0,0,0,0.08),0_8px_32px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.9)] border border-slate-200/40': variant === 'elevated',
+            // Bordered: clear border with very subtle shadow
+            'border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04)]': variant === 'bordered',
           },
           className
         )}
