@@ -8,3 +8,4 @@ export * from './Badge';
 export * from './Input';
 export * from './Loading';
 export * from './Skeleton';
+export * from './OfflineBanner';
