@@ -1,10 +1,10 @@
 /**
  * Loading Page
- * Ditampilkan saat halaman sedang dimuat
+ * Ditampilkan saat halaman sedang dimuat (skeleton layout)
  */
 
-import { LoadingPage } from '@/components/ui';
+import { WeatherPageSkeleton } from '@/components/ui';
 
 export default function Loading() {
-  return <LoadingPage message="Memuat data cuaca..." />;
+  return <WeatherPageSkeleton />;
 }
