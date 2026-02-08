@@ -36,7 +36,8 @@ export const HorizontalRiskBar: FC<HorizontalRiskBarProps> = ({
 
         // Interpolasi: extend ke jam berikutnya sampai forecast berikutnya
         const nextForecast = sorted[idx + 1];
-        const endHour = nextForecast ? nextForecast.hour : Math.min(f.hour + 3, 24);
+        // Untuk forecast terakhir, extend sampai jam 24 (midnight)
+        const endHour = nextForecast ? nextForecast.hour : 24;
 
         for (let h = f.hour + 1; h < endHour && h < 24; h++) {
           risks[h] = f.riskLevel;
