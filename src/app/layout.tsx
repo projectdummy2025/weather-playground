@@ -37,7 +37,7 @@ export default function RootLayout({
     <html lang="id" className={inter.variable}>
       <body className="bg-slate-50 text-slate-900 antialiased min-h-screen">
         <OfflineBanner />
-        <div className="max-w-lg md:max-w-5xl mx-auto">
+        <div className="w-full md:max-w-5xl mx-auto px-4 md:px-0 pb-12">
           {children}
         </div>
 
