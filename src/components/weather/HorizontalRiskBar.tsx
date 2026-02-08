@@ -7,6 +7,7 @@
 
 import { type FC, useMemo } from 'react';
 import { cn } from '@/lib/utils';
+import { LightbulbIcon } from '@/components/ui';
 import type { HourlyForecast, RiskLevel } from '@/types/weather';
 
 interface HorizontalRiskBarProps {
@@ -108,7 +109,7 @@ export const HorizontalRiskBar: FC<HorizontalRiskBarProps> = ({
 
       {/* Recommendation */}
       <div className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
-        <span>💡</span>
+        <LightbulbIcon size={20} className="flex-shrink-0 mt-0.5" />
         <span>{recommendation}</span>
       </div>
 
