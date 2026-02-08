@@ -1,6 +1,6 @@
 /**
  * NarrativeSummary Component
- * Rekomendasi yang KONSISTEN dengan data yang ditampilkan
+ * Narasi persuasif seperti teman yang kasih saran cuaca
  */
 
 'use client';
@@ -29,16 +29,16 @@ export const NarrativeSummary: FC<NarrativeSummaryProps> = ({
   forecasts = [],
   className,
 }) => {
-  // Generate rekomendasi berdasarkan data
-  const recommendation = useMemo(() => {
+  // Generate narasi persuasif
+  const narrative = useMemo(() => {
     if (forecasts.length === 0) {
       return {
         type: 'info' as const,
-        text: 'Data prakiraan sedang dimuat...',
+        text: 'Sebentar ya, lagi ambil data cuaca terbaru...',
       };
     }
 
-    // Urutkan
+    // Urutkan berdasarkan waktu
     const sorted = [...forecasts].sort((a, b) => {
       if (a.localDatetime && b.localDatetime) {
         return new Date(a.localDatetime).getTime() - new Date(b.localDatetime).getTime();
@@ -46,86 +46,91 @@ export const NarrativeSummary: FC<NarrativeSummaryProps> = ({
       return a.hour - b.hour;
     });
 
-    // Analisis
+    // Analisis kondisi
     const riskyForecasts = sorted.filter(f => f.riskLevel === 'RISIKO_TINGGI');
     const cautionForecasts = sorted.filter(f => f.riskLevel === 'RISIKO_RINGAN');
     const safeForecasts = sorted.filter(f => f.riskLevel === 'AMAN');
 
-    // Jika ada risiko tinggi
+    // === NARASI UNTUK BERBAGAI KONDISI ===
+
+    // Kalau ada cuaca buruk
     if (riskyForecasts.length > 0) {
-      const times = riskyForecasts.map(f => formatTime(f)).join(', ');
-      const weather = riskyForecasts[0].weatherDesc;
+      const time = formatTimeNatural(riskyForecasts[0]);
+      const weather = riskyForecasts[0].weatherDesc.toLowerCase();
       return {
         type: 'danger' as const,
-        text: `Hindari keluar ${times}: ${weather}`,
+        text: `Wah, ${time} diprediksi ada ${weather}. Sebaiknya tunda dulu aktivitas di luar ya, atau pastikan kamu sudah di tempat yang aman sebelumnya.`,
       };
     }
 
-    // Jika semua aman
+    // Kalau semua aman
     if (cautionForecasts.length === 0 && safeForecasts.length > 0) {
+      const temp = Math.round((summary.minTemp + summary.maxTemp) / 2);
       return {
         type: 'safe' as const,
-        text: `Cuaca cerah, cocok untuk aktivitas luar.`,
+        text: `Kabar baik! Cuaca ${summary.dominantWeather.toLowerCase()} dengan suhu sekitar ${temp}°C. Cocok banget buat aktivitas di luar. Selamat beraktivitas! 🌤️`,
       };
     }
 
-    // Jika ada waspada
-    if (cautionForecasts.length > 0) {
-      const times = cautionForecasts.map(f => formatTime(f)).join(', ');
-      const weather = cautionForecasts[0].weatherDesc;
-
-      if (safeForecasts.length > 0) {
-        const safeTimes = safeForecasts.map(f => formatTime(f)).join(', ');
-        return {
-          type: 'warning' as const,
-          text: `Keluar di ${safeTimes} (cerah). Waspada ${times}: ${weather}.`,
-        };
-      }
+    // Kalau ada campuran aman dan waspada
+    if (safeForecasts.length > 0 && cautionForecasts.length > 0) {
+      const safeTime = formatTimeNatural(safeForecasts[0]);
+      const cautionTime = formatTimeNatural(cautionForecasts[0]);
+      const weather = cautionForecasts[0].weatherDesc.toLowerCase();
 
       return {
         type: 'warning' as const,
-        text: `Waspada ${times}: ${weather}. Siapkan payung.`,
+        text: `${safeTime} cuaca masih mendukung untuk keluar. Tapi ${cautionTime} ada kemungkinan ${weather}, jadi bawa payung atau jas hujan untuk jaga-jaga ya! ☔`,
+      };
+    }
+
+    // Kalau semua waspada
+    if (cautionForecasts.length > 0) {
+      const weather = cautionForecasts[0].weatherDesc.toLowerCase();
+      return {
+        type: 'warning' as const,
+        text: `Cuaca hari ini cenderung ${weather}. Kalau harus keluar, siapkan payung dan pilih waktu yang tepat. Pantau terus updatenya ya!`,
       };
     }
 
     return {
       type: 'info' as const,
-      text: 'Pantau kondisi cuaca.',
+      text: 'Cuaca hari ini cukup dinamis. Pantau terus prakiraan untuk update terbaru.',
     };
-  }, [forecasts]);
+  }, [forecasts, summary]);
 
   const bgColor = {
     safe: 'bg-green-50 border-green-200',
     warning: 'bg-amber-50 border-amber-200',
     danger: 'bg-red-50 border-red-200',
     info: 'bg-blue-50 border-blue-200',
-  }[recommendation.type];
+  }[narrative.type];
 
   const textColor = {
     safe: 'text-green-800',
     warning: 'text-amber-800',
     danger: 'text-red-800',
     info: 'text-blue-800',
-  }[recommendation.type];
+  }[narrative.type];
 
   return (
     <Card className={className}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <LightbulbIcon size={24} />
-          <span>Rekomendasi</span>
+          <span>Saran Hari Ini</span>
         </CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Rekomendasi */}
+        {/* Narasi utama */}
         <div className={cn('p-4 rounded-lg border', bgColor)}>
-          <p className={cn('font-medium', textColor)}>
-            {recommendation.text}
+          <p className={cn('leading-relaxed', textColor)}>
+            {narrative.text}
           </p>
         </div>
 
-        {/* Info cuaca */}
+        {/* Info ringkas */}
         <div className="flex items-center gap-4 text-sm text-slate-600">
           <span className="flex items-center gap-1">
             <ThermometerIcon size={18} />
@@ -141,23 +146,37 @@ export const NarrativeSummary: FC<NarrativeSummaryProps> = ({
   );
 };
 
-function formatTime(forecast: HourlyForecast): string {
+// Format waktu dengan bahasa natural
+function formatTimeNatural(forecast: HourlyForecast): string {
   if (forecast.localDatetime) {
     const date = new Date(forecast.localDatetime);
     const now = new Date();
-    const hour = `${String(date.getHours()).padStart(2, '0')}:00`;
+    const hour = date.getHours();
 
-    if (date.toDateString() === now.toDateString()) {
-      return hour;
-    }
-
+    const isToday = date.toDateString() === now.toDateString();
     const tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    if (date.toDateString() === tomorrow.toDateString()) {
-      return `besok ${hour}`;
+    const isTomorrow = date.toDateString() === tomorrow.toDateString();
+
+    // Konteks waktu
+    let timeContext = '';
+    if (hour >= 5 && hour < 10) timeContext = 'pagi';
+    else if (hour >= 10 && hour < 15) timeContext = 'siang';
+    else if (hour >= 15 && hour < 18) timeContext = 'sore';
+    else if (hour >= 18 && hour < 22) timeContext = 'malam';
+    else timeContext = 'dini hari';
+
+    const hourStr = `${String(hour).padStart(2, '0')}:00`;
+
+    if (isToday) {
+      if (hour >= 18) return `nanti malam sekitar jam ${hourStr}`;
+      return `hari ini ${timeContext} (${hourStr})`;
+    } else if (isTomorrow) {
+      return `besok ${timeContext} (${hourStr})`;
     }
 
-    return hour;
+    return `jam ${hourStr}`;
   }
-  return `${String(forecast.hour).padStart(2, '0')}:00`;
+
+  return `jam ${String(forecast.hour).padStart(2, '0')}:00`;
 }
