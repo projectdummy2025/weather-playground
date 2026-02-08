@@ -9,13 +9,15 @@ import { getWeatherData } from '@/services/weather';
 import { isValidAdm4Code } from '@/lib/bmkg';
 import { formatDateIndonesia } from '@/lib/utils';
 import { LocationHeader } from '@/components/location';
-import { 
-  WeatherCard, 
-  Timeline, 
-  NarrativeSummary, 
+import {
+  WeatherCard,
+  Timeline,
+  NarrativeSummary,
   DailyForecastCard,
   ForecastSaver,
   HistoryCard,
+  DecisionHero,
+  ActionBanner,
 } from '@/components/weather';
 
 interface WeatherPageProps {
@@ -24,23 +26,23 @@ interface WeatherPageProps {
 
 export default async function WeatherPage({ params }: WeatherPageProps) {
   const { adm4 } = await params;
-  
+
   // Validate adm4 code format
   if (!isValidAdm4Code(adm4)) {
     notFound();
   }
-  
+
   // Fetch weather data
   const weatherData = await getWeatherData(adm4);
-  
+
   if (!weatherData) {
     notFound();
   }
-  
+
   const { location, forecasts, lastUpdated } = weatherData;
   const todayForecast = forecasts[0];
   const upcomingForecasts = forecasts.slice(1);
-  
+
   // Get current weather (closest to current hour)
   const now = new Date();
   const currentHour = now.getHours();
@@ -49,11 +51,11 @@ export default async function WeatherPage({ params }: WeatherPageProps) {
       ? curr
       : prev;
   }) || todayForecast?.hourlyForecasts[0];
-  
+
   if (!currentWeather || !todayForecast) {
     notFound();
   }
-  
+
   return (
     <main className="px-4 py-4 pb-16 max-w-5xl mx-auto">
       {/* Location Header */}
@@ -66,28 +68,30 @@ export default async function WeatherPage({ params }: WeatherPageProps) {
         hourlyForecasts={todayForecast.hourlyForecasts}
         summary={todayForecast.summary}
       />
-      
+
       {/* Mobile Layout: Stacked */}
       <div className="md:hidden space-y-4 mt-4">
-        {/* Hero: Weather Card with Status */}
-        <WeatherCard 
-          location={location} 
-          currentWeather={currentWeather}
-          forecasts={todayForecast.hourlyForecasts}
+        {/* Hero: Decision Zone */}
+        <DecisionHero
+          riskLevel={todayForecast.summary.overallRisk}
+          summary={todayForecast.summary.narrative}
         />
-        
-        {/* Timeline Bar */}
+
+        {/* Action Guidance */}
+        <ActionBanner forecasts={todayForecast.hourlyForecasts} />
+
+        {/* Timeline Bar (Moved Down) */}
         <Timeline forecasts={todayForecast.hourlyForecasts} />
-        
-        {/* Recommendations */}
-        <NarrativeSummary 
+
+        {/* Recommendations / Details */}
+        <NarrativeSummary
           summary={todayForecast.summary}
           forecasts={todayForecast.hourlyForecasts}
         />
 
         {/* Riwayat Prakiraan Kemarin */}
         <HistoryCard adm4={adm4} />
-        
+
         {/* Upcoming Days */}
         {upcomingForecasts.length > 0 && (
           <section>
@@ -109,25 +113,30 @@ export default async function WeatherPage({ params }: WeatherPageProps) {
 
       {/* Desktop Layout: Grid */}
       <div className="hidden md:block space-y-6 mt-4">
-        {/* Top Row: Hero + Timeline side by side */}
-        <div className="grid grid-cols-2 gap-6">
-          <WeatherCard 
-            location={location} 
-            currentWeather={currentWeather}
-            forecasts={todayForecast.hourlyForecasts}
-          />
+        {/* Full Width Decision Hero */}
+        <DecisionHero
+          riskLevel={todayForecast.summary.overallRisk}
+          summary={todayForecast.summary.narrative}
+          className="rounded-2xl"
+        />
+
+        {/* Action Banner */}
+        <ActionBanner forecasts={todayForecast.hourlyForecasts} />
+
+        {/* Top Row: Timeline side by side */}
+        <div className="grid grid-cols-1 gap-6">
           <Timeline forecasts={todayForecast.hourlyForecasts} />
         </div>
-        
+
         {/* Recommendations - Full width */}
-        <NarrativeSummary 
+        <NarrativeSummary
           summary={todayForecast.summary}
           forecasts={todayForecast.hourlyForecasts}
         />
 
         {/* Riwayat Prakiraan Kemarin */}
         <HistoryCard adm4={adm4} />
-        
+
         {/* Upcoming Days - 3 column grid */}
         {upcomingForecasts.length > 0 && (
           <section>
@@ -146,7 +155,7 @@ export default async function WeatherPage({ params }: WeatherPageProps) {
           </section>
         )}
       </div>
-      
+
       {/* Last updated */}
       <div className="text-center text-xs text-slate-400 pt-6">
         Diperbarui: {formatDateIndonesia(lastUpdated)}, {lastUpdated.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
@@ -157,19 +166,19 @@ export default async function WeatherPage({ params }: WeatherPageProps) {
 
 export async function generateMetadata({ params }: WeatherPageProps) {
   const { adm4 } = await params;
-  
+
   if (!isValidAdm4Code(adm4)) {
     return { title: 'Lokasi Tidak Ditemukan' };
   }
-  
+
   const weatherData = await getWeatherData(adm4);
-  
+
   if (!weatherData) {
     return { title: 'Lokasi Tidak Ditemukan' };
   }
-  
+
   const { location } = weatherData;
-  
+
   return {
     title: `Cuaca ${location.desa}, ${location.kecamatan} - Cumulus`,
     description: `Prakiraan cuaca untuk ${location.desa}, ${location.kecamatan}, ${location.kabupaten}. Lihat jam aman dan jam berisiko untuk aktivitas luar ruangan.`,
