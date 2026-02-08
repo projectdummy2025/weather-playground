@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
+import { OfflineBanner } from '@/components/ui';
 import './globals.css';
 
 const inter = Inter({
@@ -35,6 +36,7 @@ export default function RootLayout({
   return (
     <html lang="id" className={inter.variable}>
       <body className="bg-slate-50 text-slate-900 antialiased min-h-screen">
+        <OfflineBanner />
         <div className="max-w-lg md:max-w-5xl mx-auto">
           {children}
         </div>
