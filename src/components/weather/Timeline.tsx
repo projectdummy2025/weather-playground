@@ -1,14 +1,17 @@
 /**
- * Timeline Component
- * Menampilkan timeline cuaca per jam dengan warna risiko
+ * Timeline Component - Redesigned
+ * Visual bar untuk mobile, segment cards untuk desktop
  */
 
 'use client';
 
-import { type FC, useState } from 'react';
+import { type FC, useMemo } from 'react';
 import { cn } from '@/lib/utils';
-import { Card, CardHeader, CardTitle, RiskBadge } from '@/components/ui';
-import type { HourlyForecast, RiskLevel } from '@/types/weather';
+import { Card, CardHeader, CardTitle } from '@/components/ui';
+import { HorizontalRiskBar, RiskLegend } from './HorizontalRiskBar';
+import { SegmentGrid } from './SegmentCard';
+import { groupIntoSegments, findBestActivityWindow } from '@/services/interpreter';
+import type { HourlyForecast } from '@/types/weather';
 
 interface TimelineProps {
   forecasts: HourlyForecast[];
@@ -16,116 +19,48 @@ interface TimelineProps {
 }
 
 export const Timeline: FC<TimelineProps> = ({ forecasts, className }) => {
-  const [selectedHour, setSelectedHour] = useState<HourlyForecast | null>(null);
-  
+  const segments = useMemo(() => groupIntoSegments(forecasts), [forecasts]);
+  const bestWindow = useMemo(() => findBestActivityWindow(forecasts), [forecasts]);
+
+  // Generate recommendation text
+  const recommendation = useMemo(() => {
+    if (bestWindow) {
+      const start = String(bestWindow.start).padStart(2, '0');
+      const end = String(bestWindow.end).padStart(2, '0');
+      return `Aktivitas luar paling baik dari jam ${start}:00 - ${end}:00`;
+    }
+    return 'Pantau kondisi cuaca sebelum beraktivitas';
+  }, [bestWindow]);
+
   return (
     <Card className={className}>
-      <CardHeader>
-        <CardTitle>Timeline Cuaca</CardTitle>
-      </CardHeader>
-      
-      {/* Horizontal scrolling timeline */}
-      <div className="overflow-x-auto pb-2 -mx-4 px-4">
-        <div className="flex gap-2 min-w-max">
-          {forecasts.map((forecast, index) => (
-            <TimelineSlot
-              key={index}
-              forecast={forecast}
-              isSelected={selectedHour?.hour === forecast.hour}
-              onClick={() => setSelectedHour(forecast)}
-            />
-          ))}
-        </div>
+      {/* Mobile View */}
+      <div className="md:hidden">
+        <CardHeader>
+          <CardTitle className="text-base">Timeline Hari Ini</CardTitle>
+        </CardHeader>
+        <HorizontalRiskBar forecasts={forecasts} />
       </div>
-      
-      {/* Selected hour detail */}
-      {selectedHour && (
-        <div className="mt-4 pt-4 border-t border-slate-100">
-          <TimelineDetail forecast={selectedHour} />
+
+      {/* Desktop View */}
+      <div className="hidden md:block">
+        <CardHeader>
+          <CardTitle>Timeline Hari Ini</CardTitle>
+        </CardHeader>
+        
+        {/* Segment Grid */}
+        <SegmentGrid segments={segments} className="mb-4" />
+
+        {/* Recommendation */}
+        <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
+          <span>💡</span>
+          <span className="font-medium">Rekomendasi:</span>
+          <span>{recommendation}</span>
         </div>
-      )}
+
+        {/* Legend */}
+        <RiskLegend className="mt-4" />
+      </div>
     </Card>
   );
 };
-
-interface TimelineSlotProps {
-  forecast: HourlyForecast;
-  isSelected: boolean;
-  onClick: () => void;
-}
-
-const TimelineSlot: FC<TimelineSlotProps> = ({
-  forecast,
-  isSelected,
-  onClick,
-}) => {
-  const bgColor = getRiskBgColor(forecast.riskLevel);
-  
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        'flex flex-col items-center p-2 rounded-lg transition-all min-w-[60px]',
-        bgColor,
-        isSelected && 'ring-2 ring-blue-500 ring-offset-2'
-      )}
-    >
-      <span className="text-xs font-medium text-slate-600">
-        {String(forecast.hour).padStart(2, '0')}:00
-      </span>
-      <span className="text-xl my-1">
-        {getRiskEmoji(forecast.riskLevel)}
-      </span>
-      <span className="text-sm font-semibold">
-        {forecast.temperature}°
-      </span>
-    </button>
-  );
-};
-
-interface TimelineDetailProps {
-  forecast: HourlyForecast;
-}
-
-const TimelineDetail: FC<TimelineDetailProps> = ({ forecast }) => {
-  return (
-    <div className="flex items-center justify-between">
-      <div>
-        <div className="text-lg font-semibold">
-          {String(forecast.hour).padStart(2, '0')}:00
-        </div>
-        <div className="text-slate-600">{forecast.weatherDesc}</div>
-        <div className="text-sm text-slate-500 mt-1">
-          {forecast.temperature}°C • Kelembapan {forecast.humidity}%
-        </div>
-      </div>
-      <RiskBadge risk={forecast.riskLevel} />
-    </div>
-  );
-};
-
-function getRiskBgColor(risk: RiskLevel): string {
-  switch (risk) {
-    case 'AMAN':
-      return 'bg-green-50 hover:bg-green-100';
-    case 'RISIKO_RINGAN':
-      return 'bg-yellow-50 hover:bg-yellow-100';
-    case 'RISIKO_TINGGI':
-      return 'bg-red-50 hover:bg-red-100';
-    default:
-      return 'bg-slate-50 hover:bg-slate-100';
-  }
-}
-
-function getRiskEmoji(risk: RiskLevel): string {
-  switch (risk) {
-    case 'AMAN':
-      return '🟢';
-    case 'RISIKO_RINGAN':
-      return '🟡';
-    case 'RISIKO_TINGGI':
-      return '🔴';
-    default:
-      return '⚪';
-  }
-}
