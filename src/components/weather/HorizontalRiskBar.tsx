@@ -24,25 +24,25 @@ export const HorizontalRiskBar: FC<HorizontalRiskBarProps> = ({
   // Generate risiko per jam dengan interpolasi untuk interval BMKG 3-jam
   const hourlyRisks = useMemo(() => {
     const risks: (RiskLevel | null)[] = Array(24).fill(null);
-    
+
     // Sort forecasts by hour
     const sorted = [...forecasts].sort((a, b) => a.hour - b.hour);
-    
+
     sorted.forEach((f, idx) => {
       if (f.hour >= 0 && f.hour < 24) {
         // Set current hour
         risks[f.hour] = f.riskLevel;
-        
+
         // Interpolasi: extend ke jam berikutnya sampai forecast berikutnya
         const nextForecast = sorted[idx + 1];
         const endHour = nextForecast ? nextForecast.hour : Math.min(f.hour + 3, 24);
-        
+
         for (let h = f.hour + 1; h < endHour && h < 24; h++) {
           risks[h] = f.riskLevel;
         }
       }
     });
-    
+
     return risks;
   }, [forecasts]);
 
@@ -52,14 +52,14 @@ export const HorizontalRiskBar: FC<HorizontalRiskBarProps> = ({
     const futureForecasts = forecasts
       .filter(f => f.hour >= currentHour && f.hour <= 21)
       .sort((a, b) => a.hour - b.hour);
-    
+
     if (futureForecasts.length === 0) {
       return 'Tidak ada data prakiraan tersedia';
     }
-    
+
     const allSafe = futureForecasts.every(f => f.riskLevel === 'AMAN');
     const firstRisky = futureForecasts.find(f => f.riskLevel === 'RISIKO_TINGGI');
-    
+
     if (allSafe) {
       return 'Cuaca cerah, cocok untuk aktivitas luar ruangan';
     }
@@ -93,29 +93,17 @@ export const HorizontalRiskBar: FC<HorizontalRiskBarProps> = ({
       </div>
 
       {/* Risk bar */}
-      <div className="relative">
-        <div className="flex h-8 rounded-lg overflow-hidden">
-          {hourlyRisks.map((risk, hour) => (
-            <div
-              key={hour}
-              className={cn(
-                'flex-1 transition-colors',
-                getRiskBarColor(risk)
-              )}
-              title={`${String(hour).padStart(2, '0')}:00 - ${getRiskTooltip(risk)}`}
-            />
-          ))}
-        </div>
-
-        {/* NOW indicator */}
-        <div
-          className="absolute top-0 bottom-0 w-0.5 bg-slate-900"
-          style={{ left: `${(currentHour / 24) * 100}%` }}
-        >
-          <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-xs font-medium text-slate-700">
-            NOW
-          </div>
-        </div>
+      <div className="flex h-12 rounded-xl overflow-hidden shadow-inner border border-slate-200">
+        {hourlyRisks.map((risk, hour) => (
+          <div
+            key={hour}
+            className={cn(
+              'flex-1 transition-colors',
+              getRiskBarColor(risk)
+            )}
+            title={`${String(hour).padStart(2, '0')}:00 - ${getRiskTooltip(risk)}`}
+          />
+        ))}
       </div>
 
       {/* Recommendation */}
