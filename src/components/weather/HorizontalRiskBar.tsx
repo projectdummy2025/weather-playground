@@ -36,8 +36,7 @@ export const HorizontalRiskBar: FC<HorizontalRiskBarProps> = ({
 
         // Interpolasi: extend ke jam berikutnya sampai forecast berikutnya
         const nextForecast = sorted[idx + 1];
-        // Untuk forecast terakhir, extend sampai jam 24 (midnight)
-        const endHour = nextForecast ? nextForecast.hour : 24;
+        const endHour = nextForecast ? nextForecast.hour : Math.min(f.hour + 3, 24);
 
         for (let h = f.hour + 1; h < endHour && h < 24; h++) {
           risks[h] = f.riskLevel;
@@ -75,8 +74,8 @@ export const HorizontalRiskBar: FC<HorizontalRiskBarProps> = ({
     return 'Waspada perubahan cuaca, siapkan payung';
   }, [forecasts, currentHour]);
 
-  // Time markers
-  const timeMarkers = [0, 3, 6, 9, 12, 15, 18, 21];
+  // Time markers sesuai interval BMKG API: 02, 05, 08, 11, 14, 17, 20, 23
+  const timeMarkers = [2, 5, 8, 11, 14, 17, 20, 23];
 
   return (
     <div className={cn('space-y-3', className)}>
@@ -85,25 +84,25 @@ export const HorizontalRiskBar: FC<HorizontalRiskBarProps> = ({
         KAPAN AMAN BERAKTIVITAS?
       </h3>
 
-      {/* Time labels */}
-      <div className="flex justify-between text-xs text-slate-500 px-0.5">
+      {/* Time labels - aligned with bar */}
+      <div className="flex text-xs text-slate-500">
         {timeMarkers.map(hour => (
-          <span key={hour} className="w-6 text-center">
+          <span key={hour} className="flex-1 text-center">
             {String(hour).padStart(2, '0')}
           </span>
         ))}
       </div>
 
-      {/* Risk bar */}
+      {/* Risk bar - only show hours with data */}
       <div className="w-full flex h-10 md:h-12 rounded-xl overflow-hidden shadow-inner border border-slate-200">
-        {hourlyRisks.map((risk, hour) => (
+        {timeMarkers.map(hour => (
           <div
             key={hour}
             className={cn(
-              'flex-1 min-w-0 transition-colors',
-              getRiskBarColor(risk)
+              'flex-1 transition-colors',
+              getRiskBarColor(hourlyRisks[hour])
             )}
-            title={`${String(hour).padStart(2, '0')}:00 - ${getRiskTooltip(risk)}`}
+            title={`${String(hour).padStart(2, '0')}:00 - ${getRiskTooltip(hourlyRisks[hour])}`}
           />
         ))}
       </div>
