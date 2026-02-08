@@ -9,3 +9,4 @@ export * from './Input';
 export * from './Loading';
 export * from './Skeleton';
 export * from './OfflineBanner';
+export * from './Icons';

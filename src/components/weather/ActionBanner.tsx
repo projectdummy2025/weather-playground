@@ -9,6 +9,7 @@ import { type FC, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import type { HourlyForecast } from '@/types/weather';
 import { generateActionItems } from '@/services/interpreter';
+import { CheckCircleIcon, WarningTriangleIcon, InfoCircleIcon } from '@/components/ui';
 
 interface ActionBannerProps {
     forecasts: HourlyForecast[];
@@ -36,13 +37,24 @@ export const ActionBanner: FC<ActionBannerProps> = ({
                         getActionStyle(action.type)
                     )}
                 >
-                    <span className="text-2xl">{getActionIcon(action.type)}</span>
+                    <ActionIcon type={action.type} />
                     <span>{action.text}</span>
                 </div>
             ))}
         </div>
     );
 };
+
+function ActionIcon({ type }: { type: 'safe' | 'warning' | 'info' }) {
+    switch (type) {
+        case 'safe':
+            return <CheckCircleIcon size={28} />;
+        case 'warning':
+            return <WarningTriangleIcon size={28} />;
+        case 'info':
+            return <InfoCircleIcon size={28} />;
+    }
+}
 
 function getActionStyle(type: 'safe' | 'warning' | 'info') {
     switch (type) {
@@ -52,13 +64,5 @@ function getActionStyle(type: 'safe' | 'warning' | 'info') {
             return 'bg-amber-100 text-amber-900 border-l-4 border-amber-600';
         case 'info':
             return 'bg-slate-100 text-slate-900 border-l-4 border-slate-600';
-    }
-}
-
-function getActionIcon(type: 'safe' | 'warning' | 'info') {
-    switch (type) {
-        case 'safe': return '✅';
-        case 'warning': return '⚠️';
-        case 'info': return 'ℹ️';
     }
 }
