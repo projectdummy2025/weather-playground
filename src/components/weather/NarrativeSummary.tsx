@@ -1,6 +1,6 @@
 /**
  * NarrativeSummary Component
- * Rekomendasi sederhana dan jujur berdasarkan data
+ * Rekomendasi yang KONSISTEN dengan data yang ditampilkan
  */
 
 'use client';
@@ -29,58 +29,70 @@ export const NarrativeSummary: FC<NarrativeSummaryProps> = ({
   forecasts = [],
   className,
 }) => {
-  // Hitung statistik sederhana
-  const stats = useMemo(() => {
-    if (forecasts.length === 0) {
-      return { amanCount: 0, waspadaCount: 0, bahayaCount: 0, total: 0 };
-    }
-
-    const amanCount = forecasts.filter(f => f.riskLevel === 'AMAN').length;
-    const waspadaCount = forecasts.filter(f => f.riskLevel === 'RISIKO_RINGAN').length;
-    const bahayaCount = forecasts.filter(f => f.riskLevel === 'RISIKO_TINGGI').length;
-
-    return { amanCount, waspadaCount, bahayaCount, total: forecasts.length };
-  }, [forecasts]);
-
-  // Generate rekomendasi JUJUR
+  // Generate rekomendasi berdasarkan data
   const recommendation = useMemo(() => {
-    if (stats.total === 0) {
+    if (forecasts.length === 0) {
       return {
         type: 'info' as const,
-        text: 'Data prakiraan sedang dimuat',
+        text: 'Data prakiraan sedang dimuat...',
       };
     }
 
-    // Jika ada bahaya
-    if (stats.bahayaCount > 0) {
+    // Urutkan
+    const sorted = [...forecasts].sort((a, b) => {
+      if (a.localDatetime && b.localDatetime) {
+        return new Date(a.localDatetime).getTime() - new Date(b.localDatetime).getTime();
+      }
+      return a.hour - b.hour;
+    });
+
+    // Analisis
+    const riskyForecasts = sorted.filter(f => f.riskLevel === 'RISIKO_TINGGI');
+    const cautionForecasts = sorted.filter(f => f.riskLevel === 'RISIKO_RINGAN');
+    const safeForecasts = sorted.filter(f => f.riskLevel === 'AMAN');
+
+    // Jika ada risiko tinggi
+    if (riskyForecasts.length > 0) {
+      const times = riskyForecasts.map(f => formatTime(f)).join(', ');
+      const weather = riskyForecasts[0].weatherDesc;
       return {
         type: 'danger' as const,
-        text: 'Cuaca buruk diprediksi hari ini. Hindari aktivitas luar ruangan.',
+        text: `Hindari keluar ${times}: ${weather}`,
       };
     }
 
-    // Jika ada waspada tapi tidak ada aman
-    if (stats.waspadaCount > 0 && stats.amanCount === 0) {
+    // Jika semua aman
+    if (cautionForecasts.length === 0 && safeForecasts.length > 0) {
+      return {
+        type: 'safe' as const,
+        text: `Cuaca cerah, cocok untuk aktivitas luar.`,
+      };
+    }
+
+    // Jika ada waspada
+    if (cautionForecasts.length > 0) {
+      const times = cautionForecasts.map(f => formatTime(f)).join(', ');
+      const weather = cautionForecasts[0].weatherDesc;
+
+      if (safeForecasts.length > 0) {
+        const safeTimes = safeForecasts.map(f => formatTime(f)).join(', ');
+        return {
+          type: 'warning' as const,
+          text: `Keluar di ${safeTimes} (cerah). Waspada ${times}: ${weather}.`,
+        };
+      }
+
       return {
         type: 'warning' as const,
-        text: 'Cuaca tidak stabil. Siapkan payung jika harus keluar.',
+        text: `Waspada ${times}: ${weather}. Siapkan payung.`,
       };
     }
 
-    // Jika campuran aman dan waspada
-    if (stats.waspadaCount > 0 && stats.amanCount > 0) {
-      return {
-        type: 'warning' as const,
-        text: 'Cuaca berubah-ubah. Cek prakiraan sebelum beraktivitas.',
-      };
-    }
-
-    // Semua aman
     return {
-      type: 'safe' as const,
-      text: 'Cuaca cerah. Cocok untuk aktivitas luar ruangan.',
+      type: 'info' as const,
+      text: 'Pantau kondisi cuaca.',
     };
-  }, [stats]);
+  }, [forecasts]);
 
   const bgColor = {
     safe: 'bg-green-50 border-green-200',
@@ -106,7 +118,7 @@ export const NarrativeSummary: FC<NarrativeSummaryProps> = ({
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Rekomendasi utama */}
+        {/* Rekomendasi */}
         <div className={cn('p-4 rounded-lg border', bgColor)}>
           <p className={cn('font-medium', textColor)}>
             {recommendation.text}
@@ -128,3 +140,24 @@ export const NarrativeSummary: FC<NarrativeSummaryProps> = ({
     </Card>
   );
 };
+
+function formatTime(forecast: HourlyForecast): string {
+  if (forecast.localDatetime) {
+    const date = new Date(forecast.localDatetime);
+    const now = new Date();
+    const hour = `${String(date.getHours()).padStart(2, '0')}:00`;
+
+    if (date.toDateString() === now.toDateString()) {
+      return hour;
+    }
+
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    if (date.toDateString() === tomorrow.toDateString()) {
+      return `besok ${hour}`;
+    }
+
+    return hour;
+  }
+  return `${String(forecast.hour).padStart(2, '0')}:00`;
+}

@@ -1,6 +1,6 @@
 /**
  * HorizontalRiskBar Component
- * Bar sederhana menampilkan prakiraan dari data yang tersedia
+ * Bar sederhana dengan rekomendasi SPESIFIK
  */
 
 'use client';
@@ -29,26 +29,33 @@ export const HorizontalRiskBar: FC<HorizontalRiskBarProps> = ({
     });
   }, [forecasts]);
 
-  // Generate rekomendasi
+  // Generate rekomendasi SPESIFIK
   const recommendation = useMemo(() => {
     if (sortedForecasts.length === 0) {
       return 'Tidak ada data prakiraan';
     }
 
-    const hasHighRisk = sortedForecasts.some(f => f.riskLevel === 'RISIKO_TINGGI');
-    const hasMediumRisk = sortedForecasts.some(f => f.riskLevel === 'RISIKO_RINGAN');
+    const firstRisky = sortedForecasts.find(f => f.riskLevel === 'RISIKO_TINGGI');
+    const firstCaution = sortedForecasts.find(f => f.riskLevel === 'RISIKO_RINGAN');
+    const firstSafe = sortedForecasts.find(f => f.riskLevel === 'AMAN');
     const allSafe = sortedForecasts.every(f => f.riskLevel === 'AMAN');
 
-    if (hasHighRisk) {
-      return 'Cuaca buruk diprediksi. Hindari aktivitas luar.';
+    if (firstRisky) {
+      return `Cuaca buruk sekitar ${formatTime(firstRisky)}. Hindari aktivitas luar.`;
     }
 
-    if (allSafe) {
-      return 'Cuaca cerah, cocok untuk aktivitas luar.';
+    if (allSafe && sortedForecasts.length > 0) {
+      const first = formatTime(sortedForecasts[0]);
+      const last = formatTime(sortedForecasts[sortedForecasts.length - 1]);
+      return `Cuaca cerah dari ${first} sampai ${last}.`;
     }
 
-    if (hasMediumRisk) {
-      return 'Cuaca tidak stabil. Siapkan payung.';
+    if (firstSafe && firstCaution) {
+      return `${formatTime(firstSafe)} cerah. Waspada ${formatTime(firstCaution)}: ${firstCaution.weatherDesc}.`;
+    }
+
+    if (firstCaution) {
+      return `${formatTime(firstCaution)}: ${firstCaution.weatherDesc}. Siapkan payung.`;
     }
 
     return 'Pantau kondisi cuaca.';
@@ -73,7 +80,7 @@ export const HorizontalRiskBar: FC<HorizontalRiskBarProps> = ({
       <div className="flex text-xs text-slate-500">
         {sortedForecasts.map((forecast, idx) => (
           <span key={idx} className="flex-1 text-center truncate">
-            {formatHour(forecast)}
+            {formatShortTime(forecast)}
           </span>
         ))}
       </div>
@@ -87,7 +94,7 @@ export const HorizontalRiskBar: FC<HorizontalRiskBarProps> = ({
               'flex-1 transition-colors',
               getRiskBarColor(forecast.riskLevel)
             )}
-            title={`${formatHour(forecast)} - ${getRiskLabel(forecast.riskLevel)}`}
+            title={`${formatShortTime(forecast)} - ${forecast.weatherDesc}`}
           />
         ))}
       </div>
@@ -131,12 +138,34 @@ export const RiskLegend: FC<{ className?: string }> = ({ className }) => {
 // Helper functions
 // ============================================
 
-function formatHour(forecast: HourlyForecast): string {
+function formatShortTime(forecast: HourlyForecast): string {
   if (forecast.localDatetime) {
     const date = new Date(forecast.localDatetime);
     return `${String(date.getHours()).padStart(2, '0')}:00`;
   }
   return `${String(forecast.hour).padStart(2, '0')}:00`;
+}
+
+function formatTime(forecast: HourlyForecast): string {
+  if (forecast.localDatetime) {
+    const date = new Date(forecast.localDatetime);
+    const now = new Date();
+    const hour = String(date.getHours()).padStart(2, '0');
+
+    const isToday = date.toDateString() === now.toDateString();
+    if (isToday) {
+      return `jam ${hour}:00`;
+    }
+
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    if (date.toDateString() === tomorrow.toDateString()) {
+      return `besok ${hour}:00`;
+    }
+
+    return `${hour}:00`;
+  }
+  return `jam ${String(forecast.hour).padStart(2, '0')}:00`;
 }
 
 function getRiskBarColor(risk: RiskLevel): string {
@@ -149,18 +178,5 @@ function getRiskBarColor(risk: RiskLevel): string {
       return 'bg-red-500';
     default:
       return 'bg-slate-200';
-  }
-}
-
-function getRiskLabel(risk: RiskLevel): string {
-  switch (risk) {
-    case 'AMAN':
-      return 'Aman';
-    case 'RISIKO_RINGAN':
-      return 'Waspada';
-    case 'RISIKO_TINGGI':
-      return 'Hindari';
-    default:
-      return 'Tidak ada data';
   }
 }
