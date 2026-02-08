@@ -1,6 +1,6 @@
 /**
  * Timeline Component
- * Tampilkan prakiraan dengan prioritas jam aktivitas
+ * Tampilkan prakiraan HANYA jam aktivitas (06:00-21:00)
  */
 
 'use client';
@@ -9,11 +9,11 @@ import { type FC, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui';
 import { RiskLegend } from './HorizontalRiskBar';
-import type { HourlyForecast, RiskLevel } from '@/types/weather';
+import type { HourlyForecast } from '@/types/weather';
 
-// Jam aktivitas normal
+// Jam aktivitas normal (06:00 - 21:00)
 const ACTIVITY_START_HOUR = 6;
-const ACTIVITY_END_HOUR = 22;
+const ACTIVITY_END_HOUR = 21;
 
 interface TimelineProps {
   forecasts: HourlyForecast[];
@@ -21,11 +21,8 @@ interface TimelineProps {
 }
 
 export const Timeline: FC<TimelineProps> = ({ forecasts, className }) => {
-  // Filter dan urutkan forecast
+  // Filter dan urutkan forecast - HANYA jam aktivitas
   const displayForecasts = useMemo(() => {
-    const now = new Date();
-    const currentHour = now.getHours();
-
     // Urutkan berdasarkan waktu
     const sorted = [...forecasts].sort((a, b) => {
       if (a.localDatetime && b.localDatetime) {
@@ -34,53 +31,36 @@ export const Timeline: FC<TimelineProps> = ({ forecasts, className }) => {
       return a.hour - b.hour;
     });
 
-    // Jika malam (setelah jam 22), tampilkan forecast besok jam aktivitas
-    if (currentHour >= ACTIVITY_END_HOUR) {
-      const tomorrow = new Date(now);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-
-      // Cari forecast besok di jam aktivitas
-      const tomorrowActive = sorted.filter(f => {
-        if (!f.localDatetime) return false;
-        const date = new Date(f.localDatetime);
-        const hour = date.getHours();
-        return date.toDateString() === tomorrow.toDateString() &&
-          hour >= ACTIVITY_START_HOUR && hour < ACTIVITY_END_HOUR;
-      });
-
-      if (tomorrowActive.length > 0) {
-        return tomorrowActive.slice(0, 6);
-      }
-    }
-
-    // Jika pagi buta (sebelum jam 6)
-    if (currentHour < ACTIVITY_START_HOUR) {
-      // Cari forecast hari ini jam aktivitas
-      const todayActive = sorted.filter(f => {
-        if (!f.localDatetime) return false;
-        const date = new Date(f.localDatetime);
-        const hour = date.getHours();
-        return date.toDateString() === now.toDateString() &&
-          hour >= ACTIVITY_START_HOUR && hour < ACTIVITY_END_HOUR;
-      });
-
-      if (todayActive.length > 0) {
-        return todayActive.slice(0, 6);
-      }
-    }
-
-    // Default: ambil forecast yang ada, prioritaskan jam aktivitas
-    const activeHours = sorted.filter(f => {
+    // FILTER KETAT: hanya jam 06:00 - 21:00 (aktivitas normal)
+    const activityOnly = sorted.filter(f => {
       const hour = f.localDatetime ? new Date(f.localDatetime).getHours() : f.hour;
-      return hour >= ACTIVITY_START_HOUR && hour < ACTIVITY_END_HOUR;
+      return hour >= ACTIVITY_START_HOUR && hour <= ACTIVITY_END_HOUR;
     });
 
-    if (activeHours.length >= 4) {
-      return activeHours.slice(0, 6);
+    // Jika ada data jam aktivitas, tampilkan
+    if (activityOnly.length > 0) {
+      return activityOnly.slice(0, 6);
     }
 
-    // Fallback: tampilkan apa yang ada
-    return sorted.slice(0, 6);
+    // Jika tidak ada jam aktivitas sama sekali, cari forecast besok pagi
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const tomorrowMorning = sorted.filter(f => {
+      if (!f.localDatetime) return false;
+      const date = new Date(f.localDatetime);
+      const hour = date.getHours();
+      return date.toDateString() === tomorrow.toDateString() &&
+        hour >= 6 && hour <= 12;
+    });
+
+    if (tomorrowMorning.length > 0) {
+      return tomorrowMorning.slice(0, 6);
+    }
+
+    // Fallback terakhir: jika benar-benar tidak ada, jangan tampilkan apapun
+    return [];
   }, [forecasts]);
 
   if (displayForecasts.length === 0) {
@@ -90,7 +70,11 @@ export const Timeline: FC<TimelineProps> = ({ forecasts, className }) => {
           <CardTitle>Prakiraan Cuaca</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-slate-500 text-center py-4">Memuat data prakiraan...</p>
+          <p className="text-slate-500 text-center py-4">
+            Data prakiraan untuk jam aktivitas belum tersedia.
+            <br />
+            <span className="text-sm">Cek lagi besok pagi!</span>
+          </p>
         </CardContent>
       </Card>
     );
