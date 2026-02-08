@@ -21,32 +21,56 @@ export const HorizontalRiskBar: FC<HorizontalRiskBarProps> = ({
   const now = new Date();
   const currentHour = now.getHours();
 
-  // Generate 24 jam (atau berdasarkan data)
+  // Generate risiko per jam dengan interpolasi untuk interval BMKG 3-jam
   const hourlyRisks = useMemo(() => {
     const risks: (RiskLevel | null)[] = Array(24).fill(null);
-    forecasts.forEach(f => {
+    
+    // Sort forecasts by hour
+    const sorted = [...forecasts].sort((a, b) => a.hour - b.hour);
+    
+    sorted.forEach((f, idx) => {
       if (f.hour >= 0 && f.hour < 24) {
+        // Set current hour
         risks[f.hour] = f.riskLevel;
+        
+        // Interpolasi: extend ke jam berikutnya sampai forecast berikutnya
+        const nextForecast = sorted[idx + 1];
+        const endHour = nextForecast ? nextForecast.hour : Math.min(f.hour + 3, 24);
+        
+        for (let h = f.hour + 1; h < endHour && h < 24; h++) {
+          risks[h] = f.riskLevel;
+        }
       }
     });
+    
     return risks;
   }, [forecasts]);
 
   // Generate rekomendasi
   const recommendation = useMemo(() => {
-    const futureForecasts = forecasts.filter(f => f.hour >= currentHour && f.hour <= 18);
-    const firstRisky = futureForecasts.find(f => f.riskLevel === 'RISIKO_TINGGI');
+    // Filter forecast dari jam sekarang sampai malam
+    const futureForecasts = forecasts
+      .filter(f => f.hour >= currentHour && f.hour <= 21)
+      .sort((a, b) => a.hour - b.hour);
+    
+    if (futureForecasts.length === 0) {
+      return 'Tidak ada data prakiraan tersedia';
+    }
+    
     const allSafe = futureForecasts.every(f => f.riskLevel === 'AMAN');
-
+    const firstRisky = futureForecasts.find(f => f.riskLevel === 'RISIKO_TINGGI');
+    
     if (allSafe) {
-      return 'Cuaca mendukung aktivitas sepanjang hari';
+      return 'Cuaca cerah, cocok untuk aktivitas luar ruangan';
     }
 
     if (firstRisky) {
-      return `Selesaikan aktivitas luar sebelum jam ${String(firstRisky.hour).padStart(2, '0')}:00`;
+      const jamRisky = String(firstRisky.hour).padStart(2, '0');
+      return `Waspada cuaca buruk mulai jam ${jamRisky}:00`;
     }
 
-    return 'Pantau terus kondisi cuaca hari ini';
+    // Ada risiko ringan
+    return 'Waspada perubahan cuaca, siapkan payung';
   }, [forecasts, currentHour]);
 
   // Time markers

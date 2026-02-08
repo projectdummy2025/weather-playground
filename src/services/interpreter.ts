@@ -340,18 +340,21 @@ export interface TimeSegment {
 
 /**
  * Mengelompokkan forecast ke dalam 4 segment waktu
+ * Disesuaikan dengan interval data BMKG (3 jam)
  */
 export function groupIntoSegments(
   forecasts: HourlyForecast[]
 ): TimeSegment[] {
+  // Segment disesuaikan dengan interval BMKG: 0, 3, 6, 9, 12, 15, 18, 21
   const segmentConfig = [
-    { label: 'Pagi' as const, startHour: 6, endHour: 12, timeRange: '06:00 - 12:00' },
-    { label: 'Siang' as const, startHour: 12, endHour: 15, timeRange: '12:00 - 15:00' },
-    { label: 'Sore' as const, startHour: 15, endHour: 18, timeRange: '15:00 - 18:00' },
-    { label: 'Malam' as const, startHour: 18, endHour: 24, timeRange: '18:00 - 00:00' },
+    { label: 'Pagi' as const, startHour: 6, endHour: 12, timeRange: '06:00 - 12:00', bmkgHours: [6, 9] },
+    { label: 'Siang' as const, startHour: 12, endHour: 15, timeRange: '12:00 - 15:00', bmkgHours: [12] },
+    { label: 'Sore' as const, startHour: 15, endHour: 18, timeRange: '15:00 - 18:00', bmkgHours: [15] },
+    { label: 'Malam' as const, startHour: 18, endHour: 24, timeRange: '18:00 - 00:00', bmkgHours: [18, 21] },
   ];
 
   return segmentConfig.map(config => {
+    // Filter berdasarkan jam BMKG yang ada di segment ini
     const hours = forecasts.filter(
       f => f.hour >= config.startHour && f.hour < config.endHour
     );
@@ -421,44 +424,54 @@ export function generateActionItems(
 ): ActionItem[] {
   const items: ActionItem[] = [];
   const segments = groupIntoSegments(forecasts);
+  const now = new Date();
+  const currentHour = now.getHours();
 
-  // Cek kondisi pagi
-  const pagi = segments.find(s => s.label === 'Pagi');
-  if (pagi && pagi.hours.length > 0) {
-    if (pagi.dominantRisk === 'AMAN') {
-      items.push({ type: 'safe', text: 'Pagi cerah, cocok untuk aktivitas luar' });
-    } else if (pagi.dominantRisk === 'RISIKO_TINGGI') {
-      items.push({ type: 'warning', text: 'Pagi hari berpotensi hujan, siapkan payung' });
-    }
-  }
-
-  // Cek kondisi siang/sore
-  const siang = segments.find(s => s.label === 'Siang');
-  const sore = segments.find(s => s.label === 'Sore');
+  // Cek apakah semua segment aman
+  const allSafe = segments.every(s => s.dominantRisk === 'AMAN' || s.hours.length === 0);
   
-  if (siang?.dominantRisk === 'RISIKO_TINGGI' || sore?.dominantRisk === 'RISIKO_TINGGI') {
-    const jamMulai = siang?.dominantRisk === 'RISIKO_TINGGI' ? 12 : 15;
-    items.push({ type: 'warning', text: `Siapkan payung setelah jam ${jamMulai}:00` });
-  }
+  if (allSafe) {
+    items.push({ type: 'safe', text: 'Cuaca cerah sepanjang hari, cocok untuk aktivitas luar' });
+  } else {
+    // Cek kondisi pagi (jika masih pagi)
+    const pagi = segments.find(s => s.label === 'Pagi');
+    if (pagi && pagi.hours.length > 0 && currentHour < 12) {
+      if (pagi.dominantRisk === 'AMAN') {
+        items.push({ type: 'safe', text: 'Pagi cerah, cocok untuk aktivitas luar' });
+      } else if (pagi.dominantRisk === 'RISIKO_TINGGI') {
+        items.push({ type: 'warning', text: 'Pagi hari berpotensi hujan, siapkan payung' });
+      } else {
+        items.push({ type: 'warning', text: 'Pagi berawan, waspada perubahan cuaca' });
+      }
+    }
 
-  // Cek kondisi malam
-  const malam = segments.find(s => s.label === 'Malam');
-  if (malam && malam.hours.length > 0) {
-    if (malam.dominantRisk === 'AMAN') {
-      items.push({ type: 'safe', text: 'Malam aman untuk pulang kerja' });
-    } else if (malam.dominantRisk === 'RISIKO_TINGGI') {
-      items.push({ type: 'warning', text: 'Malam berpotensi hujan, pulang lebih awal' });
+    // Cek kondisi siang/sore
+    const siang = segments.find(s => s.label === 'Siang');
+    const sore = segments.find(s => s.label === 'Sore');
+    
+    if ((siang?.hours.length ?? 0) > 0 || (sore?.hours.length ?? 0) > 0) {
+      if (siang?.dominantRisk === 'RISIKO_TINGGI' || sore?.dominantRisk === 'RISIKO_TINGGI') {
+        const jamMulai = siang?.dominantRisk === 'RISIKO_TINGGI' ? 12 : 15;
+        items.push({ type: 'warning', text: `Siapkan payung setelah jam ${jamMulai}:00` });
+      } else if (siang?.dominantRisk === 'AMAN' && sore?.dominantRisk === 'AMAN') {
+        items.push({ type: 'safe', text: 'Siang dan sore cerah untuk beraktivitas' });
+      }
+    }
+
+    // Cek kondisi malam
+    const malam = segments.find(s => s.label === 'Malam');
+    if (malam && malam.hours.length > 0) {
+      if (malam.dominantRisk === 'AMAN') {
+        items.push({ type: 'safe', text: 'Malam aman untuk perjalanan pulang' });
+      } else if (malam.dominantRisk === 'RISIKO_TINGGI') {
+        items.push({ type: 'warning', text: 'Malam berpotensi hujan, pulang lebih awal' });
+      }
     }
   }
 
   // Jika tidak ada items, berikan info umum
   if (items.length === 0) {
-    const overallSafe = forecasts.every(f => f.riskLevel === 'AMAN');
-    if (overallSafe) {
-      items.push({ type: 'safe', text: 'Cuaca mendukung aktivitas sepanjang hari' });
-    } else {
-      items.push({ type: 'info', text: 'Pantau terus kondisi cuaca hari ini' });
-    }
+    items.push({ type: 'info', text: 'Pantau terus kondisi cuaca hari ini' });
   }
 
   // Maksimal 3 items
@@ -476,96 +489,102 @@ export interface TimeWindow {
 
 /**
  * Cari rentang waktu AMAN terpanjang
+ * Durasi dihitung sebagai selisih jam (untuk interval BMKG 3-jam)
  */
 export function findBestActivityWindow(
   forecasts: HourlyForecast[]
 ): TimeWindow | null {
   if (forecasts.length === 0) return null;
 
-  // Filter jam 6 pagi sampai 18 sore (jam aktivitas normal)
-  const activityHours = forecasts.filter(f => f.hour >= 6 && f.hour <= 18);
+  // Filter jam 6 pagi sampai 21 malam (jam aktivitas normal)
+  const activityHours = forecasts
+    .filter(f => f.hour >= 6 && f.hour <= 21)
+    .sort((a, b) => a.hour - b.hour);
+  
   if (activityHours.length === 0) return null;
 
-  let bestWindow: TimeWindow | null = null;
-  let currentStart: number | null = null;
-  let currentEnd: number | null = null;
+  // Cari semua window AMAN berturutan
+  const safeWindows: TimeWindow[] = [];
+  let windowStart: number | null = null;
+  let windowEnd: number | null = null;
 
-  for (const forecast of activityHours) {
+  for (let i = 0; i < activityHours.length; i++) {
+    const forecast = activityHours[i];
+    const nextForecast = activityHours[i + 1];
+    
     if (forecast.riskLevel === 'AMAN') {
-      if (currentStart === null) {
-        currentStart = forecast.hour;
-        currentEnd = forecast.hour;
-      } else {
-        currentEnd = forecast.hour;
+      if (windowStart === null) {
+        windowStart = forecast.hour;
       }
-    } else {
-      // Akhir dari window aman
-      if (currentStart !== null && currentEnd !== null) {
-        const duration = currentEnd - currentStart + 1;
-        if (!bestWindow || duration > bestWindow.duration) {
-          bestWindow = { start: currentStart, end: currentEnd, duration };
+      // Extend end ke jam berikutnya (interval 3 jam)
+      windowEnd = forecast.hour + 3;
+      
+      // Jika jam berikutnya tidak AMAN atau tidak ada, tutup window
+      if (!nextForecast || nextForecast.riskLevel !== 'AMAN') {
+        if (windowStart !== null && windowEnd !== null) {
+          const duration = windowEnd - windowStart;
+          safeWindows.push({ start: windowStart, end: windowEnd, duration });
         }
+        windowStart = null;
+        windowEnd = null;
       }
-      currentStart = null;
-      currentEnd = null;
     }
   }
 
-  // Cek window terakhir
-  if (currentStart !== null && currentEnd !== null) {
-    const duration = currentEnd - currentStart + 1;
-    if (!bestWindow || duration > bestWindow.duration) {
-      bestWindow = { start: currentStart, end: currentEnd, duration };
-    }
-  }
-
-  return bestWindow;
+  // Kembalikan window terpanjang
+  if (safeWindows.length === 0) return null;
+  return safeWindows.reduce((best, current) => 
+    current.duration > best.duration ? current : best
+  );
 }
 
 /**
  * Cari rentang waktu BERISIKO terpanjang
+ * Durasi dihitung sebagai selisih jam (untuk interval BMKG 3-jam)
  */
 export function findWorstActivityWindow(
   forecasts: HourlyForecast[]
 ): TimeWindow | null {
   if (forecasts.length === 0) return null;
 
-  // Filter jam 6 pagi sampai 18 sore (jam aktivitas normal)
-  const activityHours = forecasts.filter(f => f.hour >= 6 && f.hour <= 18);
+  // Filter jam 6 pagi sampai 21 malam (jam aktivitas normal)
+  const activityHours = forecasts
+    .filter(f => f.hour >= 6 && f.hour <= 21)
+    .sort((a, b) => a.hour - b.hour);
+  
   if (activityHours.length === 0) return null;
 
-  let worstWindow: TimeWindow | null = null;
-  let currentStart: number | null = null;
-  let currentEnd: number | null = null;
+  // Cari semua window BERISIKO berturutan
+  const riskyWindows: TimeWindow[] = [];
+  let windowStart: number | null = null;
+  let windowEnd: number | null = null;
 
-  for (const forecast of activityHours) {
+  for (let i = 0; i < activityHours.length; i++) {
+    const forecast = activityHours[i];
+    const nextForecast = activityHours[i + 1];
+    
     if (forecast.riskLevel === 'RISIKO_TINGGI') {
-      if (currentStart === null) {
-        currentStart = forecast.hour;
-        currentEnd = forecast.hour;
-      } else {
-        currentEnd = forecast.hour;
+      if (windowStart === null) {
+        windowStart = forecast.hour;
       }
-    } else {
-      // Akhir dari window berisiko
-      if (currentStart !== null && currentEnd !== null) {
-        const duration = currentEnd - currentStart + 1;
-        if (!worstWindow || duration > worstWindow.duration) {
-          worstWindow = { start: currentStart, end: currentEnd, duration };
+      // Extend end ke jam berikutnya (interval 3 jam)
+      windowEnd = forecast.hour + 3;
+      
+      // Jika jam berikutnya tidak BERISIKO atau tidak ada, tutup window
+      if (!nextForecast || nextForecast.riskLevel !== 'RISIKO_TINGGI') {
+        if (windowStart !== null && windowEnd !== null) {
+          const duration = windowEnd - windowStart;
+          riskyWindows.push({ start: windowStart, end: windowEnd, duration });
         }
+        windowStart = null;
+        windowEnd = null;
       }
-      currentStart = null;
-      currentEnd = null;
     }
   }
 
-  // Cek window terakhir
-  if (currentStart !== null && currentEnd !== null) {
-    const duration = currentEnd - currentStart + 1;
-    if (!worstWindow || duration > worstWindow.duration) {
-      worstWindow = { start: currentStart, end: currentEnd, duration };
-    }
-  }
-
-  return worstWindow;
+  // Kembalikan window terpanjang
+  if (riskyWindows.length === 0) return null;
+  return riskyWindows.reduce((best, current) => 
+    current.duration > best.duration ? current : best
+  );
 }

@@ -27,10 +27,22 @@ export const Timeline: FC<TimelineProps> = ({ forecasts, className }) => {
     if (bestWindow) {
       const start = String(bestWindow.start).padStart(2, '0');
       const end = String(bestWindow.end).padStart(2, '0');
-      return `Aktivitas luar paling baik dari jam ${start}:00 - ${end}:00`;
+      
+      // Jika durasi panjang (lebih dari 6 jam), sebutkan cuaca bagus
+      if (bestWindow.duration >= 6) {
+        return `Cuaca mendukung aktivitas dari jam ${start}:00 - ${end}:00`;
+      }
+      return `Waktu terbaik untuk aktivitas luar: ${start}:00 - ${end}:00`;
     }
+    
+    // Cek apakah semua aman
+    const allSafe = forecasts.every(f => f.riskLevel === 'AMAN');
+    if (allSafe) {
+      return 'Cuaca cerah sepanjang hari, cocok untuk aktivitas luar';
+    }
+    
     return 'Pantau kondisi cuaca sebelum beraktivitas';
-  }, [bestWindow]);
+  }, [bestWindow, forecasts]);
 
   return (
     <Card className={className}>

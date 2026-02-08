@@ -18,17 +18,19 @@ export const SegmentCard: FC<SegmentCardProps> = ({
   isActive = false,
   className,
 }) => {
-  const bgColor = {
+  const hasData = segment.hours.length > 0;
+  
+  const bgColor = hasData ? {
     'AMAN': 'bg-green-50 border-green-200',
     'RISIKO_RINGAN': 'bg-yellow-50 border-yellow-200',
     'RISIKO_TINGGI': 'bg-red-50 border-red-200',
-  }[segment.dominantRisk];
+  }[segment.dominantRisk] : 'bg-slate-50 border-slate-200';
 
-  const activeBorder = {
+  const activeBorder = hasData ? {
     'AMAN': 'ring-green-500',
     'RISIKO_RINGAN': 'ring-yellow-500',
     'RISIKO_TINGGI': 'ring-red-500',
-  }[segment.dominantRisk];
+  }[segment.dominantRisk] : 'ring-slate-400';
 
   return (
     <div
@@ -50,38 +52,43 @@ export const SegmentCard: FC<SegmentCardProps> = ({
       </div>
 
       {/* Risk indicator */}
-      <div className="my-3">
-        <div className="text-3xl">
-          {getRiskEmoji(segment.dominantRisk)}
-        </div>
-        <div className={cn(
-          'text-sm font-bold mt-1',
-          {
-            'text-green-700': segment.dominantRisk === 'AMAN',
-            'text-yellow-700': segment.dominantRisk === 'RISIKO_RINGAN',
-            'text-red-700': segment.dominantRisk === 'RISIKO_TINGGI',
-          }
-        )}>
-          {getRiskLabel(segment.dominantRisk).toUpperCase()}
-        </div>
-      </div>
-
-      {/* Temperature & Weather */}
-      {segment.hours.length > 0 && (
-        <div className="text-xs text-slate-600 space-y-1">
-          <div>
-            {segment.tempRange.min}° - {segment.tempRange.max}°C
+      {hasData ? (
+        <>
+          <div className="my-3">
+            <div className="text-3xl">
+              {getRiskEmoji(segment.dominantRisk)}
+            </div>
+            <div className={cn(
+              'text-sm font-bold mt-1',
+              {
+                'text-green-700': segment.dominantRisk === 'AMAN',
+                'text-yellow-700': segment.dominantRisk === 'RISIKO_RINGAN',
+                'text-red-700': segment.dominantRisk === 'RISIKO_TINGGI',
+              }
+            )}>
+              {getRiskLabel(segment.dominantRisk).toUpperCase()}
+            </div>
           </div>
-          <div className="truncate">
-            {segment.dominantWeather}
-          </div>
-        </div>
-      )}
 
-      {/* Empty state */}
-      {segment.hours.length === 0 && (
-        <div className="text-xs text-slate-400">
-          Tidak ada data
+          {/* Temperature & Weather */}
+          <div className="text-xs text-slate-600 space-y-1">
+            <div>
+              {segment.tempRange.min === segment.tempRange.max 
+                ? `${segment.tempRange.min}°C`
+                : `${segment.tempRange.min}° - ${segment.tempRange.max}°C`
+              }
+            </div>
+            <div className="truncate">
+              {segment.dominantWeather}
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="my-3">
+          <div className="text-3xl text-slate-300">⏳</div>
+          <div className="text-xs text-slate-400 mt-2">
+            Menunggu data
+          </div>
         </div>
       )}
     </div>

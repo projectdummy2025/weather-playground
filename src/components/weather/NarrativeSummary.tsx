@@ -127,6 +127,11 @@ const TimeWindowCard: FC<TimeWindowCardProps> = ({
   const formatHour = (hour: number) => 
     `${String(hour).padStart(2, '0')}:00`;
 
+  // Format waktu: jika start dan end berbeda, tampilkan range
+  const timeDisplay = window.start === window.end 
+    ? formatHour(window.start)
+    : `${formatHour(window.start)} - ${formatHour(window.end)}`;
+
   return (
     <div className={cn(
       'rounded-xl border-2 p-4 text-center',
@@ -148,7 +153,7 @@ const TimeWindowCard: FC<TimeWindowCardProps> = ({
         'text-lg font-semibold mt-2',
         isBest ? 'text-green-800' : 'text-red-800'
       )}>
-        {formatHour(window.start)} - {formatHour(window.end)}
+        {timeDisplay}
       </div>
       <div className="text-xs text-slate-500 mt-1">
         ({window.duration} jam)
