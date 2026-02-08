@@ -1,6 +1,6 @@
 /**
  * NarrativeSummary Component
- * Narasi persuasif seperti teman yang kasih saran cuaca
+ * Narasi persuasif dengan logika jam aktivitas yang masuk akal
  */
 
 'use client';
@@ -17,6 +17,10 @@ import {
   CloudIcon,
 } from '@/components/ui';
 import type { DailySummary, HourlyForecast } from '@/types/weather';
+
+// Jam aktivitas normal (06:00 - 22:00)
+const ACTIVITY_START_HOUR = 6;
+const ACTIVITY_END_HOUR = 22;
 
 interface NarrativeSummaryProps {
   summary: DailySummary;
@@ -46,29 +50,88 @@ export const NarrativeSummary: FC<NarrativeSummaryProps> = ({
       return a.hour - b.hour;
     });
 
-    // Analisis kondisi
-    const riskyForecasts = sorted.filter(f => f.riskLevel === 'RISIKO_TINGGI');
-    const cautionForecasts = sorted.filter(f => f.riskLevel === 'RISIKO_RINGAN');
-    const safeForecasts = sorted.filter(f => f.riskLevel === 'AMAN');
+    // FILTER: Hanya jam aktivitas (06:00 - 22:00)
+    const activityHours = sorted.filter(f => {
+      const hour = f.localDatetime ? new Date(f.localDatetime).getHours() : f.hour;
+      return hour >= ACTIVITY_START_HOUR && hour < ACTIVITY_END_HOUR;
+    });
+
+    // Jika tidak ada data jam aktivitas, cek jam sekarang
+    const now = new Date();
+    const currentHour = now.getHours();
+
+    // Kalau sudah malam (setelah jam 22), kasih info untuk besok
+    if (activityHours.length === 0 && currentHour >= ACTIVITY_END_HOUR) {
+      // Cari forecast besok jam aktivitas
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const tomorrowForecasts = sorted.filter(f => {
+        if (!f.localDatetime) return false;
+        const date = new Date(f.localDatetime);
+        const hour = date.getHours();
+        return date.toDateString() === tomorrow.toDateString() &&
+          hour >= ACTIVITY_START_HOUR && hour < ACTIVITY_END_HOUR;
+      });
+
+      if (tomorrowForecasts.length > 0) {
+        const hasBadWeather = tomorrowForecasts.some(f => f.riskLevel === 'RISIKO_TINGGI');
+        const hasCaution = tomorrowForecasts.some(f => f.riskLevel === 'RISIKO_RINGAN');
+
+        if (hasBadWeather) {
+          return {
+            type: 'danger' as const,
+            text: `Besok diprediksi ada cuaca buruk. Rencanakan aktivitasmu dengan hati-hati ya. Pantau terus updatenya!`,
+          };
+        } else if (hasCaution) {
+          return {
+            type: 'warning' as const,
+            text: `Besok cuaca agak tidak stabil. Siapkan payung untuk jaga-jaga! ☔`,
+          };
+        } else {
+          return {
+            type: 'safe' as const,
+            text: `Besok cuaca cerah! Tidur yang nyenyak, besok cocok untuk aktivitas luar. 🌤️`,
+          };
+        }
+      }
+
+      return {
+        type: 'info' as const,
+        text: 'Sudah malam, istirahat dulu ya. Besok cek lagi prakiraan cuacanya!',
+      };
+    }
+
+    // Kalau belum jam aktivitas (sebelum jam 6 pagi)
+    if (activityHours.length === 0 && currentHour < ACTIVITY_START_HOUR) {
+      return {
+        type: 'info' as const,
+        text: 'Masih pagi buta nih. Tidur dulu, nanti jam 6 cek lagi ya!',
+      };
+    }
+
+    // Analisis kondisi untuk jam aktivitas
+    const riskyForecasts = activityHours.filter(f => f.riskLevel === 'RISIKO_TINGGI');
+    const cautionForecasts = activityHours.filter(f => f.riskLevel === 'RISIKO_RINGAN');
+    const safeForecasts = activityHours.filter(f => f.riskLevel === 'AMAN');
 
     // === NARASI UNTUK BERBAGAI KONDISI ===
 
-    // Kalau ada cuaca buruk
+    // Kalau ada cuaca buruk di jam aktivitas
     if (riskyForecasts.length > 0) {
       const time = formatTimeNatural(riskyForecasts[0]);
       const weather = riskyForecasts[0].weatherDesc.toLowerCase();
       return {
         type: 'danger' as const,
-        text: `Wah, ${time} diprediksi ada ${weather}. Sebaiknya tunda dulu aktivitas di luar ya, atau pastikan kamu sudah di tempat yang aman sebelumnya.`,
+        text: `Hati-hati! ${time} diprediksi ada ${weather}. Kalau bisa, tunda dulu aktivitas di luar atau pastikan kamu sudah di tempat yang aman sebelumnya.`,
       };
     }
 
-    // Kalau semua aman
+    // Kalau semua jam aktivitas aman
     if (cautionForecasts.length === 0 && safeForecasts.length > 0) {
-      const temp = Math.round((summary.minTemp + summary.maxTemp) / 2);
       return {
         type: 'safe' as const,
-        text: `Kabar baik! Cuaca ${summary.dominantWeather.toLowerCase()} dengan suhu sekitar ${temp}°C. Cocok banget buat aktivitas di luar. Selamat beraktivitas! 🌤️`,
+        text: `Kabar baik! Cuaca ${summary.dominantWeather.toLowerCase()} dengan suhu ${summary.minTemp}°-${summary.maxTemp}°C. Aman untuk beraktivitas di luar. Selamat beraktivitas! 🌤️`,
       };
     }
 
@@ -80,22 +143,22 @@ export const NarrativeSummary: FC<NarrativeSummaryProps> = ({
 
       return {
         type: 'warning' as const,
-        text: `${safeTime} cuaca masih mendukung untuk keluar. Tapi ${cautionTime} ada kemungkinan ${weather}, jadi bawa payung atau jas hujan untuk jaga-jaga ya! ☔`,
+        text: `${safeTime} cuaca masih mendukung untuk keluar. Tapi ${cautionTime} ada kemungkinan ${weather}, jadi bawa payung untuk jaga-jaga ya! ☔`,
       };
     }
 
-    // Kalau semua waspada
+    // Kalau semua jam aktivitas waspada
     if (cautionForecasts.length > 0) {
       const weather = cautionForecasts[0].weatherDesc.toLowerCase();
       return {
         type: 'warning' as const,
-        text: `Cuaca hari ini cenderung ${weather}. Kalau harus keluar, siapkan payung dan pilih waktu yang tepat. Pantau terus updatenya ya!`,
+        text: `Hari ini cuaca cenderung ${weather}. Kalau harus keluar, siapkan payung dan pilih waktu yang tepat ya!`,
       };
     }
 
     return {
       type: 'info' as const,
-      text: 'Cuaca hari ini cukup dinamis. Pantau terus prakiraan untuk update terbaru.',
+      text: 'Cuaca hari ini dinamis. Pantau terus prakiraan untuk update terbaru.',
     };
   }, [forecasts, summary]);
 
@@ -158,24 +221,24 @@ function formatTimeNatural(forecast: HourlyForecast): string {
     tomorrow.setDate(tomorrow.getDate() + 1);
     const isTomorrow = date.toDateString() === tomorrow.toDateString();
 
-    // Konteks waktu
+    // Konteks waktu yang lebih natural
     let timeContext = '';
-    if (hour >= 5 && hour < 10) timeContext = 'pagi';
-    else if (hour >= 10 && hour < 15) timeContext = 'siang';
-    else if (hour >= 15 && hour < 18) timeContext = 'sore';
-    else if (hour >= 18 && hour < 22) timeContext = 'malam';
-    else timeContext = 'dini hari';
-
-    const hourStr = `${String(hour).padStart(2, '0')}:00`;
+    if (hour >= 6 && hour < 10) timeContext = 'pagi ini';
+    else if (hour >= 10 && hour < 12) timeContext = 'menjelang siang';
+    else if (hour >= 12 && hour < 15) timeContext = 'siang ini';
+    else if (hour >= 15 && hour < 18) timeContext = 'sore ini';
+    else if (hour >= 18 && hour < 22) timeContext = 'malam ini';
+    else timeContext = 'nanti';
 
     if (isToday) {
-      if (hour >= 18) return `nanti malam sekitar jam ${hourStr}`;
-      return `hari ini ${timeContext} (${hourStr})`;
+      return timeContext;
     } else if (isTomorrow) {
-      return `besok ${timeContext} (${hourStr})`;
+      if (hour >= 6 && hour < 12) return 'besok pagi';
+      if (hour >= 12 && hour < 18) return 'besok siang';
+      return 'besok malam';
     }
 
-    return `jam ${hourStr}`;
+    return `jam ${String(hour).padStart(2, '0')}:00`;
   }
 
   return `jam ${String(forecast.hour).padStart(2, '0')}:00`;
