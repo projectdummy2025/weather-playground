@@ -94,12 +94,12 @@ export const HorizontalRiskBar: FC<HorizontalRiskBarProps> = ({
       </div>
 
       {/* Risk bar */}
-      <div className="flex h-12 rounded-xl overflow-hidden shadow-inner border border-slate-200">
+      <div className="w-full flex h-10 md:h-12 rounded-xl overflow-hidden shadow-inner border border-slate-200">
         {hourlyRisks.map((risk, hour) => (
           <div
             key={hour}
             className={cn(
-              'flex-1 transition-colors',
+              'flex-1 min-w-0 transition-colors',
               getRiskBarColor(risk)
             )}
             title={`${String(hour).padStart(2, '0')}:00 - ${getRiskTooltip(risk)}`}
