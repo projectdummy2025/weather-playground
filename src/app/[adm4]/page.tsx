@@ -13,7 +13,9 @@ import {
   WeatherCard, 
   Timeline, 
   NarrativeSummary, 
-  DailyForecastCard 
+  DailyForecastCard,
+  ForecastSaver,
+  HistoryCard,
 } from '@/components/weather';
 
 interface WeatherPageProps {
@@ -56,6 +58,14 @@ export default async function WeatherPage({ params }: WeatherPageProps) {
     <main className="px-4 py-4 pb-16 max-w-5xl mx-auto">
       {/* Location Header */}
       <LocationHeader location={location} />
+
+      {/* Save today's forecast to localStorage */}
+      <ForecastSaver
+        adm4={adm4}
+        locationName={`${location.desa}, ${location.kecamatan}`}
+        hourlyForecasts={todayForecast.hourlyForecasts}
+        summary={todayForecast.summary}
+      />
       
       {/* Mobile Layout: Stacked */}
       <div className="md:hidden space-y-4 mt-4">
@@ -74,6 +84,9 @@ export default async function WeatherPage({ params }: WeatherPageProps) {
           summary={todayForecast.summary}
           forecasts={todayForecast.hourlyForecasts}
         />
+
+        {/* Riwayat Prakiraan Kemarin */}
+        <HistoryCard adm4={adm4} />
         
         {/* Upcoming Days */}
         {upcomingForecasts.length > 0 && (
@@ -111,6 +124,9 @@ export default async function WeatherPage({ params }: WeatherPageProps) {
           summary={todayForecast.summary}
           forecasts={todayForecast.hourlyForecasts}
         />
+
+        {/* Riwayat Prakiraan Kemarin */}
+        <HistoryCard adm4={adm4} />
         
         {/* Upcoming Days - 3 column grid */}
         {upcomingForecasts.length > 0 && (
