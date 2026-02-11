@@ -38,7 +38,7 @@ export function classifyWeatherRisk(
   if (windSpeed >= HIGH_WIND_SPEED_THRESHOLD) {
     return 'RISIKO_TINGGI';
   }
-  
+
   if (windSpeed >= MEDIUM_WIND_SPEED_THRESHOLD) {
     // Angin sedang + cuaca buruk = risiko tinggi
     if (MEDIUM_RISK_WEATHER.includes(weatherDesc)) {
@@ -46,16 +46,16 @@ export function classifyWeatherRisk(
     }
     return 'RISIKO_RINGAN';
   }
-  
+
   // Klasifikasi berdasarkan cuaca
   if (HIGH_RISK_WEATHER.includes(weatherDesc)) {
     return 'RISIKO_TINGGI';
   }
-  
+
   if (MEDIUM_RISK_WEATHER.includes(weatherDesc)) {
     return 'RISIKO_RINGAN';
   }
-  
+
   return 'AMAN';
 }
 
@@ -64,27 +64,48 @@ export function classifyWeatherRisk(
  */
 export function transformToHourlyForecast(
   bmkgData: BMKGWeatherData
-): HourlyForecast {
+): HourlyForecast | null {
+  // Validasi basic fields
+  if (!bmkgData.local_datetime ||
+    bmkgData.t === undefined ||
+    bmkgData.hu === undefined) {
+    console.warn('[BMKG Parser] Invalid data - missing required fields:', {
+      has_datetime: !!bmkgData.local_datetime,
+      has_temp: bmkgData.t !== undefined,
+      has_humidity: bmkgData.hu !== undefined,
+    });
+    return null;
+  }
+
   const date = new Date(bmkgData.local_datetime);
-  
+
+  // Validasi date
+  if (isNaN(date.getTime())) {
+    console.warn('[BMKG Parser] Invalid datetime:', bmkgData.local_datetime);
+    return null;
+  }
+
   const forecast: WeatherForecast = {
     localDatetime: bmkgData.local_datetime,
     date,
     hour: date.getHours(),
     temperature: bmkgData.t,
     humidity: bmkgData.hu,
-    weatherDesc: bmkgData.weather_desc,
-    weatherDescEn: bmkgData.weather_desc_en || '',
-    windSpeed: bmkgData.ws,
-    windDirection: bmkgData.wd,
+    weatherDesc: bmkgData.weather_desc || 'Tidak diketahui',
+    weatherDescEn: bmkgData.weather_desc_en || 'Unknown',
+    windSpeed: bmkgData.ws || 0,
+    windDirection: bmkgData.wd || 'N',
     cloudCover: bmkgData.tcc || 0,
     visibility: bmkgData.vs_text || '',
-    imageUrl: bmkgData.image,
+    imageUrl: bmkgData.image || '',
   };
-  
+
   return {
     ...forecast,
-    riskLevel: classifyWeatherRisk(bmkgData.weather_desc, bmkgData.ws),
+    riskLevel: classifyWeatherRisk(
+      bmkgData.weather_desc || '',
+      bmkgData.ws || 0
+    ),
   };
 }
 
@@ -105,19 +126,19 @@ export function generateDailySummary(
       narrative: 'Data cuaca tidak tersedia.',
     };
   }
-  
+
   // Hitung min/max suhu
   const temps = hourlyForecasts.map(f => f.temperature);
   const minTemp = Math.min(...temps);
   const maxTemp = Math.max(...temps);
-  
+
   // Hitung cuaca dominan
   const weatherCounts = new Map<string, number>();
   hourlyForecasts.forEach(f => {
     const count = weatherCounts.get(f.weatherDesc) || 0;
     weatherCounts.set(f.weatherDesc, count + 1);
   });
-  
+
   let dominantWeather = '';
   let maxCount = 0;
   weatherCounts.forEach((count, weather) => {
@@ -126,11 +147,11 @@ export function generateDailySummary(
       dominantWeather = weather;
     }
   });
-  
+
   // Kategorikan jam
   const safeHours: number[] = [];
   const riskyHours: number[] = [];
-  
+
   hourlyForecasts.forEach(f => {
     if (f.riskLevel === 'AMAN') {
       safeHours.push(f.hour);
@@ -138,21 +159,21 @@ export function generateDailySummary(
       riskyHours.push(f.hour);
     }
   });
-  
+
   // Tentukan overall risk
   const highRiskCount = hourlyForecasts.filter(f => f.riskLevel === 'RISIKO_TINGGI').length;
   const mediumRiskCount = hourlyForecasts.filter(f => f.riskLevel === 'RISIKO_RINGAN').length;
-  
+
   let overallRisk: RiskLevel = 'AMAN';
   if (highRiskCount > hourlyForecasts.length / 2) {
     overallRisk = 'RISIKO_TINGGI';
   } else if (highRiskCount > 0 || mediumRiskCount > hourlyForecasts.length / 2) {
     overallRisk = 'RISIKO_RINGAN';
   }
-  
+
   // Generate narasi
   const narrative = generateNarrative(hourlyForecasts, safeHours, riskyHours);
-  
+
   return {
     minTemp,
     maxTemp,
@@ -175,33 +196,33 @@ function generateNarrative(
   if (forecasts.length === 0) {
     return 'Data cuaca tidak tersedia.';
   }
-  
+
   // Kelompokkan forecast berdasarkan waktu
   const pagi = forecasts.filter(f => f.hour >= 6 && f.hour < 12);
   const siang = forecasts.filter(f => f.hour >= 12 && f.hour < 15);
   const sore = forecasts.filter(f => f.hour >= 15 && f.hour < 18);
   const malam = forecasts.filter(f => f.hour >= 18 || f.hour < 6);
-  
+
   const parts: string[] = [];
-  
+
   // Deskripsi kondisi per waktu
   if (pagi.length > 0) {
     const pagiRisk = pagi.some(f => f.riskLevel !== 'AMAN');
     const pagiWeather = pagi[0]?.weatherDesc || '';
-    parts.push(pagiRisk 
+    parts.push(pagiRisk
       ? `Pagi hari perlu waspada (${pagiWeather.toLowerCase()})`
       : `Pagi hari ${pagiWeather.toLowerCase()}`
     );
   }
-  
+
   if (siang.length > 0 || sore.length > 0) {
     const siangSore = [...siang, ...sore];
-    const hasRain = siangSore.some(f => 
+    const hasRain = siangSore.some(f =>
       f.weatherDesc.toLowerCase().includes('hujan')
     );
-    
+
     if (hasRain) {
-      const rainStart = siangSore.find(f => 
+      const rainStart = siangSore.find(f =>
         f.weatherDesc.toLowerCase().includes('hujan')
       );
       if (rainStart) {
@@ -209,12 +230,12 @@ function generateNarrative(
       }
     }
   }
-  
+
   // Rekomendasi
   if (safeHours.length > 0 && riskyHours.length > 0) {
     const firstSafe = Math.min(...safeHours);
     const lastSafe = Math.max(...safeHours);
-    
+
     if (safeHours.length >= riskyHours.length) {
       parts.push(`Waktu terbaik untuk aktivitas luar: ${firstSafe}:00 - ${lastSafe}:00`);
     } else {
@@ -225,7 +246,7 @@ function generateNarrative(
   } else {
     parts.push(`Sebaiknya tunda aktivitas luar ruangan jika memungkinkan`);
   }
-  
+
   return parts.join('. ') + '.';
 }
 
@@ -429,7 +450,7 @@ export function generateActionItems(
 
   // Cek apakah semua segment aman
   const allSafe = segments.every(s => s.dominantRisk === 'AMAN' || s.hours.length === 0);
-  
+
   if (allSafe) {
     items.push({ type: 'safe', text: 'Cuaca cerah sepanjang hari, cocok untuk aktivitas luar' });
   } else {
@@ -448,7 +469,7 @@ export function generateActionItems(
     // Cek kondisi siang/sore
     const siang = segments.find(s => s.label === 'Siang');
     const sore = segments.find(s => s.label === 'Sore');
-    
+
     if ((siang?.hours.length ?? 0) > 0 || (sore?.hours.length ?? 0) > 0) {
       if (siang?.dominantRisk === 'RISIKO_TINGGI' || sore?.dominantRisk === 'RISIKO_TINGGI') {
         const jamMulai = siang?.dominantRisk === 'RISIKO_TINGGI' ? 12 : 15;
@@ -500,7 +521,7 @@ export function findBestActivityWindow(
   const activityHours = forecasts
     .filter(f => f.hour >= 6 && f.hour <= 21)
     .sort((a, b) => a.hour - b.hour);
-  
+
   if (activityHours.length === 0) return null;
 
   // Cari semua window AMAN berturutan
@@ -511,14 +532,14 @@ export function findBestActivityWindow(
   for (let i = 0; i < activityHours.length; i++) {
     const forecast = activityHours[i];
     const nextForecast = activityHours[i + 1];
-    
+
     if (forecast.riskLevel === 'AMAN') {
       if (windowStart === null) {
         windowStart = forecast.hour;
       }
       // Extend end ke jam berikutnya (interval 3 jam)
       windowEnd = forecast.hour + 3;
-      
+
       // Jika jam berikutnya tidak AMAN atau tidak ada, tutup window
       if (!nextForecast || nextForecast.riskLevel !== 'AMAN') {
         if (windowStart !== null && windowEnd !== null) {
@@ -533,7 +554,7 @@ export function findBestActivityWindow(
 
   // Kembalikan window terpanjang
   if (safeWindows.length === 0) return null;
-  return safeWindows.reduce((best, current) => 
+  return safeWindows.reduce((best, current) =>
     current.duration > best.duration ? current : best
   );
 }
@@ -551,7 +572,7 @@ export function findWorstActivityWindow(
   const activityHours = forecasts
     .filter(f => f.hour >= 6 && f.hour <= 21)
     .sort((a, b) => a.hour - b.hour);
-  
+
   if (activityHours.length === 0) return null;
 
   // Cari semua window BERISIKO berturutan
@@ -562,14 +583,14 @@ export function findWorstActivityWindow(
   for (let i = 0; i < activityHours.length; i++) {
     const forecast = activityHours[i];
     const nextForecast = activityHours[i + 1];
-    
+
     if (forecast.riskLevel === 'RISIKO_TINGGI') {
       if (windowStart === null) {
         windowStart = forecast.hour;
       }
       // Extend end ke jam berikutnya (interval 3 jam)
       windowEnd = forecast.hour + 3;
-      
+
       // Jika jam berikutnya tidak BERISIKO atau tidak ada, tutup window
       if (!nextForecast || nextForecast.riskLevel !== 'RISIKO_TINGGI') {
         if (windowStart !== null && windowEnd !== null) {
@@ -584,7 +605,7 @@ export function findWorstActivityWindow(
 
   // Kembalikan window terpanjang
   if (riskyWindows.length === 0) return null;
-  return riskyWindows.reduce((best, current) => 
+  return riskyWindows.reduce((best, current) =>
     current.duration > best.duration ? current : best
   );
 }
