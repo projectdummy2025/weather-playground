@@ -42,21 +42,21 @@ export const Timeline: FC<TimelineProps> = ({ forecasts, className }) => {
       return activityOnly.slice(0, 6);
     }
 
-    // Jika tidak ada jam aktivitas sama sekali, cari forecast besok pagi
+    // Jika tidak ada jam aktivitas sama sekali, cari forecast besok
     const now = new Date();
     const tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const tomorrowMorning = sorted.filter(f => {
+    const tomorrowActivity = sorted.filter(f => {
       if (!f.localDatetime) return false;
       const date = new Date(f.localDatetime);
       const hour = date.getHours();
       return date.toDateString() === tomorrow.toDateString() &&
-        hour >= 6 && hour <= 12;
+        hour >= ACTIVITY_START_HOUR && hour <= ACTIVITY_END_HOUR;
     });
 
-    if (tomorrowMorning.length > 0) {
-      return tomorrowMorning.slice(0, 6);
+    if (tomorrowActivity.length > 0) {
+      return tomorrowActivity.slice(0, 6);
     }
 
     // Fallback terakhir: jika benar-benar tidak ada, jangan tampilkan apapun
