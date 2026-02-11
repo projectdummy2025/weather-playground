@@ -16,24 +16,44 @@ export interface BMKGLocation {
   lon: number;
   lat: number;
   timezone: string;
+  type?: string; // Tipe lokasi (muncul di data.lokasi)
 }
 
 // Data cuaca per waktu dari BMKG
 export interface BMKGWeatherData {
+  // Waktu
+  datetime: string; // UTC datetime ISO format
+  utc_datetime: string; // UTC datetime natural
   local_datetime: string; // Format: YYYY-MM-DD HH:mm:ss
-  t: number; // Suhu (Celsius)
-  hu: number; // Kelembapan (%)
+  time_index: string; // Index waktu (misal: "3-4")
+  analysis_date: string; // Tanggal analisis
+
+  // Cuaca
+  weather: number; // Kode cuaca (integer)
   weather_desc: string; // Deskripsi cuaca (Indonesia)
   weather_desc_en: string; // Deskripsi cuaca (English)
+  image: string; // URL ikon cuaca
+
+  // Temperatur & Kelembaban
+  t: number; // Suhu (Celsius)
+  hu: number; // Kelembapan (%)
+  tp: number; // Total precipitation
+
+  // Angin
   ws: number; // Kecepatan angin (km/h)
   wd: string; // Arah angin (N, S, E, W, etc.)
+  wd_deg: number; // Arah angin dalam derajat
+  wd_to: string; // Arah tujuan angin
+
+  // Awan & Visibilitas
   tcc: number; // Tutupan awan (%)
+  vs: number; // Visibilitas dalam meter
   vs_text: string; // Jarak pandang
-  image: string; // URL ikon cuaca
 }
 
-// Struktur data cuaca per hari
+// Struktur data cuaca per item
 export interface BMKGDailyData {
+  lokasi: BMKGLocation; // Lokasi info per data item
   cuaca: BMKGWeatherData[][];
 }
 
